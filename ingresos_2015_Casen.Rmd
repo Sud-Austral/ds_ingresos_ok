@@ -91,9 +91,16 @@ library(foreign)
 ```
 
 ```{r, warning=FALSE, message=FALSE}
-casen2020 <- readRDS("casen_2015_c.rds")
-casen2020 <- as.data.frame(casen2020)
+casen2015 <- readRDS("casen_2015_c.rds")
+casen2015 <- as.data.frame(casen2015)
 ```
+
+
+```{r}
+casen2015
+```
+
+
 
 ```{r}
 # r3_100 <- casen2020[c(1:10),]
@@ -107,11 +114,14 @@ Promedio del ingreso autónomo per cápita mensual del hogar, Casen 2015
 
 https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwjd_Z3xoKnyAhUFppUCHRjQDDUQFnoECAIQAQ&url=http%3A%2F%2Fobservatorio.ministeriodesarrollosocial.gob.cl%2Fstorage%2Fdocs%2Ffichas-regionales%2F2015%2F3.Promedio_ingreso_autonomo_percapita_del_hogar_mensual_hogar.xlsx&usg=AOvVaw3I6J-N1yxO0Tv25D-tLZra
 
-## Analisis de la comuna de Vitacura
+## 
 
+Promedio (en pesos del mes de noviembre de 2015) del ingreso autónomo mensual recibido por los hogares y dividido por el número de integrantes de los hogares. El ingreso autónomo incluye ingresos por concepto de sueldos y salarios, ganancias provenientes del trabajo independiente, autoprovisión de bienes producidos por el hogar, bonificaciones, gratificaciones, rentas, intereses, así como jubilaciones, pensiones, montepíos y transferencias entre privados.
+
+##
 
 ```{r}
-vitacura_2020 <- filter(casen2020, casen2020$comuna == "Vitacura")
+# vitacura_2020 <- filter(casen2020, casen2020$comuna == "Vitacura")
 # head(vitacura_2020,10)
 # r3_100 <- vitacura_2020[c(1:10),]
 # kbl(r3_100) %>%
@@ -121,28 +131,75 @@ vitacura_2020 <- filter(casen2020, casen2020$comuna == "Vitacura")
 
 ```
 ```{r}
-vitacura_2020 <- vitacura_2020[,c(7,17, 21,24,44,45,49,566,618)]
-head(vitacura_2020,10)
+# vitacura_2020 <- vitacura_2020[,c(7,17, 21,24,44,45,49,566,618)]
+# head(vitacura_2020,10)
 ```
 
-## ytotcor para Vitacura
+
+```{r}
+# casen2020$ypchautcor
+```
+
+
+```{r}
+
+casen2020_f <- filter(casen2015, casen2015$edad > 12)
+#casen2020_f <- filter(casen2020, casen2020$edad < 60)
+
+
+#casen2020_f <- casen2020_f[!is.na(casen2020_f$yauth ), ]  
+#ytotcor
+#yauth 
+
+a <- casen2020_f$yauth  / casen2020_f$numper
+b <- casen2020_f$comuna
+
+anio <- 2015
+
+promedios_grupales <-aggregate(a, by=list(b), FUN = mean , na.rm = TRUE)
+promedios_grupales_sd <-aggregate(a, by=list(b), FUN = sd , na.rm = TRUE)
+promedios_grupales_gini <-aggregate(a, by=list(b), FUN = gini , na.rm = TRUE)
+
+promedios_grupales$sd = promedios_grupales_sd$sd.a
+promedios_grupales$gini = promedios_grupales_gini$gini.a
+
+
+d <- promedios_grupales
+d$Año <- anio
+# names(d)[1] <- "Comuna"
+# names(d)[2] <- "Sexo"
+# names(d)[3] <- "Etnia"
+# names(d)[4] <- "promedio_yautcor"
+dd <- mutate_if(d, is.factor, as.character)
+dd
+
+
+```
+
+
+
+```{r , message=FALSE, warning=FALSE, results='hide'}
+
+b <- casen2015$comuna
+
+
+anio <- 2015
+cross_tab =  xtabs(casen2015$expc  ~ +  unlist(b)  ,aggregate(casen2015$expc ~  +  unlist(b) ,casen2015,mean))
+tabla <- as.data.frame(cross_tab)
+d <-tabla[!(tabla$Freq == 0),]
+d$Año <- anio
+names(d)[1] <- "Comuna"
+
+write_xlsx(d, "frecuencias_por_categorias_Casen_2020.xlsx")
+d
+```
+
+
 
 
 
 ```{r}
-mean(vitacura_2020$ytotcor) 
-```
-
-## Filtremos por edad > 12
-
-
-```{r}
-vitacura_2020 <- filter(vitacura_2020, vitacura_2020$edad >= 12)
-head(vitacura_2020,10)
-```
-
-```{r}
-mean(vitacura_2020$ytotcor) 
+mean(dd$mean.a) 
 ```
 
 
@@ -238,21 +295,34 @@ names(d)[4] <- "promedio_yautcor"
 dd <- mutate_if(d, is.factor, as.character)
 write_xlsx(dd, "ytotcor_por_categorias_Casen_2020.xlsx")
 ```
+
+
+
+
+
+
 ## Frecuencias
+
+
+
+```{r}
+casen2020
+```
 
 ```{r , message=FALSE, warning=FALSE, results='hide'}
 
-b <- casen2020_2_mas_de_12$comuna
-c <- casen2020_2_mas_de_12$sexo
-d <- casen2020_2_mas_de_12$r3 #etnia
-anio <- 2020
-cross_tab =  xtabs(casen2020_2_mas_de_12$expc  ~ +  unlist(b) + unlist(c)  + unlist(d) ,aggregate(casen2020_2_mas_de_12$expc ~  +  unlist(b) + unlist(c) + unlist(d),casen2020_2_mas_de_12,mean))
+b <- casen2020$comuna
+
+
+anio <- 2015
+cross_tab =  xtabs(casen2020$expc  ~ +  unlist(b)  ,aggregate(casen2020$expc ~  +  unlist(b) ,casen2020,mean))
 tabla <- as.data.frame(cross_tab)
 d <-tabla[!(tabla$Freq == 0),]
 d$Año <- anio
 names(d)[1] <- "Comuna"
 
 write_xlsx(d, "frecuencias_por_categorias_Casen_2020.xlsx")
+d
 ```
 
 
