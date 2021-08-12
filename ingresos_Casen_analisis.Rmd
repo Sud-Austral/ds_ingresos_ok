@@ -35,9 +35,9 @@ fecha: `r format(Sys.time(), "%d-%m-%Y")`
 :-----:|:-----:|:-----:|:-----:|:-----:
  | **Tipo** |Ingreso total|Ingreso autónomo|Ingreso del trabajo|Ingreso de la ocupación principal
 año| | |
-2017|ytotcor|ytrabajocor|ytrabajocor|yoprcor
-2015|ytotcor|ytrabajocor|ytrabajocor|yoprcor
-2013|ytotcor|ytrabajocor|ytrabajocor|yoprcor
+2017|ytotcor|yautcor|ytrabajocor|yoprcor
+2015|ytotcor|yautcor|ytrabajocor|yoprcor
+2013|ytotcor|yautcor|ytrabajocor|yoprcor
 2011|ytrabaj |yautaj |ytrabaj      |yopraj
 2009|ytrabaj |yautaj |ytrabaj      |yopraj
 2006|ytrabaj |yautaj |ytrabaj      |yopraj
@@ -415,7 +415,34 @@ sum(rr$YAUTHAJ)
 
 
 ```{r}
+
+library(foreign)
+dataset <-read.spss("casen2011.sav", to.data.frame=TRUE)
+dataset
+
 ```
+
+
+```{r}
+dataset2 <- filter(dataset, dataset$comuna == "Santiago")
+dataset2
+```
+
+```{r}
+dataset3 <- unique(dataset2$folio , to.data.frame=TRUE)
+length(dataset3)
+```
+
+
+
+
+
+
+
+
+
+
+
 
 
 
