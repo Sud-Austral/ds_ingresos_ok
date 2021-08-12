@@ -91,13 +91,13 @@ library(foreign)
 ```
 
 ```{r, warning=FALSE, message=FALSE}
-casen2015 <- readRDS("casen_2015_c.rds")
-casen2015 <- as.data.frame(casen2015)
+casen2013 <- readRDS("casen_2013_c.rds")
+casen2013 <- as.data.frame(casen2013)
 ```
 
 
 ```{r}
-casen2015
+# casen2013
 ```
 
 
@@ -139,24 +139,26 @@ Promedio (en pesos del mes de noviembre de 2015) del ingreso autónomo mensual r
 ```{r}
 # casen2020$ypchautcor
 ```
-
+### Ingresos totales
 
 ```{r}
+casen2013 <- filter(casen2013, casen2013$edad > 15)
+#casen2013 <- filter( casen2013,  casen2013$edad < 60)
 
-casen2020_f <- filter(casen2015, casen2015$edad > 12)
-#casen2020_f <- filter(casen2020, casen2020$edad < 60)
 
-
-#casen2020_f <- casen2020_f[!is.na(casen2020_f$yauth ), ]  
+#casen2013<-  casen2013[!is.na( casen2013$ytotcorh), ]  
 #ytotcor
 #yauth 
 
-a <- casen2020_f$yauth  / casen2020_f$numper
-b <- casen2020_f$comuna
+a <- casen2013$ytotcorh
+b <- casen2013$comuna
 
-anio <- 2015
+anio <- 2013
 
-promedios_grupales <-aggregate(a, by=list(b), FUN = mean , na.rm = TRUE)
+promedios_grupales <-aggregate(  a, by=list(b), FUN = mean , na.rm = TRUE)
+
+
+
 promedios_grupales_sd <-aggregate(a, by=list(b), FUN = sd , na.rm = TRUE)
 promedios_grupales_gini <-aggregate(a, by=list(b), FUN = gini , na.rm = TRUE)
 
@@ -166,8 +168,50 @@ promedios_grupales$gini = promedios_grupales_gini$gini.a
 
 d <- promedios_grupales
 d$Año <- anio
-# names(d)[1] <- "Comuna"
-# names(d)[2] <- "Sexo"
+names(d)[1] <- "Comuna"
+names(d)[2] <- "Ingreso"
+# names(d)[3] <- "Etnia"
+# names(d)[4] <- "promedio_yautcor"
+dd <- mutate_if(d, is.factor, as.character)
+dd
+
+
+```
+
+https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwjhpIWoqanyAhVCqpUCHd_yAIwQFnoECFAQAQ&url=https%3A%2F%2Fwww.gobiernosantiago.cl%2Fwp-content%2Fuploads%2F2014%2F12%2FINDICADORES-COMUNALES-CASEN-RMS-2013.xls&usg=AOvVaw2m_WiA9ARjzyulmhpyUbZs
+
+### Ingresos Monetarios
+
+
+```{r}
+casen2013 <- filter(casen2013, casen2013$edad > 12)
+#casen2013 <- filter( casen2013,  casen2013$edad < 60)
+
+
+casen2013<-  casen2013[!is.na( casen2013$ymoneCorh), ]  
+#ytotcor
+#yauth 
+
+a <- casen2013$ymoneCorh
+b <- casen2013$comuna
+
+anio <- 2013
+
+promedios_grupales <-aggregate(  a, by=list(b), FUN = mean , na.rm = TRUE)
+
+
+
+promedios_grupales_sd <-aggregate(a, by=list(b), FUN = sd , na.rm = TRUE)
+promedios_grupales_gini <-aggregate(a, by=list(b), FUN = gini , na.rm = TRUE)
+
+promedios_grupales$sd = promedios_grupales_sd$sd.a
+promedios_grupales$gini = promedios_grupales_gini$gini.a
+
+
+d <- promedios_grupales
+d$Año <- anio
+names(d)[1] <- "Comuna"
+names(d)[2] <- "Ingreso"
 # names(d)[3] <- "Etnia"
 # names(d)[4] <- "promedio_yautcor"
 dd <- mutate_if(d, is.factor, as.character)
@@ -178,20 +222,71 @@ dd
 
 
 
-```{r , message=FALSE, warning=FALSE, results='hide'}
 
-b <- casen2015$comuna
+```{r}
+
+casen2013 <- filter(casen2013, casen2013$edad > 12)
+#casen2013 <- filter( casen2013,  casen2013$edad < 60)
 
 
-anio <- 2015
-cross_tab =  xtabs(casen2015$expc  ~ +  unlist(b)  ,aggregate(casen2015$expc ~  +  unlist(b) ,casen2015,mean))
-tabla <- as.data.frame(cross_tab)
-d <-tabla[!(tabla$Freq == 0),]
+casen2013<-  casen2013[!is.na( casen2013$yautcorh), ]  
+#ytotcor
+#yauth 
+
+a <- casen2013$yautcorh
+b <- casen2013$comuna
+
+anio <- 2013
+
+promedios_grupales <-aggregate(  a, by=list(b), FUN = mean , na.rm = TRUE)
+
+
+
+promedios_grupales_sd <-aggregate(a, by=list(b), FUN = sd , na.rm = TRUE)
+promedios_grupales_gini <-aggregate(a, by=list(b), FUN = gini , na.rm = TRUE)
+
+promedios_grupales$sd = promedios_grupales_sd$sd.a
+promedios_grupales$gini = promedios_grupales_gini$gini.a
+
+
+d <- promedios_grupales
 d$Año <- anio
 names(d)[1] <- "Comuna"
+names(d)[2] <- "Ingreso"
+# names(d)[3] <- "Etnia"
+# names(d)[4] <- "promedio_yautcor"
+dd <- mutate_if(d, is.factor, as.character)
+dd
 
-write_xlsx(d, "frecuencias_por_categorias_Casen_2020.xlsx")
-d
+
+
+
+
+
+
+
+
+```
+
+
+
+
+
+
+```{r , message=FALSE, warning=FALSE, results='hide'}
+
+# b <- casen2013$comuna
+# 
+# 
+# anio <- 2013
+# cross_tab =  xtabs( unlist(b)  ,aggregate(casen2013$expc ~  +  unlist(b) ,casen2013,mean))
+# tabla <- as.data.frame(cross_tab)
+# d <-tabla[!(tabla$Freq == 0),]
+# d$Año <- anio
+# names(d)[1] <- "Comuna"
+# 
+# write_xlsx(d, "frecuencias_por_categorias_Casen_2020.xlsx")
+# d
 ```
 
 
@@ -204,96 +299,44 @@ mean(dd$mean.a)
 
 
 ```{r}
-a <- vitacura_2020$ytotcor
-b <- vitacura_2020$comuna
-c <- vitacura_2020$sexo
-d <- vitacura_2020$r3 #etnia
-anio <- 2020
-
-promedios_grupales <-aggregate(a, by=list(b, c, d), FUN = mean , na.rm = TRUE)
-promedios_grupales_sd <-aggregate(a, by=list(b, c, d ), FUN = sd , na.rm = TRUE)
-promedios_grupales_gini <-aggregate(a, by=list(b, c, d), FUN = gini , na.rm = TRUE)
-promedios_grupales$sd = promedios_grupales_sd$sd.a
-promedios_grupales$gini = promedios_grupales_gini$gini.a
-d <- promedios_grupales
-d$Año <- anio
-names(d)[1] <- "Comuna"
-names(d)[2] <- "Sexo"
-names(d)[3] <- "Etnia"
-names(d)[4] <- "promedio_yautcor"
-dd <- mutate_if(d, is.factor, as.character)
-dd
+# a <- vitacura_2020$ytotcor
+# b <- vitacura_2020$comuna
+# c <- vitacura_2020$sexo
+# d <- vitacura_2020$r3 #etnia
+# anio <- 2020
+# 
+# promedios_grupales <-aggregate(a, by=list(b, c, d), FUN = mean , na.rm = TRUE)
+# promedios_grupales_sd <-aggregate(a, by=list(b, c, d ), FUN = sd , na.rm = TRUE)
+# promedios_grupales_gini <-aggregate(a, by=list(b, c, d), FUN = gini , na.rm = TRUE)
+# promedios_grupales$sd = promedios_grupales_sd$sd.a
+# promedios_grupales$gini = promedios_grupales_gini$gini.a
+# d <- promedios_grupales
+# d$Año <- anio
+# names(d)[1] <- "Comuna"
+# names(d)[2] <- "Sexo"
+# names(d)[3] <- "Etnia"
+# names(d)[4] <- "promedio_yautcor"
+# dd <- mutate_if(d, is.factor, as.character)
+# dd
 ```
 
 ```{r}
-b <- vitacura_2020$comuna
-c <- vitacura_2020$sexo
-d <- vitacura_2020$r3 #etnia
-anio <- 2017
-cross_tab =  xtabs(vitacura_2020$expc  ~ +  unlist(b) + unlist(c)  + unlist(d) ,aggregate(vitacura_2020$expc ~  +  unlist(b) + unlist(c) + unlist(d),d,mean))
-tabla <- as.data.frame(cross_tab)
-d <-tabla[!(tabla$Freq == 0),]
-d$Año <- anio
-names(d)[1] <- "Comuna"
-d
+# b <- vitacura_2020$comuna
+# c <- vitacura_2020$sexo
+# d <- vitacura_2020$r3 #etnia
+# anio <- 2017
+# cross_tab =  xtabs(vitacura_2020$expc  ~ +  unlist(b) + unlist(c)  + unlist(d) ,aggregate(vitacura_2020$expc ~  +  unlist(b) + unlist(c) + unlist(d),d,mean))
+# tabla <- as.data.frame(cross_tab)
+# d <-tabla[!(tabla$Freq == 0),]
+# d$Año <- anio
+# names(d)[1] <- "Comuna"
+# d
 ```
 
 
 ```{r}
 una_suma <- sum(d$Freq)
 (186333.2*378+1226906.5*1179+1878770.5*38910+1138615.9*42072)/una_suma
-```
-
-
-## Generalizacion
-
-
-
-```{r}
-casen2020_2 <- casen2020[,c(7,17, 21,24,44,45,49,566,618)]
-head(casen2020_2,10)
-```
-
-## ytotcor total
-
-```{r}
-mean(casen2020_2$ytotcor) 
-```
-
-## Filtremos por edad > 12
-
-
-```{r}
-casen2020_2_mas_de_12 <- filter(casen2020_2, casen2020_2$edad >= 12)
-head(casen2020_2_mas_de_12,10)
-```
-
-```{r}
-mean(casen2020_2_mas_de_12$ytotcor) 
-```
-
-## Generalizacion
-
-```{r}
-a <- casen2020_2_mas_de_12$ytotcor
-b <- casen2020_2_mas_de_12$comuna
-c <- casen2020_2_mas_de_12$sexo
-d <- casen2020_2_mas_de_12$r3 #etnia
-anio <- 2020
-
-promedios_grupales <-aggregate(a, by=list(b, c, d), FUN = mean , na.rm = TRUE)
-promedios_grupales_sd <-aggregate(a, by=list(b, c, d ), FUN = sd , na.rm = TRUE)
-promedios_grupales_gini <-aggregate(a, by=list(b, c, d), FUN = gini , na.rm = TRUE)
-promedios_grupales$sd = promedios_grupales_sd$sd.a
-promedios_grupales$gini = promedios_grupales_gini$gini.a
-d <- promedios_grupales
-d$Año <- anio
-names(d)[1] <- "Comuna"
-names(d)[2] <- "Sexo"
-names(d)[3] <- "Etnia"
-names(d)[4] <- "promedio_yautcor"
-dd <- mutate_if(d, is.factor, as.character)
-write_xlsx(dd, "ytotcor_por_categorias_Casen_2020.xlsx")
 ```
 
 
@@ -305,41 +348,77 @@ write_xlsx(dd, "ytotcor_por_categorias_Casen_2020.xlsx")
 
 
 
-```{r}
-casen2020
-```
 
 ```{r , message=FALSE, warning=FALSE, results='hide'}
 
-b <- casen2020$comuna
+b <- casen2013$comuna
 
 
 anio <- 2015
-cross_tab =  xtabs(casen2020$expc  ~ +  unlist(b)  ,aggregate(casen2020$expc ~  +  unlist(b) ,casen2020,mean))
+cross_tab =  xtabs(casen2013$expc  ~ +  unlist(b)  ,aggregate(casen2013$expc ~  +  unlist(b) ,casen2013,mean))
 tabla <- as.data.frame(cross_tab)
 d <-tabla[!(tabla$Freq == 0),]
 d$Año <- anio
 names(d)[1] <- "Comuna"
 
 write_xlsx(d, "frecuencias_por_categorias_Casen_2020.xlsx")
-d
+print(d)
 ```
 
+https://ciperchile.cl/wp-content/uploads/datos-tierra-amarilla-BCN.pdf
 
-## Verificacion
+tierra amarilla
+
+Ingreso autónomo 574.790
+Subsidios monetarios 6.583
+Ingreso monetario 581.372
+
+
+
 
 
 
 
 ```{r}
-filtro_ytotcor_vita <- filter(dd, dd$Comuna == "Vitacura")
-filtro_ytotcor_vita
+tabla_casen_2006_edad_15 <- read_xlsx("tabla_casen_2006_edad_15.xlsx")
 ```
 
+
+
 ```{r}
-filtro_frec_vita <- filter(d, d$Comuna == "Vitacura")
-filtro_frec_vita
+
+
+casen2006_f <- tabla_casen_2006_edad_15[,c("COMUNA","YAUTHAJ","EXPC")] 
+
+
+tabla <- table(casen2006_f$YAUTHAJ)
+tabla <- as.data.frame(tabla)
+colnames(tabla) <- c("YAUTHAJ","freq_YAUTHAJ")
+repetidos2 <- merge(x=casen2006_f, y=tabla, by = "YAUTHAJ", all.x = T)
+#repetidos2 <- repetidos2[,c(2,1,3,5)]
+repetidos2
 ```
+
+
+
+
+```{r}
+rr <- repetidos2[!duplicated(repetidos2), ]
+rr
+```
+
+
+
+```{r}
+sum(rr$YAUTHAJ)
+```
+
+
+```{r}
+```
+
+
+
 
 
 
