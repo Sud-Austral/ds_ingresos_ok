@@ -175,9 +175,6 @@ casen2011  <- mutate_if(casen2011, is.factor, as.character)
 ```{r}
 casen2011_rm <- filter(casen2011, casen2011$region == "Metropolitana")
 ```
- 
- 
-
 
 ```{r}
 # comuna_ing <- unique(casen2011_rm$comuna)
@@ -206,8 +203,6 @@ head(rr,10)
 ```
 
 
-
-
 ```{r}
 aaa <- aggregate(rr$ing_per_h, list(rr$comuna), FUN=mean) 
 names(aaa)[1]<-c("Comuna")
@@ -219,8 +214,6 @@ names(aaa)[2]<-c("calculo_propio")
 ```{r}
 write_xlsx(aaa, "aaaa.xlsx")
 ```
-
-
 
 
 ```{r}
@@ -245,6 +238,14 @@ Comuna, y = ~calculo_propio) %>%
 p <- p %>% add_trace(y = ~iaph, name = 'iaph', mode = 'markers')
 p 
 ```
+
+
+
+
+
+
+
+
 
 
 
