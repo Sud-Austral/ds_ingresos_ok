@@ -1,0 +1,960 @@
+---
+title:  Análisis propios de los ingresos de la Casen
+
+author:
+- name: VE-CC-AJ
+  affiliation: DataIntelligence
+subtitle: | 
+ 
+header-includes:
+   - \usepackage[]{babel}
+
+output:
+  rmdformats::html_clean:
+    highlight: kate
+    toc: true
+    use_bookdown: true    
+---
+
+fecha: `r format(Sys.time(), "%d-%m-%Y")`
+
+<style type="text/css">
+.main-container {
+  max-width: 1600px;
+  margin-left: 100px;
+  margin-right: auto;
+}
+</style>
+
+# Introducción
+
+En Chile es extremadamente difícil encontar datos oficiales que específicamente desplieguen información sobre cada uno de los ingresos que calcula la Casen en las **comunas**. Éste trabajo se aproxima a los valores que se pudieron encontrar, pero yerra un porcentaje de 10% a 15%. Intentamos de manera estadistica determinar los valores reales para los promedios en las comunas. Nuestro esfuerzo actual se concentra en expandir corectamente las muestras
+
+
+# Los ingresos
+
+Recordemos los cuatro datos cuantitativos fundamentales de la generación de los ingresos:
+
+ | | | | 
+:-----:|:-----:|:-----:|:-----:|:-----:
+ | **Tipo** |Ingreso total|Ingreso autónomo|Ingreso del trabajo|Ingreso de la ocupación principal
+año| | |
+2020|ytotcor|yautcor|ytrabajocor|yoprcor
+2017|ytotcor|yautcor|ytrabajocor|yoprcor
+2015|ytotcor|yautcor|ytrabajocor|yoprcor
+2013|ytotcor|yautcor|ytrabajocor|yoprcor
+2011|ytrabaj |yautaj |ytrabaj      |yopraj
+2009|ytrabaj |yautaj |ytrabaj      |yopraj
+2006|ytrabaj |yautaj |ytrabaj      |yopraj
+
+Fué un error haber excluído los outlier a los ingresos, pues distorsióno los valores que pudiesemos obtener cercanos a los oficiales. 
+
+
+# El ingreso autónomo per cápita del hogar
+
+Uno de los datos oficiales que pudimos obtener fue el ingreso autónomo per cápita del hogar.
+Es un póco mas complejo de calcular pero tiene sentido sociológico, mediante dos vías distintas llegamos a ellas. Una es por una tabla bien extensa obtenida de [(ver aquí)](https://datasocial.ministeriodesarrollosocial.gob.cl/dataSocial/csv/Tablas_Ingreso.xlsx) 
+
+ <!-- ![Tabla de referencia](image_2021_08_12T19_27_00_679Z.png) -->
+
+Y la otra con un paper [(ver aquí)](https://datasocial.ministeriodesarrollosocial.gob.cl/fichaIndicador/513/2)
+
+Por dos instrumentos diferentes oficialmente llegaron a los mismos resultados y son a los cuales intentamos aproximarnos.
+
+Comencemos con una definición del ingreso per cápita del hogar
+
+Debemos hacer una manipulación de la base de datos creando una nueva columna que contenga la cantidad de personas que viven en el hogar para dividir este numero con el primero
+
+Ingreso autónomo per cápita del hogar: Razón  entre  el  ingreso  autónomo  del  hogar  y  el 
+número de personas que constituyen ese hogar, excluido el servicio doméstico puertas adentro. 
+
+Vamos a tomar por ejemplo 5 comunas y a los datos que queremos llegar son estos:
+
+Comuna            Ingreso autónomo percápita del hogar, CASEN 2011   ($ de noviembre de 2011)
+
+Santiago          454.444\
+Cerrillos         197.710\
+Cerro Navia       148.263\
+Conchalí          195.703\
+El Bosque         144.495\
+
+https://ciperchile.cl/wp-content/uploads/INDICE-DE-PRIORIDAD-SOCIAL-2014.pdf
+
+
+
+
+
+
+```{r , message=FALSE, warning=FALSE, include = FALSE, eecho = FALSE}
+#suppressWarnings(library(RODBC))
+library(ggplot2)
+library(ggpubr)
+library(markdown)
+library(shiny)
+library(shinythemes)
+library(tidyverse)
+library(magrittr)
+library(lubridate)
+library(plotly)
+library(xts)
+library(dygraphs)
+library(kableExtra)
+library(knitr)
+library("readxl")
+library(rsconnect)
+library(dplyr)
+library(summarytools)
+library(epiDisplay)
+#library(leaflet)
+library(haven)
+library(epiDisplay)
+library("readxl")
+library(expss)
+library(hrbrthemes)
+library(viridis)
+library(viridisLite)
+library(DescTools)
+library(roperators)
+library(shinycssloaders)
+library(writexl)
+library(labelled)
+library(tidyverse)
+library(haven)
+library(readr)
+library(sjmisc)
+library(WriteXLS)
+library(ineq)
+library(readstata13)
+library(reldist)
+library(foreign)
+```
+
+
+ 
+Los primeros acercamientos se hará sobre la Casen del 2011, se intentara calcular el promedio del ingreso autónomo del hogar **yauthaj** y se verificar los resultados con los datos de referencia.
+ 
+### Lectura de casen 2011
+
+```{r}
+casen2011 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2011_c.rds")
+casen2011 <- mutate_if(casen2011, is.factor, as.character)
+```
+ 
+### Subset de 5 comunas 
+
+```{r}
+comuna_ing <- c("Santiago","Cerrillos","Cerro Navia","Conchalí","El Bosque")
+recptaculo <- data.frame()
+for (cc in comuna_ing) {
+  casen_fc <- filter(casen2011, casen2011$comuna ==  cc)
+  recptaculo <- rbind(recptaculo,casen_fc)
+}
+ 
+```
+ 
+<!-- ################################################### -->
+
+### Ejercicio comuna de **Santiago**
+
+```{r} 
+casen_fh <- filter(recptaculo, recptaculo$comuna == "Santiago") 
+# casen_fh <- casen_fh[,c("comuna","ytothaj","yauthaj","ytrabhaj","yoprhaj")]
+casen_fh <- casen_fh[,c("comuna","folio","o","yauthaj","expc_full")]
+casen_fh$folio <- as.character(casen_fh$folio)
+ 
+tabla <- table(casen_fh$folio)
+tabla <- as.data.frame(tabla)
+colnames(tabla) <- c("folio","freq_folio")
+repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
+repetidos2 <- repetidos2[,c(2,1,6,4,5)]
+ 
+rr <- repetidos2[!duplicated(repetidos2$folio), ] 
+ 
+rr$ing_per_h <- rr$yauthaj/rr$freq_folio
+mean(rr$ing_per_h)
+head(rr,10)
+```
+
+Al numero que quisimos llegar fue **454444** y el que obtuvimos fue 
+```{r}
+mean(rr$ing_per_h)
+```
+```{r}
+mean(rr$ing_per_h)
+```
+
+
+ 
+<!-- ################################################### -->
+
+### Ejercicio comuna de **Cerrillos**
+
+```{r} 
+casen_fh <- filter(recptaculo, recptaculo$comuna == "Cerrillos") 
+# casen_fh <- casen_fh[,c("comuna","ytothaj","yauthaj","ytrabhaj","yoprhaj")]
+casen_fh <- casen_fh[,c("comuna","folio","o","yauthaj","expc_full")]
+casen_fh$folio <- as.character(casen_fh$folio)
+ 
+tabla <- table(casen_fh$folio)
+tabla <- as.data.frame(tabla)
+colnames(tabla) <- c("folio","freq_folio")
+repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
+repetidos2 <- repetidos2[,c(2,1,6,4,5)]
+ 
+rr <- repetidos2[!duplicated(repetidos2$folio), ] 
+ 
+rr$ing_per_h <- rr$yauthaj/rr$freq_folio
+mean(rr$ing_per_h)
+ head(rr,10) 
+```
+
+Al numero que quisimos llegar fue **197710** y el que obtuvimos fue 
+
+```{r}
+mean(rr$ing_per_h)
+```
+
+
+
+ 
+<!-- ################################################### -->
+
+### Ejercicio comuna de **Cerro Navia**
+
+```{r} 
+casen_fh <- filter(recptaculo, recptaculo$comuna == "Cerro Navia") 
+# casen_fh <- casen_fh[,c("comuna","ytothaj","yauthaj","ytrabhaj","yoprhaj")]
+casen_fh <- casen_fh[,c("comuna","folio","o","yauthaj","expc_full")]
+casen_fh$folio <- as.character(casen_fh$folio)
+ 
+tabla <- table(casen_fh$folio)
+tabla <- as.data.frame(tabla)
+colnames(tabla) <- c("folio","freq_folio")
+repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
+repetidos2 <- repetidos2[,c(2,1,6,4,5)]
+ 
+rr <- repetidos2[!duplicated(repetidos2$folio), ]
+ 
+rr$ing_per_h <- rr$yauthaj/rr$freq_folio
+mean(rr$ing_per_h)
+head(rr,10) 
+```
+
+Al numero que quisimos llegar fue **148263** y el que obtuvimos fue 
+
+```{r}
+ mean(rr$ing_per_h)
+```
+
+
+
+ 
+<!-- ################################################### -->
+
+### Ejercicio comuna de **Conchalí**
+
+```{r} 
+casen_fh <- filter(recptaculo, recptaculo$comuna == "Conchalí") 
+# casen_fh <- casen_fh[,c("comuna","ytothaj","yauthaj","ytrabhaj","yoprhaj")]
+casen_fh <- casen_fh[,c("comuna","folio","o","yauthaj","expc_full")]
+casen_fh$folio <- as.character(casen_fh$folio)
+ 
+tabla <- table(casen_fh$folio)
+tabla <- as.data.frame(tabla)
+colnames(tabla) <- c("folio","freq_folio")
+repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
+repetidos2 <- repetidos2[,c(2,1,6,4,5)]
+ 
+rr <- repetidos2[!duplicated(repetidos2$folio), ]
+ 
+rr$ing_per_h <- rr$yauthaj/rr$freq_folio
+mean(rr$ing_per_h)
+ head(rr,10)
+
+```
+
+Al numero que quisimos llegar fue **195703** y el que obtuvimos fue 
+
+
+```{r}
+mean(rr$ing_per_h)
+```
+
+
+
+
+<!-- ################################################### -->
+
+### Ejercicio comuna de **El Bosque**
+ 
+```{r} 
+casen_fh <- filter(recptaculo, recptaculo$comuna == "El Bosque") 
+# casen_fh <- casen_fh[,c("comuna","ytothaj","yauthaj","ytrabhaj","yoprhaj")]
+casen_fh <- casen_fh[,c("comuna","folio","o","yauthaj","expc_full")]
+casen_fh$folio <- as.character(casen_fh$folio)
+ 
+tabla <- table(casen_fh$folio)
+tabla <- as.data.frame(tabla)
+colnames(tabla) <- c("folio","freq_folio")
+repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
+repetidos2 <- repetidos2[,c(2,1,6,4,5)]
+ 
+rr <- repetidos2[!duplicated(repetidos2$folio), ]
+ 
+rr$ing_per_h <- rr$yauthaj/rr$freq_folio
+mean(rr$ing_per_h)
+head(rr,10)
+
+```
+
+Al numero que quisimos llegar fue **144495** y el que obtuvimos fue 
+
+```{r}
+mean(rr$ing_per_h)
+```
+
+
+
+     
+<!-- ########################---PRUEBAS---########################### -->
+
+# intento de expansión sobre comunas
+
+Creemos que el error esta en la expansión, intentamos aplicarla
+
+
+```{r} 
+casen_fh <- filter(recptaculo, recptaculo$comuna == "Santiago")  
+casen_fh <- casen_fh[,c("comuna","folio","o","yauthaj","expc_full")]
+# na.omit(casen_fh)
+ 
+casen_fh$folio <- as.character(casen_fh$folio)
+ 
+tabla <- table(casen_fh$folio)
+tabla <- as.data.frame(tabla)
+colnames(tabla) <- c("folio","freq_folio")
+repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
+repetidos2 <- repetidos2[,c(2,1,6,4,5)]
+ 
+rr <- repetidos2[!duplicated(repetidos2$folio), ]
+
+head(rr,10)
+```
+
+
+```{r} 
+# rr$ing_per_h <- rr$yauthaj/rr$freq_folio
+#rr$ing_per_hexp <- (rr$yauthaj)*rr$expc_full
+# rr$ing_per_h <- sum(rr$yauthaj)/sum(rr$freq_folio*rr$expc_full)
+rr$ing_per_h <- rr$yauthaj*(rr$freq_folio*rr$expc_full)
+ head(rr,10)
+```
+
+
+
+```{r}
+promedio <- mean((rr$ing_per_h)/(rr$freq_folio*rr$expc_full))
+promedio
+```
+ Al numero que quisimos llegar fue **454444** y el que obtuvimos fue `r promedio` 
+
+<!-- <!-- ################################################### --> 
+
+
+<!-- ```{r}  -->
+<!-- casen_fh <- filter(recptaculo, recptaculo$comuna == "Cerrillos")  -->
+<!-- # casen_fh <- casen_fh[,c("comuna","ytothaj","yauthaj","ytrabhaj","yoprhaj")] -->
+<!-- casen_fh <- casen_fh[,c("comuna","folio","o","yauthaj","expc_full")] -->
+<!-- casen_fh$folio <- as.character(casen_fh$folio) -->
+
+<!-- tabla <- table(casen_fh$folio) -->
+<!-- tabla <- as.data.frame(tabla) -->
+<!-- colnames(tabla) <- c("folio","freq_folio") -->
+<!-- repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T) -->
+<!-- repetidos2 <- repetidos2[,c(2,1,6,4,5)] -->
+
+<!-- rr <- repetidos2[!duplicated(repetidos2$folio), ]  -->
+
+<!-- rr$ing_per_h <- rr$yauthaj/rr$freq_folio -->
+<!--  head(rr,10) -->
+<!-- mean(rr$ing_per_h) -->
+<!-- ``` -->
+
+<!-- <!-- ################################################### -->  
+
+<!-- ```{r}  -->
+<!-- casen_fh <- filter(recptaculo, recptaculo$comuna == "Cerro Navia")  -->
+<!-- # casen_fh <- casen_fh[,c("comuna","ytothaj","yauthaj","ytrabhaj","yoprhaj")] -->
+<!-- casen_fh <- casen_fh[,c("comuna","folio","o","yauthaj","expc_full")] -->
+<!-- casen_fh$folio <- as.character(casen_fh$folio) -->
+
+<!-- tabla <- table(casen_fh$folio) -->
+<!-- tabla <- as.data.frame(tabla) -->
+<!-- colnames(tabla) <- c("folio","freq_folio") -->
+<!-- repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T) -->
+<!-- repetidos2 <- repetidos2[,c(2,1,6,4,5)] -->
+
+<!-- rr <- repetidos2[!duplicated(repetidos2$folio), ] -->
+
+<!-- rr$ing_per_h <- rr$yauthaj/rr$freq_folio -->
+<!-- head(rr,10) -->
+<!-- mean(rr$ing_per_h) -->
+<!-- ``` -->
+
+<!-- <!-- ################################################### --> 
+
+<!-- ```{r}  -->
+<!-- casen_fh <- filter(recptaculo, recptaculo$comuna == "Conchalí")  -->
+<!-- # casen_fh <- casen_fh[,c("comuna","ytothaj","yauthaj","ytrabhaj","yoprhaj")] -->
+<!-- casen_fh <- casen_fh[,c("comuna","folio","o","yauthaj","expc_full")] -->
+<!-- casen_fh$folio <- as.character(casen_fh$folio) -->
+
+<!-- tabla <- table(casen_fh$folio) -->
+<!-- tabla <- as.data.frame(tabla) -->
+<!-- colnames(tabla) <- c("folio","freq_folio") -->
+<!-- repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T) -->
+<!-- repetidos2 <- repetidos2[,c(2,1,6,4,5)] -->
+
+<!-- rr <- repetidos2[!duplicated(repetidos2$folio), ] -->
+
+<!-- rr$ing_per_h <- rr$yauthaj/rr$freq_folio -->
+<!--  head(rr,10) -->
+<!-- mean(rr$ing_per_h) -->
+<!-- ``` -->
+
+<!-- <!-- ################################################### --> 
+
+
+<!-- ```{r}  -->
+<!-- casen_fh <- filter(recptaculo, recptaculo$comuna == "El Bosque")  -->
+<!-- # casen_fh <- casen_fh[,c("comuna","ytothaj","yauthaj","ytrabhaj","yoprhaj")] -->
+<!-- casen_fh <- casen_fh[,c("comuna","folio","o","yauthaj","expc_full")] -->
+<!-- casen_fh$folio <- as.character(casen_fh$folio) -->
+
+<!-- tabla <- table(casen_fh$folio) -->
+<!-- tabla <- as.data.frame(tabla) -->
+<!-- colnames(tabla) <- c("folio","freq_folio") -->
+<!-- repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T) -->
+<!-- repetidos2 <- repetidos2[,c(2,1,6,4,5)] -->
+
+<!-- rr <- repetidos2[!duplicated(repetidos2$folio), ] -->
+
+<!-- rr$ing_per_h <- rr$yauthaj/rr$freq_folio -->
+<!-- head(rr,10) -->
+<!-- mean(rr$ing_per_h) -->
+<!-- ``` -->
+
+<!-- ```{r}  -->
+<!-- comuna_el_bosque <- filter(recptaculo, recptaculo$comuna == "El Bosque")  -->
+<!-- comuna_el_bosque <- comuna_el_bosque[,c("comuna","folio","o","yauthaj","expc_full")] -->
+<!-- comuna_el_bosque$folio <- as.character(comuna_el_bosque$folio) -->
+
+<!-- tabla <- table(comuna_el_bosque$folio) -->
+<!-- tabla <- as.data.frame(tabla) -->
+<!-- colnames(tabla) <- c("folio","freq_folio") -->
+<!-- repetidos2 <- merge(x=comuna_el_bosque, y=tabla, by = "folio", all.x = T) -->
+<!-- repetidos2 <- repetidos2[,c(2,1,6,4,5)] -->
+
+<!-- rr <- repetidos2[!duplicated(repetidos2$folio), ] -->
+
+<!-- # rr$ing_per_h <- rr$yauthaj/(rr$freq_folio) -->
+<!-- # rr$ing_per_h <- rr$yauthaj/(rr$freq_folio*rr$expc_full) -->
+<!-- rr$ing_per_h <- rr$yauthaj*(rr$freq_folio*rr$expc_full) -->
+
+<!-- head(rr,10) -->
+<!-- ``` -->
+
+<!-- El Bosque - 144,495 -->
+
+<!-- ```{r} -->
+<!-- sum(rr$ing_per_h)/(sum(rr$freq_folio)*sum(rr$expc_full)) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- mean(rr$ing_per_h)/(sum(rr$freq_folio)*sum(rr$expc_full)) -->
+<!-- ``` -->
+<!-- ```{r}  -->
+
+<!-- sum(rr$yauthaj)/(sum(rr$freq_folio)) -->
+
+<!-- ``` -->
+
+<!-- Vamos a expandir los ingresos. -->
+
+<!-- Cada registro correponde al numero al numero que aprece en el campo expc_full multiplicado por la frecuencia freq_filio de esta manera obtenemo la cantidad de personas totales por comuna -->
+
+<!-- ################################################### -->
+<!-- #####################---- Tratamiento casen 2015 -----############################## -->
+
+
+
+### Lectura base de datos casen 2015
+
+https://www.bcn.cl/portal/noticias?id=principales-resultados-sobre-pobreza-e-ingresos-regionales-encuesta-casen-2015
+
+```{r}
+casen2015 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2015_c.rds")
+casen2015 <- mutate_if(casen2015, is.factor, as.character)
+# head(casen2015,10)
+```
+
+```{r}
+# casen2015
+```
+
+
+
+https://www.inflation.eu/es/tasas-de-inflacion/chile/inflacion-historica/ipc-inflacion-chile.aspx
+
+
+
+```{r} 
+unique(casen2015$region)
+```
+
+Ingreso Autónomo del Hogar Promedio
+Total, Región de Atacama 
+
+```{r}
+casen2015_Atacama <- filter(casen2015, casen2015$region ==  "Región de Atacama")
+
+
+```
+
+
+
+
+
+```{r}
+casen2015_Atacama$ytrabajoCorh <- as.numeric(casen2015_Atacama$ytrabajoCorh)
+mean(casen2015_Atacama$ytrabajoCorh)
+```
+
+nos deberia dar 727487,350835441
+
+
+```{r}
+# casen2015_Atacama
+```
+
+# ytrabajoCorh por Casen 
+
+[(ver aquí)](https://datasocial.ministeriodesarrollosocial.gob.cl/dataSocial/csv/Tablas_Ingreso.xlsx) 
+
+ytrabajoCorh
+
+### Ejercicio con regiones 
+
+```{r} 
+casen_fh <- filter(casen2015, casen2015$region == "Región Metropolitana de Santiago")
+ 
+casen_fh <- casen_fh[,c("region","folio.x","o.x","ytrabajoCorh","expr_div")]
+casen_fh$folio.x <- as.character(casen_fh$folio.x)
+  
+tabla <- table(casen_fh$folio.x)
+tabla <- as.data.frame(tabla)
+colnames(tabla) <- c("folio.x","freq_folio")
+repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio.x", all.x = T)
+repetidos2 <- repetidos2[,c(2,1,6,4,5)]
+ 
+# rr <- repetidos2
+rr <- repetidos2[!duplicated(repetidos2$folio.x ), ]
+
+rr$ing_per_h <- rr$ytrabajoCorh*rr$freq_folio*rr$expr_div
+
+
+kbl(head(rr,30)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover")) %>%
+  kable_paper() %>%
+  scroll_box(width = "100%", height = "300px")
+```
+ 
+**Promedio para ingreso del trabajo del hogar**
+
+```{r}
+mean(rr$ytrabajoCorh)
+```
+
+introduciremos el calculo de la inflacion:
+
+ IPC Chile 2016 	2,71 % 	  
+ IPC Chile 2015 	4,38 %
+
+
+
+```{r}
+(4.38+2.71)*977917.8/100
+
+```
+
+```{r}
+977917.8 - 69334.37
+```
+
+
+ Nuestro resultado debiese ser: 913907,141084357
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ```{r, warning=FALSE, message=FALSE} -->
+<!-- casen2013 <- readRDS("casen_2013_c.rds") -->
+<!-- casen2013 <- as.data.frame(casen2013) -->
+<!-- ``` -->
+
+
+<!-- ```{r} -->
+<!-- # casen2013 -->
+<!-- ``` -->
+
+
+
+<!-- ```{r} -->
+<!-- # r3_100 <- casen2020[c(1:10),] -->
+<!-- # kbl(r3_100) %>% -->
+<!-- #   kable_styling(bootstrap_options = c("striped", "hover")) %>% -->
+<!-- #   kable_paper() %>% -->
+<!-- #   scroll_box(width = "100%", height = "300px") -->
+<!-- ``` -->
+
+<!-- Promedio del ingreso autónomo per cápita mensual del hogar, Casen 2015 -->
+
+<!-- https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwjd_Z3xoKnyAhUFppUCHRjQDDUQFnoECAIQAQ&url=http%3A%2F%2Fobservatorio.ministeriodesarrollosocial.gob.cl%2Fstorage%2Fdocs%2Ffichas-regionales%2F2015%2F3.Promedio_ingreso_autonomo_percapita_del_hogar_mensual_hogar.xlsx&usg=AOvVaw3I6J-N1yxO0Tv25D-tLZra -->
+
+<!-- ##  -->
+
+<!-- Promedio (en pesos del mes de noviembre de 2015) del ingreso autónomo mensual recibido por los hogares y dividido por el número de integrantes de los hogares. El ingreso autónomo incluye ingresos por concepto de sueldos y salarios, ganancias provenientes del trabajo independiente, autoprovisión de bienes producidos por el hogar, bonificaciones, gratificaciones, rentas, intereses, así como jubilaciones, pensiones, montepíos y transferencias entre privados. -->
+
+<!-- ## -->
+
+<!-- ```{r} -->
+<!-- # vitacura_2020 <- filter(casen2020, casen2020$comuna == "Vitacura") -->
+<!-- # head(vitacura_2020,10) -->
+<!-- # r3_100 <- vitacura_2020[c(1:10),] -->
+<!-- # kbl(r3_100) %>% -->
+<!-- #   kable_styling(bootstrap_options = c("striped", "hover")) %>% -->
+<!-- #   kable_paper() %>% -->
+<!-- #   scroll_box(width = "100%", height = "300px") -->
+
+<!-- ``` -->
+<!-- ```{r} -->
+<!-- # vitacura_2020 <- vitacura_2020[,c(7,17, 21,24,44,45,49,566,618)] -->
+<!-- # head(vitacura_2020,10) -->
+<!-- ``` -->
+
+
+<!-- ```{r} -->
+<!-- # casen2020$ypchautcor -->
+<!-- ``` -->
+<!-- ### Ingresos totales -->
+
+<!-- ```{r} -->
+<!-- casen2013 <- filter(casen2013, casen2013$edad > 15) -->
+<!-- #casen2013 <- filter( casen2013,  casen2013$edad < 60) -->
+
+
+<!-- #casen2013<-  casen2013[!is.na( casen2013$ytotcorh), ]   -->
+<!-- #ytotcor -->
+<!-- #yauth  -->
+
+<!-- a <- casen2013$ytotcorh -->
+<!-- b <- casen2013$comuna -->
+
+<!-- anio <- 2013 -->
+
+<!-- promedios_grupales <-aggregate(  a, by=list(b), FUN = mean , na.rm = TRUE) -->
+
+
+
+<!-- promedios_grupales_sd <-aggregate(a, by=list(b), FUN = sd , na.rm = TRUE) -->
+<!-- promedios_grupales_gini <-aggregate(a, by=list(b), FUN = gini , na.rm = TRUE) -->
+
+<!-- promedios_grupales$sd = promedios_grupales_sd$sd.a -->
+<!-- promedios_grupales$gini = promedios_grupales_gini$gini.a -->
+
+
+<!-- d <- promedios_grupales -->
+<!-- d$Año <- anio -->
+<!-- names(d)[1] <- "Comuna" -->
+<!-- names(d)[2] <- "Ingreso" -->
+<!-- # names(d)[3] <- "Etnia" -->
+<!-- # names(d)[4] <- "promedio_yautcor" -->
+<!-- dd <- mutate_if(d, is.factor, as.character) -->
+<!-- dd -->
+
+
+<!-- ``` -->
+
+<!-- https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwjhpIWoqanyAhVCqpUCHd_yAIwQFnoECFAQAQ&url=https%3A%2F%2Fwww.gobiernosantiago.cl%2Fwp-content%2Fuploads%2F2014%2F12%2FINDICADORES-COMUNALES-CASEN-RMS-2013.xls&usg=AOvVaw2m_WiA9ARjzyulmhpyUbZs -->
+
+<!-- ### Ingresos Monetarios -->
+
+
+<!-- ```{r} -->
+<!-- casen2013 <- filter(casen2013, casen2013$edad > 12) -->
+<!-- #casen2013 <- filter( casen2013,  casen2013$edad < 60) -->
+
+
+<!-- casen2013<-  casen2013[!is.na( casen2013$ymoneCorh), ]   -->
+<!-- #ytotcor -->
+<!-- #yauth  -->
+
+<!-- a <- casen2013$ymoneCorh -->
+<!-- b <- casen2013$comuna -->
+
+<!-- anio <- 2013 -->
+
+<!-- promedios_grupales <-aggregate(  a, by=list(b), FUN = mean , na.rm = TRUE) -->
+
+
+
+<!-- promedios_grupales_sd <-aggregate(a, by=list(b), FUN = sd , na.rm = TRUE) -->
+<!-- promedios_grupales_gini <-aggregate(a, by=list(b), FUN = gini , na.rm = TRUE) -->
+
+<!-- promedios_grupales$sd = promedios_grupales_sd$sd.a -->
+<!-- promedios_grupales$gini = promedios_grupales_gini$gini.a -->
+
+
+<!-- d <- promedios_grupales -->
+<!-- d$Año <- anio -->
+<!-- names(d)[1] <- "Comuna" -->
+<!-- names(d)[2] <- "Ingreso" -->
+<!-- # names(d)[3] <- "Etnia" -->
+<!-- # names(d)[4] <- "promedio_yautcor" -->
+<!-- dd <- mutate_if(d, is.factor, as.character) -->
+<!-- dd -->
+
+
+<!-- ``` -->
+
+
+
+
+<!-- ```{r} -->
+
+<!-- casen2013 <- filter(casen2013, casen2013$edad > 12) -->
+<!-- #casen2013 <- filter( casen2013,  casen2013$edad < 60) -->
+
+
+<!-- casen2013<-  casen2013[!is.na( casen2013$yautcorh), ]   -->
+<!-- #ytotcor -->
+<!-- #yauth  -->
+
+<!-- a <- casen2013$yautcorh -->
+<!-- b <- casen2013$comuna -->
+
+<!-- anio <- 2013 -->
+
+<!-- promedios_grupales <-aggregate(  a, by=list(b), FUN = mean , na.rm = TRUE) -->
+
+
+
+<!-- promedios_grupales_sd <-aggregate(a, by=list(b), FUN = sd , na.rm = TRUE) -->
+<!-- promedios_grupales_gini <-aggregate(a, by=list(b), FUN = gini , na.rm = TRUE) -->
+
+<!-- promedios_grupales$sd = promedios_grupales_sd$sd.a -->
+<!-- promedios_grupales$gini = promedios_grupales_gini$gini.a -->
+
+
+<!-- d <- promedios_grupales -->
+<!-- d$Año <- anio -->
+<!-- names(d)[1] <- "Comuna" -->
+<!-- names(d)[2] <- "Ingreso" -->
+<!-- # names(d)[3] <- "Etnia" -->
+<!-- # names(d)[4] <- "promedio_yautcor" -->
+<!-- dd <- mutate_if(d, is.factor, as.character) -->
+<!-- dd -->
+
+
+
+
+
+
+
+
+
+<!-- ``` -->
+
+
+
+
+
+
+<!-- ```{r , message=FALSE, warning=FALSE, results='hide'} -->
+
+<!-- # b <- casen2013$comuna -->
+<!-- #  -->
+<!-- #  -->
+<!-- # anio <- 2013 -->
+<!-- # cross_tab =  xtabs( unlist(b)  ,aggregate(casen2013$expc ~  +  unlist(b) ,casen2013,mean)) -->
+<!-- # tabla <- as.data.frame(cross_tab) -->
+<!-- # d <-tabla[!(tabla$Freq == 0),] -->
+<!-- # d$Año <- anio -->
+<!-- # names(d)[1] <- "Comuna" -->
+<!-- #  -->
+<!-- # write_xlsx(d, "frecuencias_por_categorias_Casen_2020.xlsx") -->
+<!-- # d -->
+<!-- ``` -->
+
+
+
+
+
+<!-- ```{r} -->
+<!-- mean(dd$mean.a)  -->
+<!-- ``` -->
+
+
+<!-- ```{r} -->
+<!-- # a <- vitacura_2020$ytotcor -->
+<!-- # b <- vitacura_2020$comuna -->
+<!-- # c <- vitacura_2020$sexo -->
+<!-- # d <- vitacura_2020$r3 #etnia -->
+<!-- # anio <- 2020 -->
+<!-- #  -->
+<!-- # promedios_grupales <-aggregate(a, by=list(b, c, d), FUN = mean , na.rm = TRUE) -->
+<!-- # promedios_grupales_sd <-aggregate(a, by=list(b, c, d ), FUN = sd , na.rm = TRUE) -->
+<!-- # promedios_grupales_gini <-aggregate(a, by=list(b, c, d), FUN = gini , na.rm = TRUE) -->
+<!-- # promedios_grupales$sd = promedios_grupales_sd$sd.a -->
+<!-- # promedios_grupales$gini = promedios_grupales_gini$gini.a -->
+<!-- # d <- promedios_grupales -->
+<!-- # d$Año <- anio -->
+<!-- # names(d)[1] <- "Comuna" -->
+<!-- # names(d)[2] <- "Sexo" -->
+<!-- # names(d)[3] <- "Etnia" -->
+<!-- # names(d)[4] <- "promedio_yautcor" -->
+<!-- # dd <- mutate_if(d, is.factor, as.character) -->
+<!-- # dd -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- # b <- vitacura_2020$comuna -->
+<!-- # c <- vitacura_2020$sexo -->
+<!-- # d <- vitacura_2020$r3 #etnia -->
+<!-- # anio <- 2017 -->
+<!-- # cross_tab =  xtabs(vitacura_2020$expc  ~ +  unlist(b) + unlist(c)  + unlist(d) ,aggregate(vitacura_2020$expc ~  +  unlist(b) + unlist(c) + unlist(d),d,mean)) -->
+<!-- # tabla <- as.data.frame(cross_tab) -->
+<!-- # d <-tabla[!(tabla$Freq == 0),] -->
+<!-- # d$Año <- anio -->
+<!-- # names(d)[1] <- "Comuna" -->
+<!-- # d -->
+<!-- ``` -->
+
+
+<!-- ```{r} -->
+<!-- una_suma <- sum(d$Freq) -->
+<!-- (186333.2*378+1226906.5*1179+1878770.5*38910+1138615.9*42072)/una_suma -->
+<!-- ``` -->
+
+
+
+
+
+
+<!-- ## Frecuencias -->
+
+
+
+
+<!-- ```{r , message=FALSE, warning=FALSE, results='hide'} -->
+
+<!-- b <- casen2013$comuna -->
+
+
+<!-- anio <- 2015 -->
+<!-- cross_tab =  xtabs(casen2013$expc  ~ +  unlist(b)  ,aggregate(casen2013$expc ~  +  unlist(b) ,casen2013,mean)) -->
+<!-- tabla <- as.data.frame(cross_tab) -->
+<!-- d <-tabla[!(tabla$Freq == 0),] -->
+<!-- d$Año <- anio -->
+<!-- names(d)[1] <- "Comuna" -->
+
+<!-- write_xlsx(d, "frecuencias_por_categorias_Casen_2020.xlsx") -->
+<!-- print(d) -->
+<!-- ``` -->
+
+<!-- https://ciperchile.cl/wp-content/uploads/datos-tierra-amarilla-BCN.pdf -->
+
+<!-- tierra amarilla -->
+
+<!-- Ingreso autónomo 574.790 -->
+<!-- Subsidios monetarios 6.583 -->
+<!-- Ingreso monetario 581.372 -->
+
+
+
+
+
+
+
+<!-- ```{r} -->
+<!-- tabla_casen_2006_edad_15 <- read_xlsx("tabla_casen_2006_edad_15.xlsx") -->
+<!-- ``` -->
+
+
+
+<!-- ```{r} -->
+
+
+<!-- casen2006_f <- tabla_casen_2006_edad_15[,c("COMUNA","YAUTHAJ","EXPC")]  -->
+
+
+<!-- tabla <- table(casen2006_f$YAUTHAJ) -->
+<!-- tabla <- as.data.frame(tabla) -->
+<!-- colnames(tabla) <- c("YAUTHAJ","freq_YAUTHAJ") -->
+<!-- repetidos2 <- merge(x=casen2006_f, y=tabla, by = "YAUTHAJ", all.x = T) -->
+<!-- #repetidos2 <- repetidos2[,c(2,1,3,5)] -->
+<!-- repetidos2 -->
+<!-- ``` -->
+
+
+
+
+<!-- ```{r} -->
+<!-- rr <- repetidos2[!duplicated(repetidos2), ] -->
+<!-- rr -->
+<!-- ``` -->
+
+
+
+<!-- ```{r} -->
+<!-- sum(rr$YAUTHAJ) -->
+<!-- ``` -->
+
+
+<!-- ```{r} -->
+<!-- ``` -->
+
+
+
+
+
+
+
