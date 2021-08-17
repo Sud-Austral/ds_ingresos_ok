@@ -108,7 +108,7 @@ https://www.bcn.cl/portal/noticias?id=principales-resultados-sobre-pobreza-e-ing
 Por dos instrumentos diferentes oficiales llegamos a los mismos resultados y son a los cuales intentamos aproximarnos.
 
 
-iii.  Se comparará con la tabla obtenida en las III [(ver aquí)](https://datasocial.ministeriodesarrollosocial.gob.cl/dataSocial/csv/Tablas_Ingreso.xlsx) 
+iii.  Se comparará con una tabla muy completa pero con información por hogar [(aquí)](https://datasocial.ministeriodesarrollosocial.gob.cl/dataSocial/csv/Tablas_Ingreso.xlsx) 
 
  <!-- ![Tabla de referencia](image_2021_08_12T19_27_00_679Z.png) -->
 
@@ -141,7 +141,14 @@ año| | |
 
 <!-- ############################################################################################################################################################ -->
 
-## Verificación de nuestros cálculos con datos oficiales (2020)
+## Verificación de nuestros cálculos con datos oficiales del 2020
+
+Nuestra primera preocupación fue corroborar si los ddatos que obteniamos de ingresos del 2020 fuesen los correctos. PAra ello realizamos nuestros propios cálculos y comparamos con: [(aquí)](https://datasocial.ministeriodesarrollosocial.gob.cl/dataSocial/csv/Tablas_Ingreso.xlsx) 
+
+Comparamos con ytrabajocorh yautcorh ysubh ymonecorh a nivel regional y los resultados son prácticamente los mismos.
+
+
+
 
 ```{r, warning=FALSE, message=FALSE}
 # casen2020 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2015_c.rds")
@@ -454,33 +461,46 @@ p
 <h3> Datos oficiales </h3>
 
 ```{r, warning = FALSE, message=FALSE}
-tabla_ing_aut1 <- read_xlsx("ingreso_del_trabajo_oficial_2020.xlsx")
-names(tabla_ing_aut1)[3] <- "region" 
-names(tabla_ing_aut1)[1] <- "region_c" 
- 
-tabla_ing_aut2 <- read_xlsx("ingreso_del_trabajo_oficial_2017.xlsx")
-names(tabla_ing_aut2)[3] <- "region" 
-names(tabla_ing_aut2)[1] <- "region_c" 
- 
- 
-tabla_2 = merge(x = tabla_ing_aut2, y = tabla_ing_aut1, by = "region_c", all.x = T)
-tabla_2 <- tabla_2[,-c(3)]
- 
-tabla_ing_aut3 <- read_xlsx("ingresos_del_trabajo_global.xlsx")
-tabla_ing_aut3 <- tabla_ing_aut3[,-c(2)]
-names(tabla_ing_aut3)[7] <- "region"
-names(tabla_ing_aut3)[1] <- "region_c"
- 
-tabla_3 = merge(x = tabla_ing_aut3, y = tabla_2, by = "region_c", all.x = T)
-tabla_3 <- tabla_3[,-c(7)]
-names(tabla_3)[7] <- "2017"
-names(tabla_3)[8] <- "2020"
-names(tabla_3)[9] <- "region"
+# tabla_ing_aut1 <- read_xlsx("ingreso_del_trabajo_oficial_2020.xlsx")
+# names(tabla_ing_aut1)[3] <- "region" 
+# names(tabla_ing_aut1)[1] <- "region_c" 
+#  
+# tabla_ing_aut2 <- read_xlsx("ingreso_del_trabajo_oficial_2017.xlsx")
+# names(tabla_ing_aut2)[3] <- "region" 
+# names(tabla_ing_aut2)[1] <- "region_c" 
+#  
+#  
+# tabla_2 = merge(x = tabla_ing_aut2, y = tabla_ing_aut1, by = "region_c", all.x = T)
+# tabla_2 <- tabla_2[,-c(3)]
+#  
+# tabla_ing_aut3 <- read_xlsx("ingresos_del_trabajo_global.xlsx")
+# tabla_ing_aut3 <- tabla_ing_aut3[,-c(2)]
+# names(tabla_ing_aut3)[7] <- "region"
+# names(tabla_ing_aut3)[1] <- "region_c"
+#  
+# tabla_3 = merge(x = tabla_ing_aut3, y = tabla_2, by = "region_c", all.x = T)
+# tabla_3 <- tabla_3[,-c(7)]
+# names(tabla_3)[7] <- "2017"
+# names(tabla_3)[8] <- "2020"
+# names(tabla_3)[9] <- "region"
+# 
+# kbl(tabla_3) %>%
+#   kable_styling(bootstrap_options = c("striped", "hover")) %>%
+#   kable_paper() %>%
+#   scroll_box(width = "100%", height = "300px")
 
-kbl(tabla_3) %>%
+datos_oficiales <- read_xlsx("ingresos_oficiales_2006-2020.xlsx")
+datos_oficiales <- cbind(datos_oficiales[,c(1,9,10)],mutate_if(datos_oficiales[,2:8], is.character, as.numeric))
+datos_oficiales <- filter(datos_oficiales, grepl("trabajo", ingreso) )
+
+
+kbl(datos_oficiales) %>%
   kable_styling(bootstrap_options = c("striped", "hover")) %>%
   kable_paper() %>%
   scroll_box(width = "100%", height = "300px")
+
+
+tabla_3 <- datos_oficiales
 ```
 
 ```{r} 
@@ -503,7 +523,7 @@ rr <- repetidos2[!duplicated(repetidos2$folio ), ]
 
 tabla_reg <- data.frame(
   region = i,
-  promedio_2020 = mean(rr$ytrabajocorh)
+  calculado_2020 = mean(rr$ytrabajocorh)
 )
 
 tabla_prom_reg <- rbind(tabla_prom_reg, tabla_reg)
@@ -513,7 +533,7 @@ tabla_prom_reg <- rbind(tabla_prom_reg, tabla_reg)
 # tabla_ing_aut <- read_xlsx("ingreso_del_trabajo_oficial_2020.xlsx")
 # names(tabla_ing_aut)[3] <- "region" 
 # names(tabla_ing_aut)[1] <- "region_c" 
- tabla_ing_aut <- tabla_3[,c("region","2020")]
+ tabla_ing_aut <- tabla_3[,c("region","publicado_2020")]
 tabla_2020 = merge(x = tabla_prom_reg, y = tabla_ing_aut, by = "region", all.x = T)
 tabla_2020 <- tabla_2020[,-c(3)]
  
@@ -534,7 +554,7 @@ rr <- repetidos2[!duplicated(repetidos2$folio ), ]
 
 tabla_reg <- data.frame(
   region = i,
-  promedio_2017 = mean(rr$ytrabajocorh)
+  calculado_2017 = mean(rr$ytrabajocorh)
 )
 
 tabla_prom_reg <- rbind(tabla_prom_reg, tabla_reg)
@@ -544,7 +564,7 @@ tabla_prom_reg <- rbind(tabla_prom_reg, tabla_reg)
 # tabla_ing_aut <- read_xlsx("ingreso_del_trabajo_oficial_2017.xlsx")
 # names(tabla_ing_aut)[3] <- "region" 
 # names(tabla_ing_aut)[1] <- "region_c" 
-  tabla_ing_aut <- tabla_3[,c("region","2017")]
+  tabla_ing_aut <- tabla_3[,c("region","publicado_2017")]
   
 tabla_2017 = merge(x = tabla_prom_reg, y = tabla_ing_aut, by = "region", all.x = T)
 tabla_2017 <- tabla_2017[,-c(3)]
@@ -578,7 +598,7 @@ tabla_prom_reg <- rbind(tabla_prom_reg,c("Región de Ñuble",NA))
 # tabla_ing_aut <- read_xlsx("ingreso_del_trabajo_oficial_2017.xlsx")
 # names(tabla_ing_aut)[3] <- "region" 
 # names(tabla_ing_aut)[1] <- "region_c" 
-  tabla_ing_aut <- tabla_3[,c("region","2015")]
+  tabla_ing_aut <- tabla_3[,c("region","publicado_2015")]
   
 tabla_2015 = merge(x = tabla_prom_reg, y = tabla_ing_aut, by = "region", all.x = T)
 tabla_2015 <- tabla_2015[,-c(3)]
@@ -604,7 +624,7 @@ rr <- repetidos2[!duplicated(repetidos2$folio ), ]
 
 tabla_reg <- data.frame(
   region = i,
-  promedio_2013 = mean(rr$ytrabajoCorh)
+  calculado_2013 = mean(rr$ytrabajoCorh)
 )
 
 tabla_prom_reg <- rbind(tabla_prom_reg, tabla_reg)
@@ -614,7 +634,7 @@ tabla_prom_reg <- rbind(tabla_prom_reg,c("Región de Ñuble",NA))
 # tabla_ing_aut <- read_xlsx("ingreso_del_trabajo_oficial_2017.xlsx")
 # names(tabla_ing_aut)[3] <- "region" 
 # names(tabla_ing_aut)[1] <- "region_c" 
-  tabla_ing_aut <- tabla_3[,c("region","2013")]
+  tabla_ing_aut <- tabla_3[,c("region","publicado_2013")]
   
 tabla_2013 = merge(x = tabla_prom_reg, y = tabla_ing_aut, by = "region", all.x = T)
 tabla_2013 <- tabla_2013[,-c(3)]
@@ -634,7 +654,7 @@ tabla_2013$region[tabla_2013$region == "XI. Aysén"] <- "Región de Aysén del G
 tabla_2013$region[tabla_2013$region == "XII. Magallanes"] <- "Región de Magallanes y de la Antártica Chilena"
 tabla_2013$region[tabla_2013$region == "XIV. Los Ríos"] <- "Región de Los Ríos"
 tabla_2013$region[tabla_2013$region == "XV. Arica y Parinacota"] <- "Región de Arica y Parinacota"
-tabla_2013$promedio_2013 <- as.numeric(tabla_2013$promedio_2013)
+tabla_2013$calculado_2013 <- as.numeric(tabla_2013$calculado_2013)
 
 #### 2011
 
@@ -655,7 +675,7 @@ rr <- repetidos2[!duplicated(repetidos2$folio ), ]
 
 tabla_reg <- data.frame(
   region = i,
-  promedio_2011 = mean(rr$ytrabhaj)
+  calculado_2011 = mean(rr$ytrabhaj)
 )
 
 tabla_prom_reg <- rbind(tabla_prom_reg, tabla_reg)
@@ -665,7 +685,7 @@ tabla_prom_reg <- rbind(tabla_prom_reg,c("Región de Ñuble",NA))
 # tabla_ing_aut <- read_xlsx("ingreso_del_trabajo_oficial_2017.xlsx")
 # names(tabla_ing_aut)[3] <- "region" 
 # names(tabla_ing_aut)[1] <- "region_c" 
-  tabla_ing_aut <- tabla_3[,c("region","2011")]
+  tabla_ing_aut <- tabla_3[,c("region","publicado_2011")]
   
 tabla_2011 = merge(x = tabla_prom_reg, y = tabla_ing_aut, by = "region", all.x = T)
 tabla_2011 <- tabla_2011[,-c(3)]
@@ -684,7 +704,7 @@ tabla_2011$region[tabla_2011$region == "Metropolitana"] <- "Región Metropolitan
 tabla_2011$region[tabla_2011$region == "O Higgins"] <- "Región del Libertador Gral. Bernardo O'Higgins"
 tabla_2011$region[tabla_2011$region == "Tarapacá"] <- "Región de Tarapacá"
 tabla_2011$region[tabla_2011$region == "Valparaíso"] <- "Región de Valparaíso"
-tabla_2011$promedio_2011 <- as.numeric(tabla_2011$promedio_2011)
+tabla_2011$calculado_2011 <- as.numeric(tabla_2011$calculado_2011)
  
 #### 2009
 
@@ -705,7 +725,7 @@ rr <- repetidos2[!duplicated(repetidos2$FOLIO ), ]
 
 tabla_reg <- data.frame(
   region = i,
-  promedio_2009 = mean(rr$YTRABHAJ)
+ calculado_2009 = mean(rr$YTRABHAJ)
 )
 
 tabla_prom_reg <- rbind(tabla_prom_reg, tabla_reg)
@@ -715,7 +735,7 @@ tabla_prom_reg <- rbind(tabla_prom_reg,c("Región de Ñuble",NA))
 # tabla_ing_aut <- read_xlsx("ingreso_del_trabajo_oficial_2017.xlsx")
 # names(tabla_ing_aut)[3] <- "region" 
 # names(tabla_ing_aut)[1] <- "region_c" 
-  tabla_ing_aut <- tabla_3[,c("region","2009")]
+  tabla_ing_aut <- tabla_3[,c("region","publicado_2009")]
   
 tabla_2009 = merge(x = tabla_prom_reg, y = tabla_ing_aut, by = "region", all.x = T)
 tabla_2009 <- tabla_2009[,-c(3)]
@@ -734,7 +754,7 @@ tabla_2009$region[tabla_2009$region == "Maule"] <- "Región del Maule"
 tabla_2009$region[tabla_2009$region == "Región Metropolitana"] <- "Región Metropolitana de Santiago"
 tabla_2009$region[tabla_2009$region == "Tarapacá"] <- "Región de Tarapacá"
 tabla_2009$region[tabla_2009$region == "Valparaíso"] <- "Región de Valparaíso"
-tabla_2009$promedio_2009 <- as.numeric(tabla_2009$promedio_2009)
+tabla_2009$calculado_2009 <- as.numeric(tabla_2009$calculado_2009)
 
 tabla_2017$region[tabla_2017$region == "Región de Ayséndel Gral. Carlos Ibáñez del Campo"] <- "Región de Aysén del Gral. Carlos Ibáñez del Campo"
 tabla_2017$region[tabla_2017$region == "Región del Libertador Gral. Bernardo O’Higgins"] <- "Región del Libertador Gral. Bernardo O'Higgins"
@@ -765,11 +785,7 @@ tabla_3$region[tabla_3$region == "Región de Ayséndel Gral. Carlos Ibáñez del
 tabla_3$region[tabla_3$region == "Región del Libertador Gral. Bernardo O’Higgins"] <- "Región del Libertador Gral. Bernardo O'Higgins"
 
 tabla_f = merge( x = ingresos, y = tabla_3, by = "region" , all.x = T)
-tabla_f$`2006` <- as.numeric(tabla_f$`2006`)
-tabla_f$`2009` <- as.numeric(tabla_f$`2009`)
-tabla_f$`2011` <- as.numeric(tabla_f$`2011`)
-tabla_f$`2013` <- as.numeric(tabla_f$`2013`)
-tabla_f$`2015` <- as.numeric(tabla_f$`2015`)
+
 
 tabla_f%>% datatable(extensions = 'Buttons',class = 'cell-border stripe',
           options = list(
@@ -783,21 +799,40 @@ tabla_f%>% datatable(extensions = 'Buttons',class = 'cell-border stripe',
 )) 
 ```
 
+
+
+```{r}
+tabla_f
+```
+
+
+```{r}
+
+tabla_f$por_01 <- 100*tabla_f$calculado_2009/tabla_f$calculado_2011
+
+names (tabla_f)[5] = "calculado_2015"
+
+tabla_f
+```
+
+
+
+
 # Comparación de los ingresos por tipo y región entre los años 2017-2020
 
 ```{r, warning = FALSE, message=FALSE}
-p <- plot_ly(tabla_f, width = 1200, x = ~region, y = ~promedio_2009, name = 'calculado 2009', mode = 'markers') %>% add_lines() 
-p <- p %>% add_lines(y = ~promedio_2011, name = 'calculado 2011', mode = 'markers')
-p <- p %>% add_lines(y = ~promedio_2013, name = 'calculado 2013', mode = 'markers')
-p <- p %>% add_lines(y = ~promedio_2015, name = 'calculado 2015', mode = 'markers')
-p <- p %>% add_lines(y = ~promedio_2017, name = 'calculado 2017', mode = 'markers')
-p <- p %>% add_lines(y = ~promedio_2020, name = 'calculado 2020', mode = 'markers') 
-p <- p %>% add_trace(y = ~`2009`, name = 'Oficial 2009', mode = 'markers') 
-p <- p %>% add_trace(y = ~`2011`, name = 'Oficial 2011', mode = 'markers') 
-p <- p %>% add_trace(y = ~`2013`, name = 'Oficial 2013', mode = 'markers') 
-p <- p %>% add_trace(y = ~`2015`, name = 'Oficial 2015', mode = 'markers') 
-p <- p %>% add_trace(y = ~`2017`, name = 'Oficial 2017', mode = 'markers') 
-p <- p %>% add_trace(y = ~`2020`, name = 'Oficial 2020', mode = 'markers') 
+p <- plot_ly(tabla_f, width = 1200, x = ~region, y = ~calculado_2009, name = 'calculado 2009', mode = 'markers') %>% add_lines() 
+p <- p %>% add_lines(y = ~calculado_2011, name = 'calculado 2011', mode = 'markers')
+p <- p %>% add_lines(y = ~calculado_2013, name = 'calculado 2013', mode = 'markers')
+p <- p %>% add_lines(y = ~calculado_2015, name = 'calculado 2015', mode = 'markers')
+p <- p %>% add_lines(y = ~calculado_2017, name = 'calculado 2017', mode = 'markers')
+p <- p %>% add_lines(y = ~calculado_2020, name = 'calculado 2020', mode = 'markers') 
+p <- p %>% add_trace(y = ~`publicado_2009`, name = 'Oficial 2009', mode = 'markers') 
+p <- p %>% add_trace(y = ~`publicado_2011`, name = 'Oficial 2011', mode = 'markers') 
+p <- p %>% add_trace(y = ~`publicado_2013`, name = 'Oficial 2013', mode = 'markers') 
+p <- p %>% add_trace(y = ~`publicado_2015`, name = 'Oficial 2015', mode = 'markers') 
+p <- p %>% add_trace(y = ~`publicado_2017`, name = 'Oficial 2017', mode = 'markers') 
+p <- p %>% add_trace(y = ~`publicado_2020`, name = 'Oficial 2020', mode = 'markers') 
 p
 ```
 
@@ -1246,6 +1281,104 @@ p <- p %>% add_trace(y = ~iaph, name = 'iaph', mode = 'markers')
 p
 ```
 
+# Analisis por personas por comuna
 
+Si llegamos a tal nivel de sofisticacion con el percapita y las variables calculadas coinciden con las publicadas sobre varios anos, aunque no exista publicacion oficial con la cual comparar a nivel de personas, nuestras estimaciones deberian  estar ok.
+
+
+Vamos a estimar a nivel porcentual la variación del ingreso total personal entre el 2017 y el 2020 por comuna.
+
+## Ingresos
+
+```{r}
+salida_001 = aggregate(casen2017[,c("ytotcor")],by = list(PAISES = casen2017$comuna), FUN = mean)
+names(salida_001)[1]<-c("comunas")
+names(salida_001)[2]<-c("promedios totales 2017")
+head(salida_001,10)
+```
+
+```{r}
+salida_002 = aggregate(casen2020[,c("ytotcor")],by = list(PAISES = casen2020$comuna), FUN = mean)
+names(salida_002)[1]<-c("comunas")
+names(salida_002)[2]<-c("promedios totales 2020")
+head(salida_002,10)
+```
+
+
+```{r}
+union_003 <- merge(salida_001,salida_002, by="comunas", all.x = TRUE)
+union_003$difer_por <- (100-100*union_003$`promedios totales 2017`/union_003$`promedios totales 2020`)
+head(union_003,10)
+```
+
+
+
+
+
+2009
+
+```{r, message=FALSE, warning=FALSE, results='hide'}
+ab <- casen2009
+eliminated <-ab
+a <- eliminated$YTOTAJ
+b <- eliminated$COMUNA
+c <- eliminated$SEXO
+d <- eliminated$T5
+
+
+promedios_grupales <-aggregate(a, by=list(b, c, d), FUN = mean , na.rm = TRUE)
+promedios_grupales_sd <-aggregate(a, by=list(b, c, d), FUN = sd , na.rm = TRUE)
+promedios_grupales$sd = promedios_grupales_sd$sd.a
+d<-promedios_grupales
+d$Año <- "2009"
+
+ttt <- d[complete.cases(d), ]
+
+
+names(ttt)[1] <- "Comuna"
+names(ttt)[2] <- "Sexo"
+names(ttt)[3] <- "Etnia"
+names(ttt)[4] <- "Promedio"
+names(ttt)[5] <- "Desviación standard"
+names(ttt)[6] <- "Año"
+ttt
+```
+
+
+```{r, message=FALSE, warning=FALSE, results='hide'}
+codigos_comunales <- readRDS(file = "C:/Users/chris/OneDrive/Documentos/archivos_grandes/codigos_comunales_2009.rds")
+names(codigos_comunales)[1] <- "Código"
+names(codigos_comunales)[2] <- "Comuna"
+df_2009 = merge( x = ttt, y = codigos_comunales, by = "Comuna", all.x = TRUE)
+df_2009 <- df_2009[!(df_2009$Promedio == 0),]
+tabla_matp2 <- df_2009[complete.cases(df_2009), ]
+
+
+```
+
+
+## Frecuencias
+
+```{r}
+ab <- casen2009
+b <- ab$COMUNA
+c <- ab$SEXO
+d <- ab$T5
+tabla_matp <-xtabs(ab$EXPC~b+c+d, data = ab)
+tabla_matp <- as.data.frame(tabla_matp)
+tabla_matp <-tabla_matp[!(tabla_matp$Freq == 0),]
+
+
+ tabla_matp  %>% datatable(extensions = 'Buttons',class = 'cell-border stripe',
+          options = list(
+            dom = 'Blfrtip',
+            buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+            pageLength = 5,
+            autoWidth = TRUE,
+            
+            scrollX = TRUE,
+            lengthMenu = list(c(10,25,50,-1),c(10,25,50,"All"))
+)) 
+```
 
 
