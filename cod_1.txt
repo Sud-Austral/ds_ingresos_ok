@@ -1,0 +1,47 @@
+
+ 
+<h3>Datos calculados</h3>
+
+```{r}
+ingresos  = merge(x = tabla_2017, y = tabla_2020, by = "region", all.x = T)
+ingresos  = merge(x = tabla_2015, y = ingresos, by = "region", all.x = T)
+ingresos  = merge(x = tabla_2013, y = ingresos, by = "region", all.x = T)
+ingresos  = merge(x = tabla_2011, y = ingresos, by = "region", all.x = T)
+ingresos  = merge(x = tabla_2009, y = ingresos, by = "region", all.x = T)
+
+kbl(ingresos) %>%
+  kable_styling(bootstrap_options = c("striped", "hover")) %>%
+  kable_paper() %>%
+  scroll_box(width = "100%", height = "300px")
+```
+ 
+```{r, warning = FALSE, message=FALSE}
+tabla_3$region[tabla_3$region == "Región de Ayséndel Gral. Carlos Ibáñez del Campo"] <- "Región de Aysén del Gral. Carlos Ibáñez del Campo"
+tabla_3$region[tabla_3$region == "Región del Libertador Gral. Bernardo O’Higgins"] <- "Región del Libertador Gral. Bernardo O'Higgins"
+
+tabla_f = merge( x = ingresos, y = tabla_3, by = "region" , all.x = T)
+tabla_f$`2006` <- as.numeric(tabla_f$`2006`)
+tabla_f$`2009` <- as.numeric(tabla_f$`2009`)
+tabla_f$`2011` <- as.numeric(tabla_f$`2011`)
+tabla_f$`2013` <- as.numeric(tabla_f$`2013`)
+tabla_f$`2015` <- as.numeric(tabla_f$`2015`)
+tabla_f
+```
+
+# Comparación de los ingresos por tipo y región entre los años 2017-2020
+
+```{r, warning = FALSE, message=FALSE}
+p <- plot_ly(tabla_f, width = 1200, x = ~region, y = ~promedio_2009, name = 'calculado 2009', mode = 'markers') %>% add_lines() 
+p <- p %>% add_lines(y = ~promedio_2011, name = 'calculado 2011', mode = 'markers')
+p <- p %>% add_lines(y = ~promedio_2013, name = 'calculado 2013', mode = 'markers')
+p <- p %>% add_lines(y = ~promedio_2015, name = 'calculado 2015', mode = 'markers')
+p <- p %>% add_lines(y = ~promedio_2017, name = 'calculado 2017', mode = 'markers')
+p <- p %>% add_lines(y = ~promedio_2020, name = 'calculado 2020', mode = 'markers') 
+p <- p %>% add_trace(y = ~`2009`, name = 'Oficial 2009', mode = 'markers') 
+p <- p %>% add_trace(y = ~`2011`, name = 'Oficial 2011', mode = 'markers') 
+p <- p %>% add_trace(y = ~`2013`, name = 'Oficial 2013', mode = 'markers') 
+p <- p %>% add_trace(y = ~`2015`, name = 'Oficial 2015', mode = 'markers') 
+p <- p %>% add_trace(y = ~`2017`, name = 'Oficial 2017', mode = 'markers') 
+p <- p %>% add_trace(y = ~`2020`, name = 'Oficial 2020', mode = 'markers') 
+p 
+```

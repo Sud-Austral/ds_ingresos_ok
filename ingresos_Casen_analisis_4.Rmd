@@ -174,7 +174,9 @@ casen2015 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_
 casen2015 <- mutate_if(casen2015, is.factor, as.character)
 casen2017 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2017_c.rds")
 casen2017 <- mutate_if(casen2017, is.factor, as.character)
-casen2020 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2020_c.rds")
+casen2020 <- read.spss(file="C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2020.sav", to.data.frame=TRUE) 
+saveRDS(casen2020,"casen2020.rds")
+casen2020 <- readRDS("casen2020.rds")
 casen2020 <- mutate_if(casen2020, is.factor, as.character)
 
 
@@ -205,6 +207,115 @@ reg_11 <- unique(casen2011$region)
 reg_09 <- unique(casen2009$region)
 reg_06 <- unique(casen2006$region)
 ```
+
+POBREZA EN PORCENTAJE DE PERSONAS 2006
+
+```{r}
+unique(casen2006$CORTE)
+```
+
+```{r}
+casen2006$EXPC
+```
+
+
+```{r}
+tabla_matp <-xtabs(casen2006$EXPC~COMUNA+CORTE, data = casen2006)
+head(tabla_matp,10)
+```
+
+
+```{r}
+sum(tabla_matp[,1])+sum(tabla_matp[,2])+sum(tabla_matp[,3])
+sum(tabla_matp[,1])
+
+```
+
+```{r}
+516738*100/16115371
+```
+
+```{r}
+casen_2006_r1 <- filter(casen2006, casen2006$R == "VIII")
+casen_2006_r1
+```
+
+```{r}
+unique(casen_2006_r1$CORTE)
+```
+
+
+
+```{r}
+casen_2006_r1 %>% filter(!is.na(CORTE))
+
+tabla_matp <-xtabs(casen_2006_r1$EXPR~R+CORTE, data = casen_2006_r1)
+head(tabla_matp,10)
+```
+
+```{r}
+sum(tabla_matp[,1])+sum(tabla_matp[,2])+sum(tabla_matp[,3])
+sum(tabla_matp[,3])
+```
+
+```{r}
+302497*100/1950099
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+
+
+ab <- casen2006
+      
+a <- ab$codigo
+b <- ab$COMUNA
+c <- ab$CORTE
+
+      
+cross_tab =  xtabs(ab$EXPC ~  unlist(b) + unlist(c),aggregate(ab$EXPC ~ unlist(b) +   unlist(c) ,ab,mean))
+tabla <- as.data.frame(cross_tab)
+d <-tabla[!(tabla$Freq == 0),]
+d$anio <- "2006"
+      
+#names(d)[1] <- "Código"     
+#names(d)[2] <- "Comuna"
+#names(d)[3] <- "Categoría"
+#names(d)[4] <- "Etnia"
+#names(d)[5] <- "Sexo"
+#names(d)[6] <- "Frecuencia"
+#names(d)[6] <- "Año"  
+
+head(d,5)
+```
+
+```{r}
+sum(d$Freq)
+```
+
+
+
+
+
+```{r}
+xsum <- sum(tabla_matp,Indigente)
+```
+
+
 
 
 ## Ingreso del trabajo hogar: **ytrabajocorh**
@@ -404,6 +515,8 @@ p
 
 
 ## ytrabajocorh 2017
+
+Verifiquemos que los ingresos del trabajo sean los mismos a los oficiales por region para el 2017:
 
 ```{r} 
 
