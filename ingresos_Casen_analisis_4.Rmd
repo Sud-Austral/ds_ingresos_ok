@@ -162,21 +162,40 @@ integrantes del hogar, excluido el servicio doméstico puertas adentro.
 <h3>Lecturas de tablas Casen</h3>
 
 ```{r}
-# casen2020 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2015_c.rds")
-casen2020 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2020.rds")
-casen2020 <- mutate_if(casen2020, is.factor, as.character)
-casen2017 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2017_c.rds")
-casen2017 <- mutate_if(casen2017, is.factor, as.character)
-casen2015 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2015_c.rds")
-casen2015 <- mutate_if(casen2015, is.factor, as.character)
-casen2013 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2013_c.rds")
-casen2013 <- mutate_if(casen2013, is.factor, as.character)
-casen2011 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2011_c.rds")
-casen2011 <- mutate_if(casen2011, is.factor, as.character)
-casen2009 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2009_c.rds")
-casen2009 <- mutate_if(casen2009, is.factor, as.character)
-casen2006 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2006_c.rds")
+casen2006 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2006_c.rds")
 casen2006 <- mutate_if(casen2006, is.factor, as.character)
+casen2009 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2009_c.rds")
+casen2009 <- mutate_if(casen2009, is.factor, as.character)
+casen2011 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2011_c.rds")
+casen2011 <- mutate_if(casen2011, is.factor, as.character)
+casen2013 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2013_c.rds")
+casen2013 <- mutate_if(casen2013, is.factor, as.character)
+casen2015 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2015_c.rds")
+casen2015 <- mutate_if(casen2015, is.factor, as.character)
+casen2017 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2017_c.rds")
+casen2017 <- mutate_if(casen2017, is.factor, as.character)
+casen2020 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2020_c.rds")
+casen2020 <- mutate_if(casen2020, is.factor, as.character)
+
+
+
+
+
+
+# casen2020 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2020.rds")
+# casen2020 <- mutate_if(casen2020, is.factor, as.character)
+# casen2017 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2017_c.rds")
+# casen2017 <- mutate_if(casen2017, is.factor, as.character)
+# casen2015 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2015_c.rds")
+# casen2015 <- mutate_if(casen2015, is.factor, as.character)
+# casen2013 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2013_c.rds")
+# casen2013 <- mutate_if(casen2013, is.factor, as.character)
+# casen2011 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2011_c.rds")
+# casen2011 <- mutate_if(casen2011, is.factor, as.character)
+# casen2009 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2009_c.rds")
+# casen2009 <- mutate_if(casen2009, is.factor, as.character)
+# casen2006 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2006_c.rds")
+# casen2006 <- mutate_if(casen2006, is.factor, as.character)
 
 reg_20 <- unique(casen2020$region)
 reg_17 <- unique(casen2017$region)
