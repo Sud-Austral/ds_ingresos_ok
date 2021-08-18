@@ -1,5 +1,5 @@
 ---
-title: Análisis propios de los ingresos de la Casen <span style="color:green"></span>
+title: Análisis propios de los ingresos de la<span style="color:green"> Casen </span>
 author:
 - name: VE-CC-AJ
   affiliation: DataIntelligence
@@ -77,50 +77,19 @@ library(DT)
 
 # Introducción
 
-1 Información de las Casen:\
+1 Informes de las Casen e información básica:\
 http://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-2011
 
-2 En difícil encontar datos oficiales que entreguen información de los ingresos a nivel  de **persona** por **comunas** en la Casen, porque es de hogares, lo que sociológicamente tiene sentido. La sociedad se comporta como órganos individuales funcionando dentro de los hogares. La enfermedad, como así mismo la caída del ingreso de un integrante de la familia los afecta a todos. Pensemos en la etnia, el sexo, edad, etc. 
+# El problema
 
-3 Fue un error haber eliminado outliers de las distribuciones de ingresos pues los resultados obtenidos de esta manera los hacen incomparables con cualquier otro tipo de análisis que no siga la misma metodologia. Casen no excluye outliers.
-
-## Cuatro fuentes de datos (las dos últimas las mismas, pero duplicadas)
-
-Logramos obtener tres fuentes de datos:
-
-
-
-Uno a nivel **comunal** en la Región Metropolitana y tres a nivel Regional:
-
-i. Ingreso autónomo <span style="color:red">percápita</span> 
-del hogar, CASEN 2011
-($ de noviembre de 2011)
-de la pagina 16 [de aquí](https://ciperchile.cl/wp-content/uploads/INDICE-DE-PRIORIDAD-SOCIAL-2014.pdf
-).
-
-
-
-ii. Ingreso autónomo promedio e ingreso monetario promedio del hogar a nivel regional el 2015:
-
-https://www.bcn.cl/portal/noticias?id=principales-resultados-sobre-pobreza-e-ingresos-regionales-encuesta-casen-2015
-
-
-Por dos instrumentos diferentes oficiales llegamos a los mismos resultados y son a los cuales intentamos aproximarnos.
-
-
-iii.  Se comparará con la tabla obtenida en las III [(ver aquí)](https://datasocial.ministeriodesarrollosocial.gob.cl/dataSocial/csv/Tablas_Ingreso.xlsx) 
-
- <!-- ![Tabla de referencia](image_2021_08_12T19_27_00_679Z.png) -->
-
-iiii. Y la otra con una página interactiva con datos por región [(ver aquí)](https://datasocial.ministeriodesarrollosocial.gob.cl/fichaIndicador/513/2)
-
+Nos encontramos con inconsistencias en el cálculo de  ingresos, pero como demostraremos, creemos que es problema de interpretación y no de método o base de datos corrupta.
 
 <br>
 
 
 ## Los ingresos
 
-Recordemos los cuatro datos cuantitativos fundamentales de la generación de los ingresos:
+Recordemos los cuatro datos fundamentales de la generación de los ingresos:
 
  | | | | 
 :-----:|:-----:|:-----:|:-----:|:-----:
@@ -137,45 +106,86 @@ año| | |
  
 
 
+# Metodología y fuentes de datos
+
+Nuestra metodología fue la de encontrar publicaciones oficiales con datos calculados de la Casen y compararlos con cálculos propios.
+
+## Metodología.
+
+En general la Casen no es analizada a  nivel de personas, sino que de hogares. 
+
+La página de la Casen 2020 en pandemia analizada contiene  un excel con datos calculados. Son todos referidos a hogares. Uno se llama:
+
+"Ingreso promedio de los hogares por tipo de ingreso y región", con lo que se tiene que hacer el siguiente cálculo, por ejemplo para la variable ytrabajocorh:
+
+
+
+para cada hogar la Casen lleva asociado la variable ytrabajocorh que significa "Ingreso del trabajo del hogar corregido" que se repite para cada registro perteneciente a un hogar (folio). Se transforma la tabla y se hace un sólo registro con el ingreso familiar. Se promedian en una región. Si bien el cálculo es simple, nos da cierto nivel de complejidad que hará notar con mayor facilidad los errores:
+
+## Verificación para el Censo 2020
+
+### Bases de datos
+
+Los ejercicios resultan con los $ a noviembre de cada año.
+
+Nuestra mayor preocupación era que las cifras de ingresos del Censo 2020 coincidieran con nuestros cálculos, por lo que la primera base de datos que buscamos fue ella.
+
+Para ello calculamos el ingreso promedio de los hogares por tipo de ingreso y región, 2006-2020, ($ noviembre de cada año
+
+![title](uno.png)
+
+![title](dos.png)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 <!-- ############################################################################################################################################################ -->
 
-## Verificación de nuestros cálculos con datos oficiales (2020)
+### Verificación de nuestros cálculos con datos oficiales del 2020
 
 ```{r, warning=FALSE, message=FALSE} 
-casen2020 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2020.rds")
-casen2020 <- mutate_if(casen2020, is.factor, as.character)
-casen2017 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2017_c.rds")
-casen2017 <- mutate_if(casen2017, is.factor, as.character)
-casen2015 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2015_c.rds")
-casen2015 <- mutate_if(casen2015, is.factor, as.character)
-casen2013 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2013_c.rds")
-casen2013 <- mutate_if(casen2013, is.factor, as.character)
-casen2011 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2011_c.rds")
-casen2011 <- mutate_if(casen2011, is.factor, as.character)
-casen2009 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2009_c.rds")
-casen2009 <- mutate_if(casen2009, is.factor, as.character)
-casen2006 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2006_c.rds")
-casen2006 <- mutate_if(casen2006, is.factor, as.character)
+# casen2020 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2020.rds")
+# casen2020 <- mutate_if(casen2020, is.factor, as.character)
+# casen2017 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2017_c.rds")
+# casen2017 <- mutate_if(casen2017, is.factor, as.character)
+# casen2015 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2015_c.rds")
+# casen2015 <- mutate_if(casen2015, is.factor, as.character)
+# casen2013 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2013_c.rds")
+# casen2013 <- mutate_if(casen2013, is.factor, as.character)
+# casen2011 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2011_c.rds")
+# casen2011 <- mutate_if(casen2011, is.factor, as.character)
+# casen2009 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2009_c.rds")
+# casen2009 <- mutate_if(casen2009, is.factor, as.character)
+# casen2006 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2006_c.rds")
+# casen2006 <- mutate_if(casen2006, is.factor, as.character)
  
 
-# casen2006 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2006_c.rds")
-# casen2006 <- mutate_if(casen2006, is.factor, as.character)
-# casen2009 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2009_c.rds")
-# casen2009 <- mutate_if(casen2009, is.factor, as.character)
-# casen2011 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2011_c.rds")
-# casen2011 <- mutate_if(casen2011, is.factor, as.character)
-# casen2013 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2013_c.rds")
-# casen2013 <- mutate_if(casen2013, is.factor, as.character)
-# casen2015 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2015_c.rds")
-# casen2015 <- mutate_if(casen2015, is.factor, as.character)
-# casen2017 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2017_c.rds")
-# casen2017 <- mutate_if(casen2017, is.factor, as.character)
-# # casen2020 <- read.spss(file="C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2020.sav", to.data.frame=TRUE) 
-# # saveRDS(casen2020,"casen2020.rds")
-# casen2020 <- readRDS("casen2020.rds")
-# casen2020 <- mutate_if(casen2020, is.factor, as.character)
+casen2006 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2006_c.rds")
+casen2006 <- mutate_if(casen2006, is.factor, as.character)
+casen2009 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2009_c.rds")
+casen2009 <- mutate_if(casen2009, is.factor, as.character)
+casen2011 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2011_c.rds")
+casen2011 <- mutate_if(casen2011, is.factor, as.character)
+casen2013 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2013_c.rds")
+casen2013 <- mutate_if(casen2013, is.factor, as.character)
+casen2015 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2015_c.rds")
+casen2015 <- mutate_if(casen2015, is.factor, as.character)
+casen2017 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2017_c.rds")
+casen2017 <- mutate_if(casen2017, is.factor, as.character)
+# casen2020 <- read.spss(file="C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2020.sav", to.data.frame=TRUE)
+# saveRDS(casen2020,"casen2020.rds")
+casen2020 <- readRDS("casen2020.rds")
+casen2020 <- mutate_if(casen2020, is.factor, as.character)
 
 
 
@@ -198,10 +208,9 @@ reg_06 <- unique(casen2006$R)
 ```
 
 
-### Ingreso del trabajo hogar: **ytrabajocorh**
+#### Ingreso del trabajo hogar: **ytrabajocorh**
 
 ```{r} 
-
 tabla_prom_reg <- data.frame()
 
 for (i in reg_20) {
@@ -213,6 +222,8 @@ casen_fh$folio <- as.character(casen_fh$folio)
 tabla <- table(casen_fh$folio)
 tabla <- as.data.frame(tabla)
 colnames(tabla) <- c("folio","freq_folio")
+
+
 repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
 repetidos2 <- repetidos2[,c(2,1,4,3)]
 rr <- repetidos2[!duplicated(repetidos2$folio ), ]
@@ -225,17 +236,21 @@ tabla_reg <- data.frame(
 tabla_prom_reg <- rbind(tabla_prom_reg, tabla_reg)
 
 }
+# tabla_prom_reg
+```
 
+
+```{r} 
 tabla_ing_aut <- read_xlsx("ingreso_del_trabajo_oficial_2020.xlsx")
-names(tabla_ing_aut)[3] <- "region" 
-names(tabla_ing_aut)[1] <- "region_c" 
- 
+names(tabla_ing_aut)[3] <- "region"
+names(tabla_ing_aut)[1] <- "region_c"
+
 tabla_unida = merge(x = tabla_prom_reg, y = tabla_ing_aut, by = "region", all.x = T)
 tabla_unida <- tabla_unida[,-c(3)]
-kbl(tabla_unida) %>%
-  kable_styling(bootstrap_options = c("striped", "hover")) %>%
-  kable_paper() %>%
-  scroll_box(width = "100%", height = "300px")
+# kbl(tabla_unida) %>%
+#   kable_styling(bootstrap_options = c("striped", "hover")) %>%
+#   kable_paper() %>%
+#   scroll_box(width = "100%", height = "300px")
 ```
 
 ```{r, warning = FALSE, message=FALSE}
@@ -248,7 +263,7 @@ p
 
 ### Ingreso autonomo del hogar: **yautcorh**
 
-```{r} 
+```{r, message=FALSE} 
 
 tabla_prom_reg <- data.frame()
 
@@ -391,10 +406,12 @@ p <- p %>% add_trace(y = ~`Ingreso monetario`, name = 'ingreso monetario oficial
 p 
 ```
 
+La coincidencia es prácticamente total. Realizareamos la comparación con otro año y otra variable:
 
 
+# Otra comprobación
 
-### compararemos nuestros cálculos para otro año con los datos oficiales la variable: ytrabajocorh 2017
+Compararemos nuestros cálculos para otro año con los datos oficiales la variable: ytrabajocorh 2017
 
 ```{r} 
 
@@ -445,19 +462,21 @@ p
 
  
 
-### Ingreso del trabajo hogar: yautcorh 2009-2020
+# Generalización
 
-<h3> Datos oficiales </h3>
+## yautcorh 2009-2020
+
+<!-- <h3> Datos oficiales </h3> -->
 
 ```{r, warning = FALSE, message=FALSE}
 datos_oficiales <- read_xlsx("ingresos_oficiales_2006-2020.xlsx")
 datos_oficiales <- cbind(datos_oficiales[,c(9,10)],mutate_if(datos_oficiales[,2:8], is.character, as.numeric))
 datos_oficiales <- filter(datos_oficiales, grepl("trabajo", ingreso) )
 # datos_oficiales
-kbl(datos_oficiales) %>%
-  kable_styling(bootstrap_options = c("striped", "hover")) %>%
-  kable_paper() %>%
-  scroll_box(width = "100%", height = "300px")
+# kbl(datos_oficiales) %>%
+#   kable_styling(bootstrap_options = c("striped", "hover")) %>%
+#   kable_paper() %>%
+#   scroll_box(width = "100%", height = "300px")
 ```
 
 ```{r} 
@@ -706,7 +725,6 @@ tabla_2020$region[tabla_2020$region == "Región del Libertador Gral. Bernardo O�
 ```
 
  
-<h3>Datos calculados</h3>
 
 ```{r, warning = FALSE, message=FALSE}
 ingresos  = merge(x = tabla_2017, y = tabla_2020, by = "region", all.x = T)
@@ -740,7 +758,6 @@ tabla_f%>% datatable(extensions = 'Buttons',class = 'cell-border stripe',
 )) 
 ```
 
-# Comparación de los ingresos por tipo y región entre los años 2017-2020
 
 ```{r, warning = FALSE, message=FALSE}
 p <- plot_ly(tabla_f, width = 1200, x = ~region, y = ~calculado_2009, name = 'calculado 2009', mode = 'markers') %>% add_lines() 
@@ -760,22 +777,22 @@ p
 
 
 
-### Ingreso del trabajo hogar: yautcorh 2009-2020
 
-<h3> Datos oficiales </h3>
+
+## yautcorh 2009-2020
+
+
 
 ```{r, warning = FALSE, message=FALSE}
 datos_oficiales <- read_xlsx("ingresos_oficiales_2006-2020.xlsx")
 datos_oficiales <- cbind(datos_oficiales[,c(9,10)],mutate_if(datos_oficiales[,2:8], is.character, as.numeric))
 datos_oficiales <- filter(datos_oficiales, grepl("autonomo", ingreso) )
 # datos_oficiales
-kbl(datos_oficiales) %>%
-  kable_styling(bootstrap_options = c("striped", "hover")) %>%
-  kable_paper() %>%
-  scroll_box(width = "100%", height = "300px")
-```
+# kbl(datos_oficiales) %>%
+#   kable_styling(bootstrap_options = c("striped", "hover")) %>%
+#   kable_paper() %>%
+#   scroll_box(width = "100%", height = "300px")
 
-```{r} 
 #### 2020
 
 tabla_prom_reg <- data.frame()
@@ -1020,8 +1037,7 @@ tabla_2020$region[tabla_2020$region == "Región de Ayséndel Gral. Carlos Ibáñ
 tabla_2020$region[tabla_2020$region == "Región del Libertador Gral. Bernardo O’Higgins"] <- "Región del Libertador Gral. Bernardo O'Higgins"
 ```
 
- 
-<h3>Datos calculados</h3>
+
 
 ```{r, warning = FALSE, message=FALSE}
 ingresos  = merge(x = tabla_2017, y = tabla_2020, by = "region", all.x = T)
@@ -1055,7 +1071,6 @@ tabla_f%>% datatable(extensions = 'Buttons',class = 'cell-border stripe',
 )) 
 ```
 
-# Comparación de los ingresos por tipo y región entre los años 2017-2020
 
 ```{r, warning = FALSE, message=FALSE}
 p <- plot_ly(tabla_f, width = 1200, x = ~region, y = ~calculado_2009, name = 'calculado 2009', mode = 'markers') %>% add_lines() 
@@ -1074,23 +1089,22 @@ p
 ```
 
  
-### Ingreso del trabajo hogar: yautcorh 2009-2020
 
-<h3> Datos oficiales </h3>
+
+## ymonecorh 2009-2020
+
+
 
 ```{r, warning = FALSE, message=FALSE}
 datos_oficiales <- read_xlsx("ingresos_oficiales_2006-2020.xlsx")
 datos_oficiales <- cbind(datos_oficiales[,c(9,10)],mutate_if(datos_oficiales[,2:8], is.character, as.numeric))
 datos_oficiales <- filter(datos_oficiales, grepl("ing_mone", ingreso) )
 # datos_oficiales
-kbl(datos_oficiales) %>%
-  kable_styling(bootstrap_options = c("striped", "hover")) %>%
-  kable_paper() %>%
-  scroll_box(width = "100%", height = "300px")
-```
+# kbl(datos_oficiales) %>%
+#   kable_styling(bootstrap_options = c("striped", "hover")) %>%
+#   kable_paper() %>%
+#   scroll_box(width = "100%", height = "300px")
 
-```{r} 
-#### 2020
  
 tabla_prom_reg <- data.frame()
 
@@ -1334,8 +1348,7 @@ tabla_2020$region[tabla_2020$region == "Región de Ayséndel Gral. Carlos Ibáñ
 tabla_2020$region[tabla_2020$region == "Región del Libertador Gral. Bernardo O’Higgins"] <- "Región del Libertador Gral. Bernardo O'Higgins"
 ```
 
- 
-<h3>Datos calculados</h3>
+
 
 ```{r, warning = FALSE, message=FALSE}
 ingresos  = merge(x = tabla_2017, y = tabla_2020, by = "region", all.x = T)
@@ -1368,7 +1381,7 @@ tabla_f%>% datatable(extensions = 'Buttons',class = 'cell-border stripe',
 )) 
 ```
 
-# Comparación de los ingresos por tipo y región entre los años 2017-2020
+
 
 ```{r, warning = FALSE, message=FALSE}
 p <- plot_ly(tabla_f, width = 1200, x = ~region, y = ~calculado_2009, name = 'calculado 2009', mode = 'markers') %>% add_lines() 
@@ -1388,23 +1401,17 @@ p
 
 
 
-### Ingreso del trabajo hogar: yautcorh 2009-2020
 
-<h3> Datos oficiales </h3>
+## ysubh 2009-2020
+
+
 
 ```{r, warning = FALSE, message=FALSE}
 datos_oficiales <- read_xlsx("ingresos_oficiales_2006-2020.xlsx")
 datos_oficiales <- cbind(datos_oficiales[,c(9,10)],mutate_if(datos_oficiales[,2:8], is.character, as.numeric))
 datos_oficiales <- filter(datos_oficiales, grepl("sub_mone", ingreso) )
 # datos_oficiales
-kbl(datos_oficiales) %>%
-  kable_styling(bootstrap_options = c("striped", "hover")) %>%
-  kable_paper() %>%
-  scroll_box(width = "100%", height = "300px")
-```
 
-```{r} 
-#### 2020
  
 tabla_prom_reg <- data.frame()
 
@@ -1649,7 +1656,6 @@ tabla_2020$region[tabla_2020$region == "Región del Libertador Gral. Bernardo O�
 ```
 
  
-<h3>Datos calculados</h3>
 
 ```{r, warning = FALSE, message=FALSE}
 ingresos  = merge(x = tabla_2017, y = tabla_2020, by = "region", all.x = T)
@@ -1683,7 +1689,6 @@ tabla_f %>% datatable(extensions = 'Buttons',class = 'cell-border stripe',
 )) 
 ```
 
-# Comparación de los ingresos por tipo y región entre los años 2017-2020
 
 ```{r, warning = FALSE, message=FALSE}
 p <- plot_ly(tabla_f, width = 1200, x = ~region, y = ~calculado_2009, name = 'calculado 2009', mode = 'markers') %>% add_lines() 
@@ -1704,23 +1709,16 @@ p
 
 
 
-### Ingreso del trabajo hogar: yautcorh 2009-2020
+## ymonecorh
 
-<h3> Datos oficiales </h3>
+
 
 ```{r, warning = FALSE, message=FALSE}
 datos_oficiales <- read_xlsx("ingresos_oficiales_2006-2020.xlsx")
 datos_oficiales <- cbind(datos_oficiales[,c(9,10)],mutate_if(datos_oficiales[,2:8], is.character, as.numeric))
 datos_oficiales <- filter(datos_oficiales, grepl("ing_mone", ingreso) )
 # datos_oficiales
-kbl(datos_oficiales) %>%
-  kable_styling(bootstrap_options = c("striped", "hover")) %>%
-  kable_paper() %>%
-  scroll_box(width = "100%", height = "300px")
-```
 
-```{r} 
-#### 2020
  
 tabla_prom_reg <- data.frame()
 
@@ -1965,7 +1963,7 @@ tabla_2020$region[tabla_2020$region == "Región del Libertador Gral. Bernardo O�
 ```
 
  
-<h3>Datos calculados</h3>
+
 
 ```{r, warning = FALSE, message=FALSE}
 ingresos  = merge(x = tabla_2017, y = tabla_2020, by = "region", all.x = T)
@@ -2000,7 +1998,7 @@ tabla_f%>% datatable(extensions = 'Buttons',class = 'cell-border stripe',
  
  
 
-# Comparación de los ingresos por tipo y región entre los años 2017-2020
+
 
 ```{r, warning = FALSE, message=FALSE}
 p <- plot_ly(tabla_f, width = 1200, x = ~region, y = ~calculado_2009, name = 'calculado 2009', mode = 'markers') %>% add_lines() 
@@ -2018,62 +2016,6 @@ p <- p %>% add_trace(y = ~`publicado_2020`, name = 'Oficial 2020', mode = 'marke
 p
 ```
 
-
-
-
-# Validación de los diferentes tipos de ingreso de la Casen comparando calculos propios con los oficiales ($ noviembre de cada año)
-
-
-
-
-<!-- ########################################################################################### -->
-
-
-![ ](pobreza_1.pdf.png)
-
-link 1[(ver aquí)](http://observatorio.ministeriodesarrollosocial.gob.cl/storage/docs/casen/2020/Resumen_de_resultados_de_Pobreza_por_Ingresos_y_Distribucion_de_Ingresos.pdf) 
-
-
-![](pobreza_2.png)
-
-link 2 [(ver aquí)](http://observatorio.ministeriodesarrollosocial.gob.cl/storage/docs/casen/2006/Resultados_Pobreza_Casen_2006.pdf) 
-
-
-POBREZA EN PORCENTAJE DE PERSONAS 2006
-
-```{r}
-unique(casen2006$CORTE)
- 
-tabla_matp <-xtabs(casen2006$EXPC~COMUNA+CORTE, data = casen2006)
-head(tabla_matp,10)
-```
-
-
-```{r}
-s1 <- sum(tabla_matp[,1])+sum(tabla_matp[,2])+sum(tabla_matp[,3])
-s2 <- sum(tabla_matp[,1])
-
-s2*100/s1
-```
-
-```{r}
-casen_2006_r1 <- filter(casen2006, casen2006$R == "VIII")
-# head(casen_2006_r1)
-```
-
-```{r}
-# casen_2006_r1 %>% filter(!is.na(CORTE))
-
-tabla_matp <-xtabs(casen_2006_r1$EXPR~R+CORTE, data = casen_2006_r1)
-# head(tabla_matp,10)
-```
-
-```{r}
-s1 <- sum(tabla_matp[,1])+sum(tabla_matp[,2])+sum(tabla_matp[,3])
-s2 <- sum(tabla_matp[,3])
- 
-s2*100/s1
-```
 
 
 
@@ -2104,13 +2046,6 @@ integrantes del hogar, excluido el servicio doméstico puertas adentro.
 
 <span style="color:red">folio: Identificación del hogar.</span>
 
-```{r}
-# casen2011 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2011_c.rds")
-# casen2011 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2011_c.rds")
-# casen2011  <- mutate_if(casen2011, is.factor, as.character)
-# head(casen2011,5)
-
-```
 
 ### Hacemos un subset con la region metropolitana
 
@@ -2233,8 +2168,10 @@ ttt
 
 
 ```{r, message=FALSE, warning=FALSE, results='hide'}
-# codigos_comunales <- readRDS(file = "C:/Users/chris/OneDrive/Documentos/archivos_grandes/codigos_comunales_2009.rds")
-codigos_comunales <- readRDS(file = "C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/codigos_comunales_2009.rds")
+
+codigos_comunales <- readRDS(file = "C:/Users/chris/OneDrive/Documentos/archivos_grandes/codigos_comunales_2009.rds")
+# codigos_comunales <- readRDS(file = "C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/codigos_comunales_2009.rds")
+
 names(codigos_comunales)[1] <- "Código"
 names(codigos_comunales)[2] <- "Comuna"
 df_2009 = merge( x = ttt, y = codigos_comunales, by = "Comuna", all.x = TRUE)
@@ -2713,6 +2650,82 @@ tabla_matp <-tabla_matp[!(tabla_matp$Freq == 0),]
             scrollX = TRUE,
             lengthMenu = list(c(10,25,50,-1),c(10,25,50,"All"))
 )) 
+```
+
+
+Uno a nivel **comunal** en la Región Metropolitana y tres a nivel Regional:
+
+i. Ingreso autónomo <span style="color:red">percápita</span> 
+del hogar, CASEN 2011
+($ de noviembre de 2011)
+de la pagina 16 [de aquí](https://ciperchile.cl/wp-content/uploads/INDICE-DE-PRIORIDAD-SOCIAL-2014.pdf
+).
+
+
+ii. Ingreso autónomo promedio e ingreso monetario promedio del hogar a nivel regional el 2015:
+
+https://www.bcn.cl/portal/noticias?id=principales-resultados-sobre-pobreza-e-ingresos-regionales-encuesta-casen-2015
+
+
+Por dos instrumentos diferentes oficiales llegamos a los mismos resultados y son a los cuales intentamos aproximarnos.
+
+
+iii.  Se comparará con la tabla obtenida en las III [(ver aquí)](https://datasocial.ministeriodesarrollosocial.gob.cl/dataSocial/csv/Tablas_Ingreso.xlsx) 
+
+ <!-- ![Tabla de referencia](image_2021_08_12T19_27_00_679Z.png) -->
+
+iiii. Y la otra con una página interactiva con datos por región [(ver aquí)](https://datasocial.ministeriodesarrollosocial.gob.cl/fichaIndicador/513/2)
+
+
+
+
+
+
+
+![ ](pobreza_1.pdf.png)
+
+link 1[(ver aquí)](http://observatorio.ministeriodesarrollosocial.gob.cl/storage/docs/casen/2020/Resumen_de_resultados_de_Pobreza_por_Ingresos_y_Distribucion_de_Ingresos.pdf) 
+
+
+![](pobreza_2.png)
+
+link 2 [(ver aquí)](http://observatorio.ministeriodesarrollosocial.gob.cl/storage/docs/casen/2006/Resultados_Pobreza_Casen_2006.pdf) 
+
+
+POBREZA EN PORCENTAJE DE PERSONAS 2006
+
+```{r}
+unique(casen2006$CORTE)
+ 
+tabla_matp <-xtabs(casen2006$EXPC~COMUNA+CORTE, data = casen2006)
+head(tabla_matp,10)
+```
+
+
+```{r}
+s1 <- sum(tabla_matp[,1])+sum(tabla_matp[,2])+sum(tabla_matp[,3])
+s2 <- sum(tabla_matp[,1])
+
+s2*100/s1
+```
+
+```{r}
+casen_2006_r1 <- filter(casen2006, casen2006$R == "VIII")
+# head(casen_2006_r1)
+```
+
+```{r}
+# casen_2006_r1 %>% filter(!is.na(CORTE))
+
+tabla_matp <-xtabs(casen_2006_r1$EXPR~R+CORTE, data = casen_2006_r1)
+# head(tabla_matp,10)
+```
+
+```{r}
+s1 <- sum(tabla_matp[,1])+sum(tabla_matp[,2])+sum(tabla_matp[,3])
+s2 <- sum(tabla_matp[,3])
+ 
+s2*100/s1
 ```
 
 
