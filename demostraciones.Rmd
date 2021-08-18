@@ -2163,7 +2163,7 @@ names(ttt)[3] <- "Etnia"
 names(ttt)[4] <- "Promedio"
 names(ttt)[5] <- "Desviación standard"
 names(ttt)[6] <- "Año"
-ttt
+
 ```
 
 
@@ -2182,14 +2182,14 @@ tabla_matp2 <- df_2009[complete.cases(df_2009), ]
 <!-- ############################################################################################################# -->
 
 ```{r}
-unique(casen2020$r3)
+
 ```
 ```{r}
-unique(casen2017$r3)
+
 ```
 
 ```{r}
-setdiff(unique(casen2020$r3),unique(casen2017$r3)) 
+
 ```
 ```{r}
 ###
@@ -2241,11 +2241,7 @@ casen2011$r6[casen2011$r6 == "Atacameño (Likán Antai)"] <- "Atacameño (Likan-
 casen2011$r6[casen2011$r6 == "Kawésqar (Alacalufes)"] <- "Kawashkar o Alacalufes" 
 ```
 ```{r}
-unique(casen2020$r3)
-unique(casen2017$r3)
-unique(casen2015$r3)
-unique(casen2013$r6)
-unique(casen2011$r6)
+
 ```
 
                          
@@ -2257,7 +2253,7 @@ unique(casen2011$r6)
 ## Ingreso total: ytotcorh
 
 ```{r , message=FALSE, warning=FALSE, results='hide'}
-codigos_comunales <- readRDS(file = "C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/codigos_comunales_2011-2017.rds")
+codigos_comunales <- readRDS(file = "C:/Users/chris/OneDrive/Documentos/archivos_grandes/codigos_comunales_2011-2017.rds")
 
 funcion1 <- function(n){
   
@@ -2351,7 +2347,7 @@ tabla <<- df
 # ingreso_rds <- paste("oficio4_",variable_in,"_",anio,"pruebas.rds", sep="")
 # saveRDS(df,ingreso_rds)
 
-print(df)
+# print(df)
   # return(df)
 
 }
@@ -2364,21 +2360,16 @@ for (n in 1:5){
 }
 
 tabla_cont_freq <- rbind(tabla_2011,tabla_2013,tabla_2015,tabla_2017,tabla_2020)
-tabla_cont_freq
+head(tabla_cont_freq,10)
 ```
 
-```{r}
-unique(tabla_cont_freq$Etnia)
-```
-"Atacameño (Likan-Antai)" 
-"Atacameño (Likán-Antai)" 
-"Atacameño (Likán Antai)"
+
 <!-- ############################################################################################################# -->
 
 ## Ingreso autonomo del trabajo: yautcor
 
 ```{r , message=FALSE, warning=FALSE, results='hide'}
-codigos_comunales <- readRDS(file = "C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/codigos_comunales_2011-2017.rds")
+codigos_comunales <- readRDS(file = "C:/Users/chris/OneDrive/Documentos/archivos_grandes/codigos_comunales_2011-2017.rds")
 
 funcion1 <- function(n){
   
@@ -2480,7 +2471,7 @@ tabla <<- df
 # ingreso_rds <- paste("oficio4_",variable_in,"_",anio,"pruebas.rds", sep="")
 # saveRDS(df,ingreso_rds)
 
-print(df)
+# print(df)
   # return(df)
 
 }
@@ -2493,7 +2484,7 @@ for (n in 1:5){
 }
 
 tabla_cont_freq <- rbind(tabla_2011,tabla_2013,tabla_2015,tabla_2017,tabla_2020)
-tabla_cont_freq
+head(tabla_cont_freq,10)
 ```
 
 
@@ -2503,7 +2494,7 @@ tabla_cont_freq
 ## Ingreso : yoprcor
 
 ```{r , message=FALSE, warning=FALSE, results='hide'}
-codigos_comunales <- readRDS(file = "C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/codigos_comunales_2011-2017.rds")
+codigos_comunales <- readRDS(file = "C:/Users/chris/OneDrive/Documentos/archivos_grandes/codigos_comunales_2011-2017.rds")
 
 funcion1 <- function(n){
   
@@ -2605,7 +2596,7 @@ tabla <<- df
 # ingreso_rds <- paste("oficio4_",variable_in,"_",anio,"pruebas.rds", sep="")
 # saveRDS(df,ingreso_rds)
 
-print(df)
+# print(df)
   # return(df)
 
 }
@@ -2618,7 +2609,7 @@ for (n in 1:5){
 }
 
 tabla_cont_freq <- rbind(tabla_2011,tabla_2013,tabla_2015,tabla_2017,tabla_2020)
-tabla_cont_freq
+head(tabla_cont_freq,10)
 ```
  
 
@@ -2626,7 +2617,6 @@ tabla_cont_freq
 
 <!-- ############################################################################################################# -->
 
-ytotcor|yautcor|ytrabajocor|yoprcor
 
 ## Frecuencias
 
