@@ -2104,8 +2104,8 @@ integrantes del hogar, excluido el servicio doméstico puertas adentro.
 
 ```{r}
 # casen2011 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2011_c.rds")
-casen2011 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2011_c.rds")
-casen2011  <- mutate_if(casen2011, is.factor, as.character)
+# casen2011 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2011_c.rds")
+# casen2011  <- mutate_if(casen2011, is.factor, as.character)
 # head(casen2011,5)
 
 ```
@@ -2157,7 +2157,7 @@ ccc <- merge(x = aaa, y = bbb, by = "Comuna", all.x = TRUE)
 
 
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 p <- plot_ly(ccc, width = 1200, x = ~
 Comuna, y = ~calculo_propio) %>%
   add_lines()
@@ -2231,7 +2231,7 @@ ttt
 
 
 ```{r, message=FALSE, warning=FALSE, results='hide'}
-codigos_comunales <- readRDS(file = "C:/Users/chris/OneDrive/Documentos/archivos_grandes/codigos_comunales_2009.rds")
+# codigos_comunales <- readRDS(file = "C:/Users/chris/OneDrive/Documentos/archivos_grandes/codigos_comunales_2009.rds")
 codigos_comunales <- readRDS(file = "C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/codigos_comunales_2009.rds")
 names(codigos_comunales)[1] <- "Código"
 names(codigos_comunales)[2] <- "Comuna"
@@ -2240,8 +2240,454 @@ df_2009 <- df_2009[!(df_2009$Promedio == 0),]
 tabla_matp2 <- df_2009[complete.cases(df_2009), ]
 ```
 
+<!-- ############################################################################################################# -->
+
+```{r}
+unique(casen2020$r3)
+```
+```{r}
+unique(casen2017$r3)
+```
+
+```{r}
+setdiff(unique(casen2020$r3),unique(casen2017$r3)) 
+```
+```{r}
+###
+casen2017$r3[casen2017$r3 == "No pertenece a ningún pueblo indígena"] <- "No pertenece a ninguno de estos pueblos indígenas"
+casen2017$r3[casen2017$r3 == "No sabe/no responde"] <- "No pertenece a ninguno de estos pueblos indígenas"
+casen2017$r3[casen2017$r3 == "Mapuche"] <- "Mapuche"
+casen2017$r3[casen2017$r3 == "Diaguita"] <- "Diaguita"
+casen2017$r3[casen2017$r3 == "Collas"] <- "Collas"
+casen2017$r3[casen2017$r3 == "Quechua"] <- "Quechua"
+casen2017$r3[casen2017$r3 == "Yámana o Yagán"] <- "Yámana o Yagán"
+casen2017$r3[casen2017$r3 == "Aimara"] <- "Aimara"
+casen2017$r3[casen2017$r3 == "Rapa-Nui o Pascuenses"] <- "Rapa-Nui o Pascuenses"
+casen2017$r3[casen2017$r3 == "Atacameño (Likan-Antai)"] <- "Atacameño (Likan-Antai)"
+casen2017$r3[casen2017$r3 == "Kawashkar o Alacalufes"] <- "Kawashkar o Alacalufes" 
+###
+casen2015$r3[casen2015$r3 == "No pertenece a ningún pueblo indígena"] <- "No pertenece a ninguno de estos pueblos indígenas"
+casen2015$r3[casen2015$r3 == "Sin dato"] <- "No pertenece a ninguno de estos pueblos indígenas"
+casen2015$r3[casen2015$r3 == "Mapuche"] <- "Mapuche"
+casen2015$r3[casen2015$r3 == "Diaguita"] <- "Diaguita"
+casen2015$r3[casen2015$r3 == "Collas"] <- "Collas"
+casen2015$r3[casen2015$r3 == "Quechua"] <- "Quechua"
+casen2015$r3[casen2015$r3 == "Yámana o Yagán"] <- "Yámana o Yagán"
+casen2015$r3[casen2015$r3 == "Aimara"] <- "Aimara"
+casen2015$r3[casen2015$r3 == "Rapa-Nui o Pascuenses"] <- "Rapa-Nui o Pascuenses"
+casen2015$r3[casen2015$r3 == "Atacameño (Likán-Antai)"] <- "Atacameño (Likan-Antai)"
+casen2015$r3[casen2015$r3 == "Kawashkar o Alacalufes"] <- "Kawashkar o Alacalufes" 
+###
+casen2013$r6[casen2013$r6 == "No pertenece a ningún pueblo indígena"] <- "No pertenece a ninguno de estos pueblos indígenas"
+casen2013$r6[casen2013$r6 == "NS/NR"] <- "No pertenece a ninguno de estos pueblos indígenas"
+casen2013$r6[casen2013$r6 == "Mapuche"] <- "Mapuche"
+casen2013$r6[casen2013$r6 == "Diaguita"] <- "Diaguita"
+casen2013$r6[casen2013$r6 == "Coya"] <- "Collas"
+casen2013$r6[casen2013$r6 == "Quechua"] <- "Quechua"
+casen2013$r6[casen2013$r6 == "Yagán (Yámana)"] <- "Yámana o Yagán"
+casen2013$r6[casen2013$r6 == "Aymara"] <- "Aimara"
+casen2013$r6[casen2013$r6 == "Rapa Nui (Pascuense)"] <- "Rapa-Nui o Pascuenses"
+casen2013$r6[casen2013$r6 == "Atacameño (Likán Antai)"] <- "Atacameño (Likan-Antai)"
+casen2013$r6[casen2013$r6 == "Kawésqar (Alacalufes)"] <- "Kawashkar o Alacalufes" 
+###
+casen2011$r6[casen2011$r6 == "No pertenece a ningún pueblo indígena"] <- "No pertenece a ninguno de estos pueblos indígenas"
+casen2011$r6[casen2011$r6 == "Mapuche"] <- "Mapuche"
+casen2011$r6[casen2011$r6 == "Diaguita"] <- "Diaguita"
+casen2011$r6[casen2011$r6 == "Coya"] <- "Collas"
+casen2011$r6[casen2011$r6 == "Quechua"] <- "Quechua"
+casen2011$r6[casen2011$r6 == "Yagán (Yámana)"] <- "Yámana o Yagán"
+casen2011$r6[casen2011$r6 == "Aymara"] <- "Aimara"
+casen2011$r6[casen2011$r6 == "Rapa Nui (Pascuense)"] <- "Rapa-Nui o Pascuenses"
+casen2011$r6[casen2011$r6 == "Atacameño (Likán Antai)"] <- "Atacameño (Likan-Antai)"
+casen2011$r6[casen2011$r6 == "Kawésqar (Alacalufes)"] <- "Kawashkar o Alacalufes" 
+```
+```{r}
+unique(casen2020$r3)
+unique(casen2017$r3)
+unique(casen2015$r3)
+unique(casen2013$r6)
+unique(casen2011$r6)
+```
+
+                         
+
+<!-- ############################################################################################################# -->
+
+# Tablas de contingencia
+
+## Ingreso total: ytotcorh
+
+```{r , message=FALSE, warning=FALSE, results='hide'}
+codigos_comunales <- readRDS(file = "C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/codigos_comunales_2011-2017.rds")
+
+funcion1 <- function(n){
+  
+ xx<-switch(n,"2011","2013","2015","2017","2020")
+ tanios <<- xx
+ expan<-switch(n,"expc_full","expc","expc_todas","expc","expc")
+ 
+if(xx==2011) {
+ eliminated <- casen2011
+a <- eliminated$ytotaj#ytothaj
+b <- eliminated$comuna
+c <- eliminated$sexo 
+d <- eliminated$r6 #etnia 
+anio <- 2011
+ 
+}
+ 
+if(xx==2013) {
+ eliminated <- casen2013 
+a <- eliminated$ytotcor#ytotcorh
+b <- eliminated$comuna
+c <- eliminated$sexo 
+d <- eliminated$r6 #etnia 
+anio <- 2013
+ 
+}
+ 
+if(xx==2015) {
+  eliminated <- casen2015
+a <- eliminated$ytotcor#ytotcorh
+b <- eliminated$comuna
+c <- eliminated$sexo 
+d <- eliminated$r3 #etnia 
+anio <- 2015 
+}
+ 
+if(xx==2017) {
+  eliminated <- casen2017
+a <- eliminated$ytotcor#ytotcorh
+b <- eliminated$comuna
+c <- eliminated$sexo 
+d <- eliminated$r3 #etnia 
+anio <- 2017 
+}
+ 
+if(xx==2020) {
+  eliminated <- casen2020
+a <- eliminated$ytotcor#ytotcorh
+b <- eliminated$comuna
+c <- eliminated$sexo 
+d <- eliminated$r3 #etnia 
+anio <- 2020 
+}
+tpi <- "ytotcor"
+
+promedios_grupales <-aggregate(a, by=list(b, c, d), FUN = mean , na.rm = TRUE)
+promedios_grupales_sd <-aggregate(a, by=list(b, c, d), FUN = sd , na.rm = TRUE)
+promedios_grupales_gini <-aggregate(a, by=list(b, c, d), FUN = gini , na.rm = TRUE)
+
+promedios_grupales$sd = promedios_grupales_sd$sd.a
+promedios_grupales$gini = promedios_grupales_gini$gini.a
+df<-promedios_grupales
+df$Año <- anio
+df$tipo_ingreso <- tpi
 
 
+tabla_matp <-xtabs(eliminated[,(expan)]~b+c+d, data = eliminated)
+tabla_matp <- as.data.frame(tabla_matp)
+tabla_matp <-tabla_matp[!(tabla_matp$Freq == 0),]
+df$freq <- tabla_matp$Freq
+
+df <- df[complete.cases(df), ]
+ 
+
+names(df)[1] <- "Comuna"
+names(df)[2] <- "Sexo" 
+names(df)[3] <- "Etnia" 
+names(df)[4] <- "Promedio del Ingreso"
+names(df)[5] <- "Desviación standard"
+names(df)[6] <- "Gini"
+names(df)[7] <- "Año" 
+ 
+names(codigos_comunales)[1] <- "Código"
+names(codigos_comunales)[2] <- "Comuna"
+# codigos_comunales
+
+df_2006 = merge( x = df, y = codigos_comunales, by = "Comuna", all.x = TRUE)
+df <-df_2006[!(df_2006$Promedio == 0),]
+tabla <<- df
+# variable_in<-"ytotcor"
+# ingreso_rds <- paste("oficio4_",variable_in,"_",anio,"pruebas.rds", sep="")
+# saveRDS(df,ingreso_rds)
+
+print(df)
+  # return(df)
+
+}
+```
+
+```{r echo= FALSE}
+for (n in 1:5){
+  funcion1(n)
+  assign(paste0("tabla","_",tanios),tabla)
+}
+
+tabla_cont_freq <- rbind(tabla_2011,tabla_2013,tabla_2015,tabla_2017,tabla_2020)
+tabla_cont_freq
+```
+
+```{r}
+unique(tabla_cont_freq$Etnia)
+```
+"Atacameño (Likan-Antai)" 
+"Atacameño (Likán-Antai)" 
+"Atacameño (Likán Antai)"
+<!-- ############################################################################################################# -->
+
+## Ingreso autonomo del trabajo: yautcor
+
+```{r , message=FALSE, warning=FALSE, results='hide'}
+codigos_comunales <- readRDS(file = "C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/codigos_comunales_2011-2017.rds")
+
+funcion1 <- function(n){
+  
+ xx<-switch(n,"2011","2013","2015","2017","2020")
+ tanios <<- xx
+ expan<-switch(n,"expc_full","expc","expc_todas","expc","expc")
+ 
+if(xx==2011) {
+ eliminated <- casen2011
+a <- eliminated$yautaj#yauthaj
+b <- eliminated$comuna
+c <- eliminated$sexo 
+d <- eliminated$r6 #etnia 
+anio <- 2011
+tpi <- "yautcor"
+ 
+}
+ 
+if(xx==2013) {
+ eliminated <- casen2013
+a <- eliminated$yautcor#yautcorh
+b <- eliminated$comuna
+c <- eliminated$sexo 
+d <- eliminated$r6 #etnia 
+anio <- 2013
+tpi <- "yautcor"
+ 
+}
+ 
+if(xx==2015) {
+  eliminated <- casen2015
+a <- eliminated$yautcor#yautcorh
+b <- eliminated$comuna
+c <- eliminated$sexo 
+d <- eliminated$r3 #etnia 
+anio <- 2015 
+tpi <- "yautcor"
+
+}
+ 
+if(xx==2017) {
+  eliminated <- casen2017
+a <- eliminated$yautcor#yautcorh
+b <- eliminated$comuna
+c <- eliminated$sexo 
+d <- eliminated$r3 #etnia 
+anio <- 2017 
+tpi <- "yautcor"
+
+}
+ 
+if(xx==2020) {
+  eliminated <- casen2020
+a <- eliminated$yautcor#yautcorh
+b <- eliminated$comuna
+c <- eliminated$sexo 
+d <- eliminated$r3 #etnia 
+anio <- 2020 
+tpi <- "yautcor"
+
+}
+
+
+promedios_grupales <-aggregate(a, by=list(b, c, d), FUN = mean , na.rm = TRUE)
+promedios_grupales_sd <-aggregate(a, by=list(b, c, d), FUN = sd , na.rm = TRUE)
+promedios_grupales_gini <-aggregate(a, by=list(b, c, d), FUN = gini , na.rm = TRUE)
+
+promedios_grupales$sd = promedios_grupales_sd$sd.a
+promedios_grupales$gini = promedios_grupales_gini$gini.a
+df<-promedios_grupales
+df$Año <- anio
+df$tipo_ingreso <- tpi
+
+
+tabla_matp <-xtabs(eliminated[,(expan)]~b+c+d, data = eliminated)
+tabla_matp <- as.data.frame(tabla_matp)
+tabla_matp <-tabla_matp[!(tabla_matp$Freq == 0),]
+df$freq <- tabla_matp$Freq
+
+df <- df[complete.cases(df), ]
+ 
+
+names(df)[1] <- "Comuna"
+names(df)[2] <- "Sexo" 
+names(df)[3] <- "Etnia" 
+names(df)[4] <- "Promedio del Ingreso"
+names(df)[5] <- "Desviación standard"
+names(df)[6] <- "Gini"
+names(df)[7] <- "Año" 
+ 
+names(codigos_comunales)[1] <- "Código"
+names(codigos_comunales)[2] <- "Comuna"
+# codigos_comunales
+
+df_2006 = merge( x = df, y = codigos_comunales, by = "Comuna", all.x = TRUE)
+df <-df_2006[!(df_2006$Promedio == 0),]
+tabla <<- df
+# variable_in<-"ytotcor"
+# ingreso_rds <- paste("oficio4_",variable_in,"_",anio,"pruebas.rds", sep="")
+# saveRDS(df,ingreso_rds)
+
+print(df)
+  # return(df)
+
+}
+```
+
+```{r echo= FALSE}
+for (n in 1:5){
+  funcion1(n)
+  assign(paste0("tabla","_",tanios),tabla)
+}
+
+tabla_cont_freq <- rbind(tabla_2011,tabla_2013,tabla_2015,tabla_2017,tabla_2020)
+tabla_cont_freq
+```
+
+
+
+<!-- ############################################################################################################# -->
+
+## Ingreso : yoprcor
+
+```{r , message=FALSE, warning=FALSE, results='hide'}
+codigos_comunales <- readRDS(file = "C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/codigos_comunales_2011-2017.rds")
+
+funcion1 <- function(n){
+  
+ xx<-switch(n,"2011","2013","2015","2017","2020")
+ tanios <<- xx
+ expan<-switch(n,"expc_full","expc","expc_todas","expc","expc")
+ 
+if(xx==2011) {
+ eliminated <- casen2011
+a <- eliminated$yopraj#yauthaj
+b <- eliminated$comuna
+c <- eliminated$sexo 
+d <- eliminated$r6 #etnia 
+anio <- 2011
+tpi <- "yoprcor"
+ 
+}
+ 
+if(xx==2013) {
+ eliminated <- casen2013
+a <- eliminated$yoprCor#ytrabajocorh
+b <- eliminated$comuna
+c <- eliminated$sexo 
+d <- eliminated$r6 #etnia 
+anio <- 2013
+tpi <- "yoprcor"
+ 
+}
+ 
+if(xx==2015) {
+  eliminated <- casen2015
+a <- eliminated$yoprCor#ytrabajoCorh
+b <- eliminated$comuna
+c <- eliminated$sexo 
+d <- eliminated$r3 #etnia 
+anio <- 2015 
+tpi <- "yoprcor"
+
+}
+ 
+if(xx==2017) {
+  eliminated <- casen2017
+a <- eliminated$yoprcor#ytrabajocorh
+b <- eliminated$comuna
+c <- eliminated$sexo 
+d <- eliminated$r3 #etnia 
+anio <- 2017 
+tpi <- "yoprcor"
+
+}
+ 
+if(xx==2020) {
+  eliminated <- casen2020
+a <- eliminated$yoprcor#ytrabajocorh
+b <- eliminated$comuna
+c <- eliminated$sexo 
+d <- eliminated$r3 #etnia 
+anio <- 2020 
+tpi <- "yoprcor"
+
+}
+
+
+promedios_grupales <-aggregate(a, by=list(b, c, d), FUN = mean , na.rm = TRUE)
+promedios_grupales_sd <-aggregate(a, by=list(b, c, d), FUN = sd , na.rm = TRUE)
+promedios_grupales_gini <-aggregate(a, by=list(b, c, d), FUN = gini , na.rm = TRUE)
+
+promedios_grupales$sd = promedios_grupales_sd$sd.a
+promedios_grupales$gini = promedios_grupales_gini$gini.a
+df<-promedios_grupales
+df$Año <- anio
+df$tipo_ingreso <- tpi
+
+
+tabla_matp <-xtabs(eliminated[,(expan)]~b+c+d, data = eliminated)
+tabla_matp <- as.data.frame(tabla_matp)
+tabla_matp <-tabla_matp[!(tabla_matp$Freq == 0),]
+df$freq <- tabla_matp$Freq
+
+df <- df[complete.cases(df), ]
+ 
+
+names(df)[1] <- "Comuna"
+names(df)[2] <- "Sexo" 
+names(df)[3] <- "Etnia" 
+names(df)[4] <- "Promedio del Ingreso"
+names(df)[5] <- "Desviación standard"
+names(df)[6] <- "Gini"
+names(df)[7] <- "Año" 
+ 
+names(codigos_comunales)[1] <- "Código"
+names(codigos_comunales)[2] <- "Comuna"
+# codigos_comunales
+
+df_2006 = merge( x = df, y = codigos_comunales, by = "Comuna", all.x = TRUE)
+df <-df_2006[!(df_2006$Promedio == 0),]
+tabla <<- df
+# variable_in<-"ytotcor"
+# ingreso_rds <- paste("oficio4_",variable_in,"_",anio,"pruebas.rds", sep="")
+# saveRDS(df,ingreso_rds)
+
+print(df)
+  # return(df)
+
+}
+```
+
+```{r echo= FALSE}
+for (n in 1:5){
+  funcion1(n)
+  assign(paste0("tabla","_",tanios),tabla)
+}
+
+tabla_cont_freq <- rbind(tabla_2011,tabla_2013,tabla_2015,tabla_2017,tabla_2020)
+tabla_cont_freq
+```
+ 
+
+ 
+
+<!-- ############################################################################################################# -->
+
+ytotcor|yautcor|ytrabajocor|yoprcor
 
 ## Frecuencias
 
