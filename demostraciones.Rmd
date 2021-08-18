@@ -1985,7 +1985,7 @@ tabla_f$por_11_13 <- 100*tabla_f$calculado_2011/tabla_f$calculado_2013
 tabla_f$por_13_15 <- 100*tabla_f$calculado_2013/tabla_f$calculado_2015
 tabla_f$por_15_17 <- 100*tabla_f$calculado_2015/tabla_f$calculado_2017
 tabla_f$por_17_20 <- 100*tabla_f$calculado_2017/tabla_f$calculado_2020
-
+tabla_f <- tabla_f[,c(1,2,3,16,4,17,5,18,6,19,7,20,8:15)]
 tabla_f%>% datatable(extensions = 'Buttons',class = 'cell-border stripe',
           options = list(
             dom = 'Blfrtip',
@@ -1997,6 +1997,8 @@ tabla_f%>% datatable(extensions = 'Buttons',class = 'cell-border stripe',
             lengthMenu = list(c(10,25,50,-1),c(10,25,50,"All"))
 )) 
 ```
+ 
+ 
 
 # Comparación de los ingresos por tipo y región entre los años 2017-2020
 
