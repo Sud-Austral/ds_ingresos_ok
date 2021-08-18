@@ -2029,8 +2029,12 @@ p
 
 ## Ingreso autónomo <span style="color:red">percápita</span>  del hogar, CASEN 2011 ($ de noviembre de 2011) 
 
-Ingreso autónomo per cápita del hogar, promedio de los 
-hogares es el Valor correspondiente a la suma de los ingresos autónomos per cápita de todos los hogares, dividido por el total de hogares. 
+Hasta el momento hemos calculado el ingreso de los hogares. Vamos a añadir un grado de complejidad más al calcular peste valor per cápita. Obtenemos valore para todo Chile y lLlegamos a la conclusión de que no es necesario la expansión.
+
+
+
+Ingreso autónomo per cápita del hogar promedio de los 
+hogares:  valor correspondiente a la suma de los ingresos autónomos per cápita de todos los hogares, dividido por el total de hogares. 
  
 El ingreso autónomo se define como todos los pagos que recibe el hogar, 
 provenientes tanto del trabajo como de la propiedad de los activos. Estos 
@@ -2103,9 +2107,9 @@ p <- p %>% add_trace(y = ~iaph, name = 'iaph', mode = 'markers')
 p
 ```
 
-# Analisis por personas por comuna
+# Análisis de los ingresos por persona por comuna 2017 2020
 
-Si llegamos a tal nivel de sofisticacion con el percapita y las variables calculadas coinciden con las publicadas sobre varios anos, aunque no exista publicacion oficial con la cual comparar a nivel de personas, nuestras estimaciones deberian  estar ok.
+Si llegamos a tal nivel de sofisticación con el percápita y las variables calculadas coinciden con las publicadas sobre varios años, aunque no exista publicacion oficial con la cual comparar a nivel de personas, nuestras estimaciones deberóan  estar ok.
 
 
 Vamos a estimar a nivel porcentual la variación del ingreso total personal entre el 2017 y el 2020 por comuna.
@@ -2179,18 +2183,8 @@ df_2009 <- df_2009[!(df_2009$Promedio == 0),]
 tabla_matp2 <- df_2009[complete.cases(df_2009), ]
 ```
 
-<!-- ############################################################################################################# -->
 
-```{r}
 
-```
-```{r}
-
-```
-
-```{r}
-
-```
 ```{r}
 ###
 casen2017$r3[casen2017$r3 == "No pertenece a ningún pueblo indígena"] <- "No pertenece a ninguno de estos pueblos indígenas"
@@ -2617,30 +2611,7 @@ head(tabla_cont_freq,10)
 
 <!-- ############################################################################################################# -->
 
-
-## Frecuencias
-
-```{r}
-ab <- casen2009
-b <- ab$COMUNA
-c <- ab$SEXO
-d <- ab$T5
-tabla_matp <-xtabs(ab$EXPC~b+c+d, data = ab)
-tabla_matp <- as.data.frame(tabla_matp)
-tabla_matp <-tabla_matp[!(tabla_matp$Freq == 0),]
-
-
- tabla_matp  %>% datatable(extensions = 'Buttons',class = 'cell-border stripe',
-          options = list(
-            dom = 'Blfrtip',
-            buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
-            pageLength = 5,
-            autoWidth = TRUE,
-            
-            scrollX = TRUE,
-            lengthMenu = list(c(10,25,50,-1),c(10,25,50,"All"))
-)) 
-```
+# Análisis de la pobreza
 
 
 Uno a nivel **comunal** en la Región Metropolitana y tres a nivel Regional:
