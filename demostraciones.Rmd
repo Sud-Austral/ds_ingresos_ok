@@ -2166,6 +2166,107 @@ p <- p %>% add_trace(y = ~iaph, name = 'iaph', mode = 'markers')
 p
 ```
 
+# Analisis por personas por comuna
+
+Si llegamos a tal nivel de sofisticacion con el percapita y las variables calculadas coinciden con las publicadas sobre varios anos, aunque no exista publicacion oficial con la cual comparar a nivel de personas, nuestras estimaciones deberian  estar ok.
+
+
+Vamos a estimar a nivel porcentual la variación del ingreso total personal entre el 2017 y el 2020 por comuna.
+
+## Ingresos
+
+```{r}
+salida_001 = aggregate(casen2017[,c("ytotcor")],by = list(PAISES = casen2017$comuna), FUN = mean)
+names(salida_001)[1]<-c("comunas")
+names(salida_001)[2]<-c("promedios totales 2017")
+head(salida_001,10)
+```
+
+```{r}
+salida_002 = aggregate(casen2020[,c("ytotcor")],by = list(PAISES = casen2020$comuna), FUN = mean)
+names(salida_002)[1]<-c("comunas")
+names(salida_002)[2]<-c("promedios totales 2020")
+head(salida_002,10)
+```
+
+
+```{r}
+union_003 <- merge(salida_001,salida_002, by="comunas", all.x = TRUE)
+union_003$difer_por <- (100-100*union_003$`promedios totales 2017`/union_003$`promedios totales 2020`)
+head(union_003,10)
+
+```
+
+
+
+
+2009
+
+```{r, message=FALSE, warning=FALSE, results='hide'}
+ab <- casen2009
+eliminated <-ab
+a <- eliminated$YTOTAJ
+b <- eliminated$COMUNA
+c <- eliminated$SEXO
+d <- eliminated$T5
+
+
+promedios_grupales <-aggregate(a, by=list(b, c, d), FUN = mean , na.rm = TRUE)
+promedios_grupales_sd <-aggregate(a, by=list(b, c, d), FUN = sd , na.rm = TRUE)
+promedios_grupales$sd = promedios_grupales_sd$sd.a
+d<-promedios_grupales
+d$Año <- "2009"
+
+ttt <- d[complete.cases(d), ]
+
+
+names(ttt)[1] <- "Comuna"
+names(ttt)[2] <- "Sexo"
+names(ttt)[3] <- "Etnia"
+names(ttt)[4] <- "Promedio"
+names(ttt)[5] <- "Desviación standard"
+names(ttt)[6] <- "Año"
+ttt
+```
+
+
+```{r, message=FALSE, warning=FALSE, results='hide'}
+codigos_comunales <- readRDS(file = "C:/Users/chris/OneDrive/Documentos/archivos_grandes/codigos_comunales_2009.rds")
+codigos_comunales <- readRDS(file = "C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/codigos_comunales_2009.rds")
+names(codigos_comunales)[1] <- "Código"
+names(codigos_comunales)[2] <- "Comuna"
+df_2009 = merge( x = ttt, y = codigos_comunales, by = "Comuna", all.x = TRUE)
+df_2009 <- df_2009[!(df_2009$Promedio == 0),]
+tabla_matp2 <- df_2009[complete.cases(df_2009), ]
+```
+
+
+
+
+## Frecuencias
+
+```{r}
+ab <- casen2009
+b <- ab$COMUNA
+c <- ab$SEXO
+d <- ab$T5
+tabla_matp <-xtabs(ab$EXPC~b+c+d, data = ab)
+tabla_matp <- as.data.frame(tabla_matp)
+tabla_matp <-tabla_matp[!(tabla_matp$Freq == 0),]
+
+
+ tabla_matp  %>% datatable(extensions = 'Buttons',class = 'cell-border stripe',
+          options = list(
+            dom = 'Blfrtip',
+            buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+            pageLength = 5,
+            autoWidth = TRUE,
+            
+            scrollX = TRUE,
+            lengthMenu = list(c(10,25,50,-1),c(10,25,50,"All"))
+)) 
+```
+
 
 
 
