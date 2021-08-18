@@ -453,14 +453,7 @@ p
 datos_oficiales <- read_xlsx("ingresos_oficiales_2006-2020.xlsx")
 datos_oficiales <- cbind(datos_oficiales[,c(9,10)],mutate_if(datos_oficiales[,2:8], is.character, as.numeric))
 datos_oficiales <- filter(datos_oficiales, grepl("trabajo", ingreso) )
-# datos_oficiales
-kbl(datos_oficiales) %>%
-  kable_styling(bootstrap_options = c("striped", "hover")) %>%
-  kable_paper() %>%
-  scroll_box(width = "100%", height = "300px")
-```
-
-```{r} 
+ 
 #### 2020
 
 tabla_prom_reg <- data.frame()
@@ -727,17 +720,18 @@ tabla_f$por_11_13 <- 100*tabla_f$calculado_2011/tabla_f$calculado_2013
 tabla_f$por_13_15 <- 100*tabla_f$calculado_2013/tabla_f$calculado_2015
 tabla_f$por_15_17 <- 100*tabla_f$calculado_2015/tabla_f$calculado_2017
 tabla_f$por_17_20 <- 100*tabla_f$calculado_2017/tabla_f$calculado_2020
-
-tabla_f%>% datatable(extensions = 'Buttons',class = 'cell-border stripe',
-          options = list(
-            dom = 'Blfrtip',
-            buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
-            pageLength = 5,
-            autoWidth = TRUE,
-            
-            scrollX = TRUE,
-            lengthMenu = list(c(10,25,50,-1),c(10,25,50,"All"))
-)) 
+tabla_f <- tabla_f[,c(1,2,3,16,4,17,5,18,6,19,7,20,8:15)]
+datatable(tabla_f, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+          options = list(dom = 'Bfrtip',
+          buttons = list('colvis', list(extend = 'collection',
+          buttons = list(
+          list(extend='csv',
+            filename = 'hitStats'),
+          list(extend='excel',
+            filename = 'hitStats'),
+          list(extend='pdf',
+            filename= 'hitStats')),
+          text = 'Download')), scrollX = TRUE))
 ```
 
 # Comparación de los ingresos por tipo y región entre los años 2017-2020
@@ -768,14 +762,7 @@ p
 datos_oficiales <- read_xlsx("ingresos_oficiales_2006-2020.xlsx")
 datos_oficiales <- cbind(datos_oficiales[,c(9,10)],mutate_if(datos_oficiales[,2:8], is.character, as.numeric))
 datos_oficiales <- filter(datos_oficiales, grepl("autonomo", ingreso) )
-# datos_oficiales
-kbl(datos_oficiales) %>%
-  kable_styling(bootstrap_options = c("striped", "hover")) %>%
-  kable_paper() %>%
-  scroll_box(width = "100%", height = "300px")
-```
-
-```{r} 
+ 
 #### 2020
 
 tabla_prom_reg <- data.frame()
@@ -1042,17 +1029,18 @@ tabla_f$por_11_13 <- 100*tabla_f$calculado_2011/tabla_f$calculado_2013
 tabla_f$por_13_15 <- 100*tabla_f$calculado_2013/tabla_f$calculado_2015
 tabla_f$por_15_17 <- 100*tabla_f$calculado_2015/tabla_f$calculado_2017
 tabla_f$por_17_20 <- 100*tabla_f$calculado_2017/tabla_f$calculado_2020
-
-tabla_f%>% datatable(extensions = 'Buttons',class = 'cell-border stripe',
-          options = list(
-            dom = 'Blfrtip',
-            buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
-            pageLength = 5,
-            autoWidth = TRUE,
-            
-            scrollX = TRUE,
-            lengthMenu = list(c(10,25,50,-1),c(10,25,50,"All"))
-)) 
+tabla_f <- tabla_f[,c(1,2,3,16,4,17,5,18,6,19,7,20,8:15)]
+datatable(tabla_f, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+          options = list(dom = 'Bfrtip',
+          buttons = list('colvis', list(extend = 'collection',
+          buttons = list(
+          list(extend='csv',
+            filename = 'hitStats'),
+          list(extend='excel',
+            filename = 'hitStats'),
+          list(extend='pdf',
+            filename= 'hitStats')),
+          text = 'Download')), scrollX = TRUE))
 ```
 
 # Comparación de los ingresos por tipo y región entre los años 2017-2020
@@ -1082,14 +1070,7 @@ p
 datos_oficiales <- read_xlsx("ingresos_oficiales_2006-2020.xlsx")
 datos_oficiales <- cbind(datos_oficiales[,c(9,10)],mutate_if(datos_oficiales[,2:8], is.character, as.numeric))
 datos_oficiales <- filter(datos_oficiales, grepl("ing_mone", ingreso) )
-# datos_oficiales
-kbl(datos_oficiales) %>%
-  kable_styling(bootstrap_options = c("striped", "hover")) %>%
-  kable_paper() %>%
-  scroll_box(width = "100%", height = "300px")
-```
-
-```{r} 
+ 
 #### 2020
  
 tabla_prom_reg <- data.frame()
@@ -1355,17 +1336,18 @@ tabla_f$por_11_13 <- 100*tabla_f$calculado_2011/tabla_f$calculado_2013
 tabla_f$por_13_15 <- 100*tabla_f$calculado_2013/tabla_f$calculado_2015
 tabla_f$por_15_17 <- 100*tabla_f$calculado_2015/tabla_f$calculado_2017
 tabla_f$por_17_20 <- 100*tabla_f$calculado_2017/tabla_f$calculado_2020
-
-tabla_f%>% datatable(extensions = 'Buttons',class = 'cell-border stripe',
-          options = list(
-            dom = 'Blfrtip',
-            buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
-            pageLength = 5,
-            autoWidth = TRUE,
-            
-            scrollX = TRUE,
-            lengthMenu = list(c(10,25,50,-1),c(10,25,50,"All"))
-)) 
+tabla_f <- tabla_f[,c(1,2,3,16,4,17,5,18,6,19,7,20,8:15)]
+datatable(tabla_f, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+          options = list(dom = 'Bfrtip',
+          buttons = list('colvis', list(extend = 'collection',
+          buttons = list(
+          list(extend='csv',
+            filename = 'hitStats'),
+          list(extend='excel',
+            filename = 'hitStats'),
+          list(extend='pdf',
+            filename= 'hitStats')),
+          text = 'Download')), scrollX = TRUE))
 ```
 
 # Comparación de los ingresos por tipo y región entre los años 2017-2020
@@ -1396,14 +1378,7 @@ p
 datos_oficiales <- read_xlsx("ingresos_oficiales_2006-2020.xlsx")
 datos_oficiales <- cbind(datos_oficiales[,c(9,10)],mutate_if(datos_oficiales[,2:8], is.character, as.numeric))
 datos_oficiales <- filter(datos_oficiales, grepl("sub_mone", ingreso) )
-# datos_oficiales
-kbl(datos_oficiales) %>%
-  kable_styling(bootstrap_options = c("striped", "hover")) %>%
-  kable_paper() %>%
-  scroll_box(width = "100%", height = "300px")
-```
-
-```{r} 
+ 
 #### 2020
  
 tabla_prom_reg <- data.frame()
@@ -1671,16 +1646,18 @@ tabla_f$por_13_15 <- 100*tabla_f$calculado_2013/tabla_f$calculado_2015
 tabla_f$por_15_17 <- 100*tabla_f$calculado_2015/tabla_f$calculado_2017
 tabla_f$por_17_20 <- 100*tabla_f$calculado_2017/tabla_f$calculado_2020
 
-tabla_f %>% datatable(extensions = 'Buttons',class = 'cell-border stripe',
-            options = list(
-            dom = 'Blfrtip',
-            buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
-            pageLength = 5,
-            autoWidth = TRUE,
-            
-            scrollX = TRUE,
-            lengthMenu = list(c(10,25,50,-1),c(10,25,50,"All"))
-)) 
+tabla_f <- tabla_f[,c(1,2,3,16,4,17,5,18,6,19,7,20,8:15)]
+datatable(tabla_f, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+          options = list(dom = 'Bfrtip',
+          buttons = list('colvis', list(extend = 'collection',
+          buttons = list(
+          list(extend='csv',
+            filename = 'hitStats'),
+          list(extend='excel',
+            filename = 'hitStats'),
+          list(extend='pdf',
+            filename= 'hitStats')),
+          text = 'Download')), scrollX = TRUE))
 ```
 
 # Comparación de los ingresos por tipo y región entre los años 2017-2020
@@ -1712,14 +1689,7 @@ p
 datos_oficiales <- read_xlsx("ingresos_oficiales_2006-2020.xlsx")
 datos_oficiales <- cbind(datos_oficiales[,c(9,10)],mutate_if(datos_oficiales[,2:8], is.character, as.numeric))
 datos_oficiales <- filter(datos_oficiales, grepl("ing_mone", ingreso) )
-# datos_oficiales
-kbl(datos_oficiales) %>%
-  kable_styling(bootstrap_options = c("striped", "hover")) %>%
-  kable_paper() %>%
-  scroll_box(width = "100%", height = "300px")
-```
-
-```{r} 
+ 
 #### 2020
  
 tabla_prom_reg <- data.frame()
@@ -1986,16 +1956,17 @@ tabla_f$por_13_15 <- 100*tabla_f$calculado_2013/tabla_f$calculado_2015
 tabla_f$por_15_17 <- 100*tabla_f$calculado_2015/tabla_f$calculado_2017
 tabla_f$por_17_20 <- 100*tabla_f$calculado_2017/tabla_f$calculado_2020
 tabla_f <- tabla_f[,c(1,2,3,16,4,17,5,18,6,19,7,20,8:15)]
-tabla_f%>% datatable(extensions = 'Buttons',class = 'cell-border stripe',
-          options = list(
-            dom = 'Blfrtip',
-            buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
-            pageLength = 5,
-            autoWidth = TRUE,
-            
-            scrollX = TRUE,
-            lengthMenu = list(c(10,25,50,-1),c(10,25,50,"All"))
-)) 
+datatable(tabla_f, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+          options = list(dom = 'Bfrtip',
+          buttons = list('colvis', list(extend = 'collection',
+          buttons = list(
+          list(extend='csv',
+            filename = 'hitStats'),
+          list(extend='excel',
+            filename = 'hitStats'),
+          list(extend='pdf',
+            filename= 'hitStats')),
+          text = 'Download')), scrollX = TRUE))
 ```
  
  
@@ -2196,40 +2167,9 @@ head(salida_002,10)
 union_003 <- merge(salida_001,salida_002, by="comunas", all.x = TRUE)
 union_003$difer_por <- (100-100*union_003$`promedios totales 2017`/union_003$`promedios totales 2020`)
 head(union_003,10)
-
 ```
 
 
-
-
-2009
-
-```{r, message=FALSE, warning=FALSE, results='hide'}
-ab <- casen2009
-eliminated <-ab
-a <- eliminated$YTOTAJ
-b <- eliminated$COMUNA
-c <- eliminated$SEXO
-d <- eliminated$T5
-
-
-promedios_grupales <-aggregate(a, by=list(b, c, d), FUN = mean , na.rm = TRUE)
-promedios_grupales_sd <-aggregate(a, by=list(b, c, d), FUN = sd , na.rm = TRUE)
-promedios_grupales$sd = promedios_grupales_sd$sd.a
-d<-promedios_grupales
-d$Año <- "2009"
-
-ttt <- d[complete.cases(d), ]
-
-
-names(ttt)[1] <- "Comuna"
-names(ttt)[2] <- "Sexo"
-names(ttt)[3] <- "Etnia"
-names(ttt)[4] <- "Promedio"
-names(ttt)[5] <- "Desviación standard"
-names(ttt)[6] <- "Año"
-ttt
-```
 
 
 ```{r, message=FALSE, warning=FALSE, results='hide'}
@@ -2244,16 +2184,6 @@ tabla_matp2 <- df_2009[complete.cases(df_2009), ]
 
 <!-- ############################################################################################################# -->
 
-```{r}
-unique(casen2020$r3)
-```
-```{r}
-unique(casen2017$r3)
-```
-
-```{r}
-setdiff(unique(casen2020$r3),unique(casen2017$r3)) 
-```
 ```{r}
 ###
 casen2017$r3[casen2017$r3 == "No pertenece a ningún pueblo indígena"] <- "No pertenece a ninguno de estos pueblos indígenas"
@@ -2303,15 +2233,7 @@ casen2011$r6[casen2011$r6 == "Rapa Nui (Pascuense)"] <- "Rapa-Nui o Pascuenses"
 casen2011$r6[casen2011$r6 == "Atacameño (Likán Antai)"] <- "Atacameño (Likan-Antai)"
 casen2011$r6[casen2011$r6 == "Kawésqar (Alacalufes)"] <- "Kawashkar o Alacalufes" 
 ```
-```{r}
-unique(casen2020$r3)
-unique(casen2017$r3)
-unique(casen2015$r3)
-unique(casen2013$r6)
-unique(casen2011$r6)
-```
 
-                         
 
 <!-- ############################################################################################################# -->
 
@@ -2414,7 +2336,7 @@ tabla <<- df
 # ingreso_rds <- paste("oficio4_",variable_in,"_",anio,"pruebas.rds", sep="")
 # saveRDS(df,ingreso_rds)
 
-print(df)
+# print(df)
   # return(df)
 
 }
@@ -2427,15 +2349,19 @@ for (n in 1:5){
 }
 
 tabla_cont_freq <- rbind(tabla_2011,tabla_2013,tabla_2015,tabla_2017,tabla_2020)
-tabla_cont_freq
+datatable(tabla_cont_freq, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+          options = list(dom = 'Bfrtip',
+          buttons = list('colvis', list(extend = 'collection',
+          buttons = list(
+          list(extend='csv',
+            filename = 'hitStats'),
+          list(extend='excel',
+            filename = 'hitStats'),
+          list(extend='pdf',
+            filename= 'hitStats')),
+          text = 'Download')), scrollX = TRUE))
 ```
-
-```{r}
-unique(tabla_cont_freq$Etnia)
-```
-"Atacameño (Likan-Antai)" 
-"Atacameño (Likán-Antai)" 
-"Atacameño (Likán Antai)"
+ 
 <!-- ############################################################################################################# -->
 
 ## Ingreso autonomo del trabajo: yautcor
@@ -2543,7 +2469,7 @@ tabla <<- df
 # ingreso_rds <- paste("oficio4_",variable_in,"_",anio,"pruebas.rds", sep="")
 # saveRDS(df,ingreso_rds)
 
-print(df)
+# print(df)
   # return(df)
 
 }
@@ -2556,8 +2482,152 @@ for (n in 1:5){
 }
 
 tabla_cont_freq <- rbind(tabla_2011,tabla_2013,tabla_2015,tabla_2017,tabla_2020)
-tabla_cont_freq
+datatable(tabla_cont_freq, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+          options = list(dom = 'Bfrtip',
+          buttons = list('colvis', list(extend = 'collection',
+          buttons = list(
+          list(extend='csv',
+            filename = 'hitStats'),
+          list(extend='excel',
+            filename = 'hitStats'),
+          list(extend='pdf',
+            filename= 'hitStats')),
+          text = 'Download')), scrollX = TRUE))
 ```
+
+
+
+
+<!-- ############################################################################################################# -->
+
+
+
+```{r , message=FALSE, warning=FALSE, results='hide'}
+codigos_comunales <- readRDS(file = "C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/codigos_comunales_2011-2017.rds")
+
+funcion1 <- function(n){
+  
+ xx<-switch(n,"2011","2013","2015","2017","2020")
+ tanios <<- xx
+ expan<-switch(n,"expc_full","expc","expc_todas","expc","expc")
+ 
+if(xx==2011) {
+ eliminated <- casen2011
+a <- eliminated$ytrabaj#yauthaj
+b <- eliminated$comuna
+c <- eliminated$sexo 
+d <- eliminated$r6 #etnia 
+anio <- 2011 
+ 
+}
+ 
+if(xx==2013) {
+ eliminated <- casen2013
+a <- eliminated$ytrabajoCor#yautcorh
+b <- eliminated$comuna
+c <- eliminated$sexo 
+d <- eliminated$r6 #etnia 
+anio <- 2013 
+ 
+}
+ 
+if(xx==2015) {
+  eliminated <- casen2015
+a <- eliminated$ytrabajoCor#yautcorh
+b <- eliminated$comuna
+c <- eliminated$sexo 
+d <- eliminated$r3 #etnia 
+anio <- 2015  
+
+}
+ 
+if(xx==2017) {
+  eliminated <- casen2017
+a <- eliminated$ytrabajocor#yautcorh
+b <- eliminated$comuna
+c <- eliminated$sexo 
+d <- eliminated$r3 #etnia 
+anio <- 2017  
+
+}
+ 
+if(xx==2020) {
+  eliminated <- casen2020
+a <- eliminated$ytrabajocor#yautcorh
+b <- eliminated$comuna
+c <- eliminated$sexo 
+d <- eliminated$r3 #etnia 
+anio <- 2020 
+
+
+}
+tpi <- "ytrabajocor"
+
+promedios_grupales <-aggregate(a, by=list(b, c, d), FUN = mean , na.rm = TRUE)
+promedios_grupales_sd <-aggregate(a, by=list(b, c, d), FUN = sd , na.rm = TRUE)
+promedios_grupales_gini <-aggregate(a, by=list(b, c, d), FUN = gini , na.rm = TRUE)
+
+promedios_grupales$sd = promedios_grupales_sd$sd.a
+promedios_grupales$gini = promedios_grupales_gini$gini.a
+df<-promedios_grupales
+df$Año <- anio
+df$tipo_ingreso <- tpi
+
+
+tabla_matp <-xtabs(eliminated[,(expan)]~b+c+d, data = eliminated)
+tabla_matp <- as.data.frame(tabla_matp)
+tabla_matp <-tabla_matp[!(tabla_matp$Freq == 0),]
+df$freq <- tabla_matp$Freq
+
+df <- df[complete.cases(df), ]
+ 
+
+names(df)[1] <- "Comuna"
+names(df)[2] <- "Sexo" 
+names(df)[3] <- "Etnia" 
+names(df)[4] <- "Promedio del Ingreso"
+names(df)[5] <- "Desviación standard"
+names(df)[6] <- "Gini"
+names(df)[7] <- "Año" 
+ 
+names(codigos_comunales)[1] <- "Código"
+names(codigos_comunales)[2] <- "Comuna"
+# codigos_comunales
+
+df_2006 = merge( x = df, y = codigos_comunales, by = "Comuna", all.x = TRUE)
+df <-df_2006[!(df_2006$Promedio == 0),]
+tabla <<- df
+# variable_in<-"ytotcor"
+# ingreso_rds <- paste("oficio4_",variable_in,"_",anio,"pruebas.rds", sep="")
+# saveRDS(df,ingreso_rds)
+
+# print(df)
+  # return(df)
+
+}
+```
+
+```{r echo= FALSE}
+for (n in 1:5){
+  funcion1(n)
+  assign(paste0("tabla","_",tanios),tabla)
+}
+
+tabla_cont_freq <- rbind(tabla_2011,tabla_2013,tabla_2015,tabla_2017,tabla_2020)
+datatable(tabla_cont_freq, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+          options = list(dom = 'Bfrtip',
+          buttons = list('colvis', list(extend = 'collection',
+          buttons = list(
+          list(extend='csv',
+            filename = 'hitStats'),
+          list(extend='excel',
+            filename = 'hitStats'),
+          list(extend='pdf',
+            filename= 'hitStats')),
+          text = 'Download')), scrollX = TRUE))
+```
+
+
 
 
 
@@ -2668,7 +2738,7 @@ tabla <<- df
 # ingreso_rds <- paste("oficio4_",variable_in,"_",anio,"pruebas.rds", sep="")
 # saveRDS(df,ingreso_rds)
 
-print(df)
+# print(df)
   # return(df)
 
 }
@@ -2681,7 +2751,17 @@ for (n in 1:5){
 }
 
 tabla_cont_freq <- rbind(tabla_2011,tabla_2013,tabla_2015,tabla_2017,tabla_2020)
-tabla_cont_freq
+datatable(tabla_cont_freq, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+          options = list(dom = 'Bfrtip',
+          buttons = list('colvis', list(extend = 'collection',
+          buttons = list(
+          list(extend='csv',
+            filename = 'hitStats'),
+          list(extend='excel',
+            filename = 'hitStats'),
+          list(extend='pdf',
+            filename= 'hitStats')),
+          text = 'Download')), scrollX = TRUE))
 ```
  
 
@@ -2689,31 +2769,7 @@ tabla_cont_freq
 
 <!-- ############################################################################################################# -->
 
-ytotcor|yautcor|ytrabajocor|yoprcor
-
-## Frecuencias
-
-```{r}
-ab <- casen2009
-b <- ab$COMUNA
-c <- ab$SEXO
-d <- ab$T5
-tabla_matp <-xtabs(ab$EXPC~b+c+d, data = ab)
-tabla_matp <- as.data.frame(tabla_matp)
-tabla_matp <-tabla_matp[!(tabla_matp$Freq == 0),]
-
-
- tabla_matp  %>% datatable(extensions = 'Buttons',class = 'cell-border stripe',
-          options = list(
-            dom = 'Blfrtip',
-            buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
-            pageLength = 5,
-            autoWidth = TRUE,
-            
-            scrollX = TRUE,
-            lengthMenu = list(c(10,25,50,-1),c(10,25,50,"All"))
-)) 
-```
+ 
 
 
 
