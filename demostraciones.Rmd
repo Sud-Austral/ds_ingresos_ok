@@ -1993,6 +1993,7 @@ datatable(tabla_f, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
 ```
  
  
+ 
 
 
 
