@@ -464,7 +464,7 @@ p
 
 # Generalización
 
-## yautcorh 2009-2020
+## ytrabajocorh 2009-2020
 
 <!-- <h3> Datos oficiales </h3> -->
 
@@ -1703,7 +1703,7 @@ p
 
 
 
-## ymonecorh
+## ymonecorh 2009-2020
 
 
 
@@ -2811,6 +2811,209 @@ s2 <- sum(tabla_matp[,3])
  
 s2*100/s1
 ```
+
+
+
+
+
+
+
+
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Ingresos de los hogares versus el de las personas
+
+Tenemos un problema en el que nos percatamos que los ingresos de los hogares entre el 2017 y el 2020 no caen de forma tan dramática como lo hacen los ingresos personales. Entonces vamos a hacer una verifición manual en torno a éstos dos estadios.
+
+Estudiaremos el subset de Algarrobo.
+
+En el primer par de grupos clacularemos para el 2027 y el 2020 el ingreso per cápita promedio de los hogares. En el segundo set, las cifras duras en términos individuales.
+
+
+2017
+
+
+```{r}
+options(scipen=999)
+casen2017_algarrobo <- filter(casen2017, casen2017$comuna == "Algarrobo")
+casen2017_algarrobo_head <- casen2017_algarrobo
+casen2017_algarrobo_head <- casen2017_algarrobo_head[,c(1,2,658, 756,743,744,759)]
+casen2017_algarrobo_head
+
+
+
+```
+
+Análisis:
+
+1 Eliminemos los NA
+
+```{r}
+casen2017_algarrobo_head_sin_na <- mutate_at(casen2017_algarrobo_head, c("ytot", "ytotcor", "ytoth", "yaimh","ytotcorh"), ~replace(., is.na(.), 0))
+casen2017_algarrobo_head_sin_na
+write_xlsx(casen2017_algarrobo_head_sin_na,"casen2017_algarrobo_head_sin_na.xlsx")
+```
+
+2 Calculemos el promedio de ytot para obtener los ingresos totales per capita:
+
+
+```{r}
+mean(casen2017_algarrobo_head_sin_na$ytotcor)
+```
+
+3 Calculemos los ingresos por hogar per capita
+
+```{r}
+tabla <- table(casen2017_algarrobo_head_sin_na$folio)
+tabla <- as.data.frame(tabla)
+colnames(tabla) <- c("folio","freq_folio")
+tabla
+```
+
+
+```{r}
+casen_fh <- casen2017_algarrobo_head_sin_na[,c("comuna","folio","ytotcorh")]
+casen_fh$folio <- as.character(casen_fh$folio)
+repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
+rr <- repetidos2[!duplicated(repetidos2$folio), ]
+rr
+```
+
+
+```{r}
+rr$multi <- rr$ytotcorh/rr$freq_folio
+rr
+```
+
+```{r}
+mean(rr$multi)
+```
+
+
+
+
+```{r}
+casen2017
+```
+
+
+
+
+
+
+
+
+
+```{r}
+casen2017$yaimcorh
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2020
+
+```{r}
+options(scipen=999)
+casen2017_algarrobo <- filter(casen2020, casen2020$comuna == "Algarrobo")
+casen2017_algarrobo_head <- casen2017_algarrobo
+casen2017_algarrobo_head <- casen2017_algarrobo_head[,c(1,7,468,566,560,753)]
+casen2017_algarrobo_head
+```
+
+
+
+Existen tanto areas urbanas como rurales en Algarrobo.
+Consideraremos ambas.
+
+```{r}
+unique(casen2017_algarrobo$zona)
+```
+
+El ingreso percápita para la comuna de Algarrobo el año 2017 fue: 
+
+(Segun el ministerio de Hacienda el Ingreso Per Cápita es el
+Ingreso por habitante. Es el resultado de la razón entre el producto total de un país en un determinado año y su número de habitantes.)
+
+
+```{r}
+mean(casen2017_algarrobo$ytotcor, trim=0.0, na.rm=TRUE)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+head(union_003,10)
+```
+
+
+
+
+
+
+
+
+
+
 
 
 
