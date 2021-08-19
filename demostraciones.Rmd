@@ -3276,7 +3276,7 @@ casen2017$yaimcorh
 options(scipen=999)
 casen2017_algarrobo <- filter(casen2020, casen2020$comuna == "Algarrobo")
 casen2017_algarrobo_head <- casen2017_algarrobo
-casen2017_algarrobo_head <- casen2017_algarrobo_head[,c(1,7,468,566,560,753)]
+# casen2017_algarrobo_head <- casen2017_algarrobo_head[,c(1,7,468,566,560,753)]
 casen2017_algarrobo_head
 ```
 
