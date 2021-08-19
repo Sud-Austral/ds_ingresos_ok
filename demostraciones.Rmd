@@ -733,12 +733,17 @@ datos_oficiales$region[datos_oficiales$region == "Región del Libertador Gral. B
 tabla_f = merge( x = ingresos, y = datos_oficiales, by = "region" , all.x = T)
 tabla_f <- tabla_f[,c(8,1:7,9:15)] 
 
-tabla_f$por_09_11 <- 100*tabla_f$calculado_2009/tabla_f$calculado_2011
-tabla_f$por_11_13 <- 100*tabla_f$calculado_2011/tabla_f$calculado_2013
-tabla_f$por_13_15 <- 100*tabla_f$calculado_2013/tabla_f$calculado_2015
-tabla_f$por_15_17 <- 100*tabla_f$calculado_2015/tabla_f$calculado_2017
-tabla_f$por_17_20 <- 100*tabla_f$calculado_2017/tabla_f$calculado_2020
-tabla_f <- tabla_f[,c(1,2,3,16,4,17,5,18,6,19,7,20,8:15)]
+
+tabla_f$por_09_11 <- 100-100*tabla_f$calculado_2009/tabla_f$calculado_2011
+tabla_f$por_11_13 <- 100-100*tabla_f$calculado_2011/tabla_f$calculado_2013
+tabla_f$por_13_15 <- 100- 100*tabla_f$calculado_2013/tabla_f$calculado_2015
+tabla_f$por_15_17 <- 100-100*tabla_f$calculado_2015/tabla_f$calculado_2017
+tabla_f$por_17_20 <- 100-100*tabla_f$calculado_2017/tabla_f$calculado_2020
+
+# tabla_f <- tabla_f[,c(1,2,3,16,4,17,5,18,6,19,7,20,8:15)]
+
+tabla_f <- tabla_f[,c(1,2,3,4,16,4,5,17,5,6,18,6,7,19,7,8,20,9:15)]
+
 datatable(tabla_f, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
           options = list(dom = 'Bfrtip',
           buttons = list('colvis', list(extend = 'collection',
@@ -1042,12 +1047,12 @@ datos_oficiales$region[datos_oficiales$region == "Región del Libertador Gral. B
 tabla_f = merge( x = ingresos, y = datos_oficiales, by = "region" , all.x = T)
 tabla_f <- tabla_f[,c(8,1:7,9:15)] 
 
-tabla_f$por_09_11 <- 100*tabla_f$calculado_2009/tabla_f$calculado_2011
-tabla_f$por_11_13 <- 100*tabla_f$calculado_2011/tabla_f$calculado_2013
-tabla_f$por_13_15 <- 100*tabla_f$calculado_2013/tabla_f$calculado_2015
-tabla_f$por_15_17 <- 100*tabla_f$calculado_2015/tabla_f$calculado_2017
-tabla_f$por_17_20 <- 100*tabla_f$calculado_2017/tabla_f$calculado_2020
-tabla_f <- tabla_f[,c(1,2,3,16,4,17,5,18,6,19,7,20,8:15)]
+tabla_f$por_09_11 <- 100-100*tabla_f$calculado_2009/tabla_f$calculado_2011
+tabla_f$por_11_13 <-  100-100*tabla_f$calculado_2011/tabla_f$calculado_2013
+tabla_f$por_13_15 <-  100-100*tabla_f$calculado_2013/tabla_f$calculado_2015
+tabla_f$por_15_17 <- 100- 100*tabla_f$calculado_2015/tabla_f$calculado_2017
+tabla_f$por_17_20 <-  100-100*tabla_f$calculado_2017/tabla_f$calculado_2020
+tabla_f <- tabla_f[,c(1,2,3,4,16,4,5,17,5,6,18,6,7,19,7,8,20,9:15)]
 datatable(tabla_f, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
           options = list(dom = 'Bfrtip',
           buttons = list('colvis', list(extend = 'collection',
@@ -1349,12 +1354,12 @@ datos_oficiales$region[datos_oficiales$region == "Región del Libertador Gral. B
 tabla_f = merge( x = ingresos, y = datos_oficiales, by = "region" , all.x = T)
 tabla_f <- tabla_f[,c(8,1:7,9:15)] 
 
-tabla_f$por_09_11 <- 100*tabla_f$calculado_2009/tabla_f$calculado_2011
-tabla_f$por_11_13 <- 100*tabla_f$calculado_2011/tabla_f$calculado_2013
-tabla_f$por_13_15 <- 100*tabla_f$calculado_2013/tabla_f$calculado_2015
-tabla_f$por_15_17 <- 100*tabla_f$calculado_2015/tabla_f$calculado_2017
-tabla_f$por_17_20 <- 100*tabla_f$calculado_2017/tabla_f$calculado_2020
-tabla_f <- tabla_f[,c(1,2,3,16,4,17,5,18,6,19,7,20,8:15)]
+tabla_f$por_09_11 <- 100-100*tabla_f$calculado_2009/tabla_f$calculado_2011
+tabla_f$por_11_13 <- 100-100*tabla_f$calculado_2011/tabla_f$calculado_2013
+tabla_f$por_13_15 <- 100- 100*tabla_f$calculado_2013/tabla_f$calculado_2015
+tabla_f$por_15_17 <- 100- 100*tabla_f$calculado_2015/tabla_f$calculado_2017
+tabla_f$por_17_20 <- 100- 100*tabla_f$calculado_2017/tabla_f$calculado_2020
+tabla_f <- tabla_f[,c(1,2,3,4,16,4,5,17,5,6,18,6,7,19,7,8,20,9:15)]
 datatable(tabla_f, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
           options = list(dom = 'Bfrtip',
           buttons = list('colvis', list(extend = 'collection',
@@ -1659,13 +1664,12 @@ tabla_f = merge( x = ingresos, y = datos_oficiales, by = "region" , all.x = T)
 tabla_f <- tabla_f[,c(8,1:7,9:15)] 
 
 
-tabla_f$por_09_11 <- 100*tabla_f$calculado_2009/tabla_f$calculado_2011
-tabla_f$por_11_13 <- 100*tabla_f$calculado_2011/tabla_f$calculado_2013
-tabla_f$por_13_15 <- 100*tabla_f$calculado_2013/tabla_f$calculado_2015
-tabla_f$por_15_17 <- 100*tabla_f$calculado_2015/tabla_f$calculado_2017
-tabla_f$por_17_20 <- 100*tabla_f$calculado_2017/tabla_f$calculado_2020
-
-tabla_f <- tabla_f[,c(1,2,3,16,4,17,5,18,6,19,7,20,8:15)]
+tabla_f$por_09_11 <- 100-100*tabla_f$calculado_2009/tabla_f$calculado_2011
+tabla_f$por_11_13 <- 100-100*tabla_f$calculado_2011/tabla_f$calculado_2013
+tabla_f$por_13_15 <- 100-100*tabla_f$calculado_2013/tabla_f$calculado_2015
+tabla_f$por_15_17 <- 100-100*tabla_f$calculado_2015/tabla_f$calculado_2017
+tabla_f$por_17_20 <- 100-100*tabla_f$calculado_2017/tabla_f$calculado_2020
+tabla_f <- tabla_f[,c(1,2,3,4,16,4,5,17,5,6,18,6,7,19,7,8,20,9:15)]
 datatable(tabla_f, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
           options = list(dom = 'Bfrtip',
           buttons = list('colvis', list(extend = 'collection',
@@ -1969,12 +1973,12 @@ datos_oficiales$region[datos_oficiales$region == "Región del Libertador Gral. B
 tabla_f = merge( x = ingresos, y = datos_oficiales, by = "region" , all.x = T)
 tabla_f <- tabla_f[,c(8,1:7,9:15)] 
 
-tabla_f$por_09_11 <- 100*tabla_f$calculado_2009/tabla_f$calculado_2011
-tabla_f$por_11_13 <- 100*tabla_f$calculado_2011/tabla_f$calculado_2013
-tabla_f$por_13_15 <- 100*tabla_f$calculado_2013/tabla_f$calculado_2015
-tabla_f$por_15_17 <- 100*tabla_f$calculado_2015/tabla_f$calculado_2017
-tabla_f$por_17_20 <- 100*tabla_f$calculado_2017/tabla_f$calculado_2020
-tabla_f <- tabla_f[,c(1,2,3,16,4,17,5,18,6,19,7,20,8:15)]
+tabla_f$por_09_11 <- 100-100*tabla_f$calculado_2009/tabla_f$calculado_2011
+tabla_f$por_11_13 <- 100-100*tabla_f$calculado_2011/tabla_f$calculado_2013
+tabla_f$por_13_15 <- 100-100*tabla_f$calculado_2013/tabla_f$calculado_2015
+tabla_f$por_15_17 <- 100-100*tabla_f$calculado_2015/tabla_f$calculado_2017
+tabla_f$por_17_20 <- 100-100*tabla_f$calculado_2017/tabla_f$calculado_2020
+tabla_f <- tabla_f[,c(1,2,3,4,16,4,5,17,5,6,18,6,7,19,7,8,20,9:15)]
 datatable(tabla_f, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
           options = list(dom = 'Bfrtip',
           buttons = list('colvis', list(extend = 'collection',
@@ -2131,19 +2135,6 @@ head(union_003,10)
 
 
 
-
-
-```{r, message=FALSE, warning=FALSE, results='hide'}
-
-codigos_comunales <- readRDS(file = "C:/Users/chris/OneDrive/Documentos/archivos_grandes/codigos_comunales_2009.rds")
-# codigos_comunales <- readRDS(file = "C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/codigos_comunales_2009.rds")
-
-names(codigos_comunales)[1] <- "Código"
-names(codigos_comunales)[2] <- "Comuna"
-df_2009 = merge( x = ttt, y = codigos_comunales, by = "Comuna", all.x = TRUE)
-df_2009 <- df_2009[!(df_2009$Promedio == 0),]
-tabla_matp2 <- df_2009[complete.cases(df_2009), ]
-```
 
 
 
@@ -2469,7 +2460,7 @@ datatable(tabla_cont_freq, extensions = 'Buttons', escape = FALSE, rownames = FA
 
 
 ```{r , message=FALSE, warning=FALSE, results='hide'}
-codigos_comunales <- readRDS(file = "C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/codigos_comunales_2011-2017.rds")
+codigos_comunales <- readRDS(file = "C:/Users/chris/OneDrive/Documentos/archivos_grandes/codigos_comunales_2011-2017.rds")
 
 funcion1 <- function(n){
   
@@ -2568,7 +2559,7 @@ tabla <<- df
 # saveRDS(df,ingreso_rds)
 
 # print(df)
-=======
+
 
   # return(df)
 
