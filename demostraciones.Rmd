@@ -2277,11 +2277,11 @@ datatable(tabla_percapita, extensions = 'Buttons', escape = FALSE, rownames = FA
           buttons = list('colvis', list(extend = 'collection',
           buttons = list(
           list(extend='csv',
-            filename = 'promedio_percapita_ingreso_autonomo_2011-2020'),
+            filename = 'promedio_percapita_ingreso_total_2011-2020'),
           list(extend='excel',
-            filename = 'promedio_percapita_ingreso_autonomo_2011-2020'),
+            filename = 'promedio_percapita_ingreso_total_2011-2020'),
           list(extend='pdf',
-            filename= 'promedio_percapita_ingreso_autonomo_2011-2020')),
+            filename= 'promedio_percapita_ingreso_total_2011-2020')),
           text = 'Download')), scrollX = TRUE))
 ```
 
@@ -2360,11 +2360,11 @@ datatable(tabla_percapita, extensions = 'Buttons', escape = FALSE, rownames = FA
           buttons = list('colvis', list(extend = 'collection',
           buttons = list(
           list(extend='csv',
-            filename = 'promedio_percapita_ingreso_autonomo_2011-2020'),
+            filename = 'promedio_percapita_ingreso_trabajo_2011-2020'),
           list(extend='excel',
-            filename = 'promedio_percapita_ingreso_autonomo_2011-2020'),
+            filename = 'promedio_percapita_ingreso_trabajo_2011-2020'),
           list(extend='pdf',
-            filename= 'promedio_percapita_ingreso_autonomo_2011-2020')),
+            filename= 'promedio_percapita_ingreso_trabajo_2011-2020')),
           text = 'Download')), scrollX = TRUE))
 ```
 
@@ -2443,11 +2443,11 @@ datatable(tabla_percapita, extensions = 'Buttons', escape = FALSE, rownames = FA
           buttons = list('colvis', list(extend = 'collection',
           buttons = list(
           list(extend='csv',
-            filename = 'promedio_percapita_ingreso_yoprhaj_2011-2020'),
+            filename = 'promedio_percapita_ingreso_yoprcorh_2011-2020'),
           list(extend='excel',
-            filename = 'promedio_percapita_ingreso_autonomo_2011-2020'),
+            filename = 'promedio_percapita_ingreso_yoprcorh_2011-2020'),
           list(extend='pdf',
-            filename= 'promedio_percapita_ingreso_autonomo_2011-2020')),
+            filename= 'promedio_percapita_ingreso_yoprcorh_2011-2020')),
           text = 'Download')), scrollX = TRUE))
 ```
 
@@ -2613,15 +2613,10 @@ names(codigos_comunales)[1] <- "Código"
 names(codigos_comunales)[2] <- "Comuna"
 # codigos_comunales
 
-df_2006 = merge( x = df, y = codigos_comunales, by = "Comuna", all.x = TRUE)
-df <-df_2006[!(df_2006$Promedio == 0),]
+df_tabla = merge( x = df, y = codigos_comunales, by = "Comuna", all.x = TRUE)
+df <-df_tabla[!(df_tabla$Promedio == 0),]
 tabla <<- df
-# variable_in<-"ytotcor"
-# ingreso_rds <- paste("oficio4_",variable_in,"_",anio,"pruebas.rds", sep="")
-# saveRDS(df,ingreso_rds)
-
-# print(df)
-  # return(df)
+ 
 
 }
 ```
@@ -2748,16 +2743,10 @@ names(codigos_comunales)[1] <- "Código"
 names(codigos_comunales)[2] <- "Comuna"
 # codigos_comunales
 
-df_2006 = merge( x = df, y = codigos_comunales, by = "Comuna", all.x = TRUE)
-df <-df_2006[!(df_2006$Promedio == 0),]
+df_tabla = merge( x = df, y = codigos_comunales, by = "Comuna", all.x = TRUE)
+df <-df_tabla[!(df_tabla$Promedio == 0),]
 tabla <<- df
-# variable_in<-"ytotcor"
-# ingreso_rds <- paste("oficio4_",variable_in,"_",anio,"pruebas.rds", sep="")
-# saveRDS(df,ingreso_rds)
-
-# print(df)
-
-  # return(df)
+ 
 
 }
 ```
@@ -2882,17 +2871,10 @@ names(codigos_comunales)[1] <- "Código"
 names(codigos_comunales)[2] <- "Comuna"
 # codigos_comunales
 
-df_2006 = merge( x = df, y = codigos_comunales, by = "Comuna", all.x = TRUE)
-df <-df_2006[!(df_2006$Promedio == 0),]
+df_tabla = merge( x = df, y = codigos_comunales, by = "Comuna", all.x = TRUE)
+df <-df_tabla[!(df_tabla$Promedio == 0),]
 tabla <<- df
-# variable_in<-"ytotcor"
-# ingreso_rds <- paste("oficio4_",variable_in,"_",anio,"pruebas.rds", sep="")
-# saveRDS(df,ingreso_rds)
-
-# print(df)
-
-
-  # return(df)
+ 
 
 }
 ```
@@ -3024,15 +3006,10 @@ names(codigos_comunales)[1] <- "Código"
 names(codigos_comunales)[2] <- "Comuna"
 # codigos_comunales
 
-df_2006 = merge( x = df, y = codigos_comunales, by = "Comuna", all.x = TRUE)
-df <-df_2006[!(df_2006$Promedio == 0),]
+df_tabla = merge( x = df, y = codigos_comunales, by = "Comuna", all.x = TRUE)
+df <-df_tabla[!(df_tabla$Promedio == 0),]
 tabla <<- df
-# variable_in<-"ytotcor"
-# ingreso_rds <- paste("oficio4_",variable_in,"_",anio,"pruebas.rds", sep="")
-# saveRDS(df,ingreso_rds)
-
-# print(df)
-  # return(df)
+ 
 
 }
 ```
@@ -3142,6 +3119,18 @@ s2 <- sum(tabla_matp[,3])
  
 s2*100/s1
 ```
+
+
+
+Alquiler imputado 2020
+
+yaimh
+yaimcorh 
+
+Alquiler imputado 2017
+
+yaimh
+yaimcorh
 
 
 
