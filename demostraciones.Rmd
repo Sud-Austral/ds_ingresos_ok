@@ -1,5 +1,5 @@
 ---
-title: Análisis propios de los ingresos de la<span style="color:green"> Casen </span>
+title: Análisis propios de los Ingresos de las personas y los hogares de la<span style="color:green"> Casen </span> Chile
 author:
 - name: VE-CC-AJ
   affiliation: DataIntelligence
@@ -77,14 +77,29 @@ library(DT)
 
 # Introducción
 
-1 Informes de las Casen e información básica:\
+Cuando estimamos porcentualmente la variación del ingreso total personal entre el 2017 y el 2020 por comuna nos encontramos con una caída del -34,45294636 a nivel nacional, lo que no se condice con las estadísticas que obtuvimos a nivel de hogares [aquí](http://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-en-pandemia-2020): Ingreso promedio de los hogares por tipo de ingreso y región. Los últimos apenas varian  frente a la tremenda caida del -34% de ytotcor, pero como demostraremos, creemos que es problema de interpretación y no de método o base de datos corrupta, sino que del concepto de **Alquiler imputado** que suaviza muchísimo la pobreza por ingresos.
+
+Casen se concentra en el analisis de los ingresos de los hogares, entonces el cálculo básico es el siguiente:
+
+1 Se agrupan todos los hogares por núcleo familiar con una columna que indique su cantidad.
+
+2 Hacemos un merge para traernos una variable de ingreso para el hogar (que es la suma de los ingresos de todos sus integrantes), por ejemplo ytrabajocorh (en general éstas terminan siempre con h).
+
+3 Calculamos los promedios por región.
+
+Dividimos el informe en tres:
+
+1. Para el 2020 comparamos nuestros calculos con los publicados.
+
+2. Generalizamos para los cuatro ingresos fundamentales entre 2009 y 2020, agregando la variacion porcentual entre años contiguos para nuestros ingresos calculados y agregando una grafica que compara para todos los años dsiponibles los calculados y los publicados.
+
+Informes de las Casen e información básica para Casen 2011 y anteriores:\
+
 http://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-2011
 
-# El problema
 
-Nos encontramos con inconsistencias en el cálculo de  ingresos, pero como demostraremos, creemos que es problema de interpretación y no de método o base de datos corrupta.
 
-<br>
+
 
 
 ## Los ingresos
@@ -135,18 +150,6 @@ Para ello calculamos el ingreso promedio de los hogares por tipo de ingreso y re
 ![title](uno.png)
 
 ![title](dos.png)
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 <!-- ############################################################################################################################################################ -->
@@ -2089,12 +2092,12 @@ p
 
 # Análisis de los ingresos por persona por comuna 2017 2020
 
-Si llegamos a tal nivel de sofisticación con el percápita y las variables calculadas coinciden con las publicadas sobre varios años, aunque no exista publicacion oficial con la cual comparar a nivel de personas, nuestras estimaciones deberóan  estar ok.
+Si llegamos a tal nivel de sofisticación con el percápita y las variables calculadas coinciden con las publicadas sobre varios años, aunque no exista publicacion oficial con la cual comparar a nivel de personas, nuestras estimaciones deberán estar ok.
 
 
 Vamos a estimar a nivel porcentual la variación del ingreso total personal entre el 2017 y el 2020 por comuna.
 
-## Ingresos
+## Ingresos ytotcor
 
 Promedio ingreso total 2017 -2020
 
@@ -3285,14 +3288,6 @@ p <- p %>% add_lines(y = ~prom_personas_ytotcor_2017, name = 'Promedio de person
 p <- p %>% add_lines(y = ~prom_personas_ytotcor_2020, name = 'Promedio de personas 2020', mode = 'lines+markers')
 p
 ```
-
-
-
- 
-```{r}
-sort(comunas)[1:10]
-```
- 
 
 
 
