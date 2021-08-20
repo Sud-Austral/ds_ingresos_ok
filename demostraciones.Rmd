@@ -93,7 +93,12 @@ Dividimos el informe en tres:
 
 2. Generalizamos para los cuatro ingresos fundamentales entre 2009 y 2020, agregando la variación porcentual entre años contiguos para nuestros ingresos calculados y agregando una gráfica que compara para todos los años disponibles los calculados y los publicados. Adjuntamos la tabla completa descargable.
 
-3. Problema
+3. Problema. 
+
+Cuando llegamos al análisis de los ingresos por persona por comuna 2017-2020 nos encontramos con una caída enorme, que no parece justificada por las cifras oficiales. No hay error. Ésto es así. Lo que pasa es que en éste momento entra en juego el concepto de "Alquiler imputado". Una muy buena definición la entrega la fundación SOl:
+
+Una persona de 75 años vive sola y, luego de haber pagado dividendos por más de 30 años, es dueña de su casa. El arriendo que se paga en el sector por una vivienda similar es de $300.000. Esta persona no recibe pensión básica y su pensión autofinanciada a través del sistema de AFP es de $100.000. Tampoco recibe aporte previsional solidario. Dicho de otro modo: es una persona mayor que vive en su casa y cuyo único ingreso es de $100.000. Al momento de calcular el porcentaje de pobreza, sin embargo, esta persona obtiene un ingreso mensual de $400.000, correspondiente a la suma del alquiler imputado y su pensión autofinanciada y, como la línea de pobreza para el hogar de una persona es de $158.145, figurará estadísticamente como que no es pobre.>https://www.elmostrador.cl/noticias/opinion/columnas/2018/08/29/y-si-miramos-la-pobreza-de-mercado-las-trampas-del-famoso-alquiler-imputado/
+
 
 
 
@@ -2023,6 +2028,43 @@ p
 ```
 
 
+# Análisis de los ingresos por persona por comuna 2017-2020
+
+Si llegamos a tal nivel de sofisticación con el percápita y las variables calculadas coinciden con las publicadas sobre varios años, aunque no exista publicacion oficial con la cual comparar a nivel de personas, nuestras estimaciones deberán estar ok.
+
+
+Vamos a estimar a nivel porcentual la variación del ingreso total personal entre el 2017 y el 2020 por comuna.
+
+## Ingresos ytotcor
+
+Promedio ingreso total 2017 -2020
+
+```{r}
+salida_001 = aggregate(casen2017[,c("ytotcor")],by = list(PAISES = casen2017$comuna), FUN = mean)
+names(salida_001)[1]<-c("comunas")
+names(salida_001)[2]<-c("promedios totales 2017")
+# head(salida_001,10)
+ 
+salida_002 = aggregate(casen2020[,c("ytotcor")],by = list(PAISES = casen2020$comuna), FUN = mean)
+names(salida_002)[1]<-c("comunas")
+names(salida_002)[2]<-c("promedios totales 2020")
+# head(salida_002,10)
+ 
+union_003 <- merge(salida_001,salida_002, by="comunas", all.x = TRUE)
+union_003$difer_por <- (100-100*union_003$`promedios totales 2017`/union_003$`promedios totales 2020`)
+
+datatable(union_003, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+          options = list(dom = 'Bfrtip',
+          buttons = list('colvis', list(extend = 'collection',
+          buttons = list(
+          list(extend='csv',
+            filename = 'hitStats'),
+          list(extend='excel',
+            filename = 'hitStats'),
+          list(extend='pdf',
+            filename= 'hitStats')),
+          text = 'Download')), scrollX = TRUE))
+```
 
 
 
@@ -2096,46 +2138,9 @@ p <- p %>% add_trace(y = ~iaph, name = 'iaph', mode = 'markers')
 p
 ```
 
-# Análisis de los ingresos por persona por comuna 2017 2020
-
-Si llegamos a tal nivel de sofisticación con el percápita y las variables calculadas coinciden con las publicadas sobre varios años, aunque no exista publicacion oficial con la cual comparar a nivel de personas, nuestras estimaciones deberán estar ok.
 
 
-Vamos a estimar a nivel porcentual la variación del ingreso total personal entre el 2017 y el 2020 por comuna.
 
-## Ingresos ytotcor
-
-Promedio ingreso total 2017 -2020
-
-```{r}
-salida_001 = aggregate(casen2017[,c("ytotcor")],by = list(PAISES = casen2017$comuna), FUN = mean)
-names(salida_001)[1]<-c("comunas")
-names(salida_001)[2]<-c("promedios totales 2017")
-# head(salida_001,10)
- 
-salida_002 = aggregate(casen2020[,c("ytotcor")],by = list(PAISES = casen2020$comuna), FUN = mean)
-names(salida_002)[1]<-c("comunas")
-names(salida_002)[2]<-c("promedios totales 2020")
-# head(salida_002,10)
- 
-union_003 <- merge(salida_001,salida_002, by="comunas", all.x = TRUE)
-union_003$difer_por <- (100-100*union_003$`promedios totales 2017`/union_003$`promedios totales 2020`)
-
-datatable(union_003, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
-          options = list(dom = 'Bfrtip',
-          buttons = list('colvis', list(extend = 'collection',
-          buttons = list(
-          list(extend='csv',
-            filename = 'hitStats'),
-          list(extend='excel',
-            filename = 'hitStats'),
-          list(extend='pdf',
-            filename= 'hitStats')),
-          text = 'Download')), scrollX = TRUE))
-```
-
-
-<!-- #################################################################################################################################### -->
 
 ## Promedio ingreso autonomo
 
