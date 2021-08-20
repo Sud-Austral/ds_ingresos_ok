@@ -77,7 +77,37 @@ library(DT)
 
 # Introducción
 
+
+Cuando estimamos porcentualmente la variación del ingreso total personal entre el 2017 y el 2020 por comuna nos encontramos con una caída del -34,45294636 a nivel nacional, lo que no se condice con las estadísticas que obtuvimos a nivel de hogares [aquí](http://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-en-pandemia-2020): Ingreso promedio de los hogares por tipo de ingreso y región. Los últimos apenas varian  frente a la tremenda caida del -34% de ytotcor, pero como demostraremos, creemos que es problema de interpretación y no de método o base de datos corrupta, sino que del concepto de **Alquiler imputado** que suaviza muchísimo la pobreza por ingresos.
+
+Casen se concentra en el analisis de los ingresos de los hogares, entonces el cálculo básico es el siguiente:
+
+1 Se agrupan todos los hogares por núcleo familiar con una columna que indique su cantidad si queremos calcular los ingresos per cápita.
+
+2 Hacemos un merge para traernos una variable de ingreso para el hogar (que es la suma de los ingresos de todos sus integrantes), por ejemplo ytrabajocorh (en general éstas terminan siempre con h).
+
+3 Calculamos los promedios por región.
+
+Dividimos el informe en tres:
+
+1. Para el 2020 comparamos nuestros cálculos con los publicados.
+
+2. Generalizamos para los cuatro ingresos fundamentales entre 2009 y 2020, agregando la variación porcentual entre años contiguos para nuestros ingresos calculados y agregando una gráfica que compara para todos los años disponibles los calculados y los publicados. Adjuntamos la tabla completa descargable.
+
+3. Problema
+
+
+
+4. Solucion
+
+
+
+
+
+Informes de las Casen e información básica para Casen 2011 y anteriores:\
+
 1 Informes de las Casen e información básica:\
+
 http://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-2011
 
 # El problema
@@ -2145,8 +2175,8 @@ fu_ingresos <- function(n){
         case = tabla_casen <- casen2017,
         case = tabla_casen <- casen2020
 )
-  
-casen2011_rm <- filter(tabla_casen, tabla_casen$region == nregion)
+casen2011_rm <- tabla_casen
+#casen2011_rm <- filter(tabla_casen, tabla_casen$region == nregion)
 tabla <- table(casen2011_rm[,c(nfolio)])
 tabla <- as.data.frame(tabla)
 colnames(tabla) <- c("folio","freq_folio")
@@ -2228,8 +2258,8 @@ fu_ingresos <- function(n){
         case = tabla_casen <- casen2017,
         case = tabla_casen <- casen2020
 )
-  
-casen2011_rm <- filter(tabla_casen, tabla_casen$region == nregion)
+casen2011_rm <- tabla_casen
+#casen2011_rm <- filter(tabla_casen, tabla_casen$region == nregion)
 tabla <- table(casen2011_rm[,c(nfolio)])
 tabla <- as.data.frame(tabla)
 colnames(tabla) <- c("folio","freq_folio")
@@ -2311,8 +2341,9 @@ fu_ingresos <- function(n){
         case = tabla_casen <- casen2017,
         case = tabla_casen <- casen2020
 )
-  
-casen2011_rm <- filter(tabla_casen, tabla_casen$region == nregion)
+
+casen2011_rm <- tabla_casen
+#casen2011_rm <- filter(tabla_casen, tabla_casen$region == nregion)
 tabla <- table(casen2011_rm[,c(nfolio)])
 tabla <- as.data.frame(tabla)
 colnames(tabla) <- c("folio","freq_folio")
@@ -2394,8 +2425,10 @@ fu_ingresos <- function(n){
         case = tabla_casen <- casen2017,
         case = tabla_casen <- casen2020
 )
+
   
-casen2011_rm <- filter(tabla_casen, tabla_casen$region == nregion)
+casen2011_rm <- tabla_casen
+#casen2011_rm <- filter(tabla_casen, tabla_casen$region == nregion)
 tabla <- table(casen2011_rm[,c(nfolio)])
 tabla <- as.data.frame(tabla)
 colnames(tabla) <- c("folio","freq_folio")
