@@ -3193,17 +3193,31 @@ datatable(rr, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
 
 ```
 
- 
 ```{r}
-receptaculo <- data.frame()
-comunas <- unique(casen2017$comuna)
 
-for (j in comunas[1:10]) {
+fn_prom <- function(n){
+  
+  # ningreso<-switch(n,"ytotcorh","ytotcorh","ytotcorh") #"yoprhaj","yoprCorh",
+  nfolio<-switch(n,"folio.x","folio","folio")#"folio","folio",
+  xx<-switch(n,"2015","2017","2020")
+  tanios <<- xx
+  switch (n, 
+        case = tabla_casen <- casen2015,
+        case = tabla_casen <- casen2017,
+        case = tabla_casen <- casen2020
+)
+  
+  
+receptaculo <- data.frame()
+comunas <- unique(tabla_casen$comuna)
+ # sort(comunas)[1:10]
+for (j in sort(comunas)[1:10]) {
   
 options(scipen=999)
-casen2017_algarrobo <- filter(casen2017, casen2017$comuna == j)
+casen2017_algarrobo <- filter(tabla_casen, tabla_casen$comuna == j)
 casen2017_algarrobo_head <- casen2017_algarrobo
-casen2017_algarrobo_head <- casen2017_algarrobo_head[,c("comuna","folio","ytotcor","yaimcorh","ytotcorh")]
+casen2017_algarrobo_head <- casen2017_algarrobo_head[,c("comuna",nfolio,"ytotcor","yaimcorh","ytotcorh")]
+names(casen2017_algarrobo_head)[2] <- "folio"
 
 casen2017_algarrobo_head_sin_na <- mutate_at(casen2017_algarrobo_head, c("ytotcor","yaimcorh","ytotcorh"), ~replace(., is.na(.), 0))
 casen2017_algarrobo_head_sin_na$ytotcorh_sin_ah <- (casen2017_algarrobo_head_sin_na$ytotcorh - casen2017_algarrobo_head_sin_na$yaimcorh)
@@ -3220,16 +3234,32 @@ rr <- repetidos2
 
 calculos <- data.frame(
   comuna = j,
-  prom_personas = mean(rr$ytotcor),
-  prom_hogares_sin_ing_imput = mean(rr$ytotcorh_sin_ah/rr$freq_folio),
-  prom_hogares = mean(rr$ytotcorh/rr$freq_folio)
+  prom_personas_ytotcor = mean(rr$ytotcor),
+  prom_hogares_sin_ing_imput_ytotcor = mean(rr$ytotcorh_sin_ah/rr$freq_folio),
+  prom_hogares_ytotcor = mean(rr$ytotcorh/rr$freq_folio)
   
 )
+
+colnames(calculos) <- c("comuna",paste0("prom_personas_ytotcor_",xx),paste0("prom_hogares_sin_ing_imput_ytotcor_",xx),paste0("prom_hogares_ytotcor_",xx))
  
 receptaculo <- rbind(receptaculo,calculos)
 
 }
-datatable(receptaculo, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+calculados <<- receptaculo
+# print(calculados) 
+}
+
+
+```
+
+```{r}
+for (n in 1:3) {
+  fn_prom(n)
+  assign(paste0("calculados_",tanios),calculados)
+}
+receptaculo_unido = merge(x = calculados_2017, y = calculados_2020, by = "comuna", all.x = T)
+receptaculo_unido = merge(x = calculados_2015, y = receptaculo_unido, by = "comuna", all.x = T)
+datatable(receptaculo_unido, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
           options = list(dom = 'Bfrtip',
           buttons = list('colvis', list(extend = 'collection',
           buttons = list(
@@ -3239,113 +3269,27 @@ datatable(receptaculo, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
           list(extend='pdf',
             filename= 'hitStats')),
           text = 'Download')), scrollX = TRUE))
-# %>%
-#   formatStyle('prom_hogares_sin_ing_imput', color = ifelse(receptaculo$prom_hogares_sin_ing_imput == receptaculo$prom_personas, 'red','blak'), backgroundColor = 'orange', fontWeight = 'bold' )
-
 ```
+ 
+
 
 ```{r, warning=FALSE, message=FALSE}
-p <- plot_ly(receptaculo, width = 1200, x = ~comuna, y = ~prom_personas, name = 'Promedio de personas', mode = 'markers') %>% add_lines() 
-p <- p %>% add_lines(y = ~prom_hogares_sin_ing_imput, name = 'Promedio de hogares(sin Alquiler imputado)', mode = 'markers') 
+p <- plot_ly(receptaculo_unido, width = 1200, x = ~comuna, y = ~prom_hogares_ytotcor_2015, name = 'Promedio de hogares(con Alquiler imputado) 2015', mode = 'markers' ) %>% add_trace() 
+p <- p %>% add_trace(y = ~prom_hogares_ytotcor_2017, name = 'Promedio de hogares(con Alquiler imputado) 2017', mode = 'markers')
+p <- p %>% add_trace(y = ~prom_hogares_ytotcor_2020, name = 'Promedio de hogares(con Alquiler imputado) 2020', mode = 'markers')
+p <- p %>% add_lines(y = ~prom_hogares_sin_ing_imput_ytotcor_2015, name = 'Promedio de hogares(sin Alquiler imputado) 2015', mode = 'lines+markers')
+p <- p %>% add_lines(y = ~prom_hogares_sin_ing_imput_ytotcor_2017, name = 'Promedio de hogares(sin Alquiler imputado) 2017', mode = 'lines+markers')
+p <- p %>% add_lines(y = ~prom_hogares_sin_ing_imput_ytotcor_2020, name = 'Promedio de hogares(sin Alquiler imputado) 2020', mode = 'lines+markers')
+p <- p %>% add_lines(y = ~prom_personas_ytotcor_2015, name = 'Promedio de personas 2015', mode = 'lines+markers')
+p <- p %>% add_lines(y = ~prom_personas_ytotcor_2017, name = 'Promedio de personas 2017', mode = 'lines+markers')
+p <- p %>% add_lines(y = ~prom_personas_ytotcor_2020, name = 'Promedio de personas 2020', mode = 'lines+markers')
 p
 ```
 
 
-<!-- ##########  2020 -->
 
-
-
-```{r}
-options(scipen=999)
-casen2020_algarrobo <- filter(casen2020, casen2020$comuna == "Algarrobo")
-# casen2020_algarrobo <- casen2017_algarrobo
-casen2020_algarrobo <- casen2020_algarrobo[,c("comuna","folio","ytotcor","yaimcorh","ytotcorh","numper")]
-casen2020_algarrobo
-
-```
-
-Análisis:
-
-1 Eliminemos los NA
-
-```{r}
-
-casen2020_algarrobo_head_sin_na <- mutate_at(casen2020_algarrobo, c("ytot", "ytotcor", "ytoth", "yaimh","yaimcorh","ytotcorh"), ~replace(., is.na(.), 0))
-head(casen2020_algarrobo_head_sin_na,10)
-
-write_xlsx(casen2020_algarrobo_head_sin_na,"casen2020_algarrobo_head_sin_na.xlsx")
-```
-
-2 Calculemos el promedio de ytot para obtener los ingresos totales per capita:
-
-
-```{r}
-mean(casen2020_algarrobo_head_sin_na$ytotcorh)
-```
-```{r}
-mean((casen2020_algarrobo_head_sin_na$ytotcorh- casen2020_algarrobo_head_sin_na$yaimcorh)*casen2020_algarrobo_head_sin_na$numper)
-```
-```{r}
-mean((casen2020_algarrobo_head_sin_na$ytotcorh-casen2020_algarrobo_head_sin_na$yaimcorh)/casen2020_algarrobo_head_sin_na$numper)
-```
  
-3 Calculemos los ingresos por hogar per capita
-
-```{r}
-tabla <- table(casen2020_algarrobo_head_sin_na$folio)
-tabla <- as.data.frame(tabla)
-colnames(tabla) <- c("folio","freq_folio")
  
-casen_fh <- casen2020_algarrobo_head_sin_na[,c("comuna","folio","ytotcorh","yaimcorh","numper")]
-casen_fh$folio <- as.character(casen_fh$folio)
-repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
-rr <- repetidos2[!duplicated(repetidos2$folio), ]
-rr
-```
-
-
-```{r}
-mean((rr$ytotcorh-rr$yaimcorh)*rr$numper)
-```
-
-
-```{r}
-mean(casen2020_algarrobo_head_sin_na$ytotcorh)
-```
-
-2020
-
-```{r}
-options(scipen=999)
-casen2017_algarrobo <- filter(casen2020, casen2020$comuna == "Algarrobo")
-casen2017_algarrobo_head <- casen2017_algarrobo
-# casen2017_algarrobo_head <- casen2017_algarrobo_head[,c(1,7,468,566,560,753)]
-# casen2017_algarrobo_head
-```
-
-
-Existen tanto areas urbanas como rurales en Algarrobo.
-Consideraremos ambas.
-
-```{r}
-unique(casen2017_algarrobo$zona)
-```
-
-El ingreso percápita para la comuna de Algarrobo el año 2017 fue: 
-
-(Segun el ministerio de Hacienda el Ingreso Per Cápita es el
-Ingreso por habitante. Es el resultado de la razón entre el producto total de un país en un determinado año y su número de habitantes.)
-
-
-```{r}
-mean(casen2017_algarrobo$ytotcor, trim=0.0, na.rm=TRUE)
-```
-
-
-```{r}
-head(union_003,10)
-```
-
 
 
 
