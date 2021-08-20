@@ -3220,7 +3220,7 @@ datatable(rr, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
 mean(rr$ytotcor)
 ```
  
- 
+ cambio
  
 
 # Cambios
