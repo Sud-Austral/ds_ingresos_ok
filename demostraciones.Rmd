@@ -3149,17 +3149,6 @@ yaimcorh
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 # Ingresos de los hogares versus el de las personas
 
 Tenemos un problema en el que nos percatamos que los ingresos de los hogares entre el 2017 y el 2020 no caen de forma tan dramática como lo hacen los ingresos personales. Entonces vamos a hacer una verifición manual en torno a éstos dos estadios.
@@ -3171,10 +3160,13 @@ En el primer par de grupos clacularemos para el 2027 y el 2020 el ingreso per c�
 
 2017
 
+![](Screenshot_aysen.png)
+
+
 
 ```{r}
 options(scipen=999)
-casen2017_algarrobo <- filter(casen2017, casen2017$comuna == "Algarrobo")
+casen2017_algarrobo <- filter(casen2017, casen2017$comuna == "Aysén")
 casen2017_algarrobo_head <- casen2017_algarrobo
 casen2017_algarrobo_head <- casen2017_algarrobo_head[,c("comuna","folio","ytot", "ytotcor","ytoth","yaimh","yaimcorh","ytotcorh")]
 
@@ -3201,8 +3193,7 @@ mean(casen2017_algarrobo_head_sin_na$ytotcor)
 
 3 Calculemos los ingresos por hogar per capita
 
-```{r}
-repetidos2 <- casen2017_algarrobo_head_sin_na
+```{r} 
 tabla <- table(casen2017_algarrobo_head_sin_na$folio)
 tabla <- as.data.frame(tabla)
 colnames(tabla) <- c("folio","freq_folio")
@@ -3210,26 +3201,10 @@ colnames(tabla) <- c("folio","freq_folio")
 casen_fh <- casen2017_algarrobo_head_sin_na[,c("comuna","folio","ytot", "ytotcor", "ytoth", "yaimh","yaimcorh","ytotcorh","ytotcorh_sin_ah")]
 casen_fh$folio <- as.character(casen_fh$folio)
 repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
-# rr <- repetidos2[!duplicated(repetidos2$folio), ]
-rr2 <- repetidos2[!duplicated(repetidos2$folio), ]
-rr <- repetidos2
-rr
-```
-```{r}
-mean(rr$ytotcor)
-```
 
-```{r}
-# filtro <-filter(casen2017_algarrobo_head_sin_na ,casen2017_algarrobo_head_sin_na$folio == "560210040301" | casen2017_algarrobo_head_sin_na$folio == "560210030101")
-filtro <- rr2
-filtro <- filtro[,-c(3,4)]
-filtro
-```
-```{r}
-mean(filtro$ytotcorh_sin_ah/filtro$freq_folio)
-```
- 
-```{r}
+# rr <- repetidos2[!duplicated(repetidos2$folio), ]
+# rr2 <- repetidos2[!duplicated(repetidos2$folio), ]
+
 datatable(rr, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
           options = list(dom = 'Bfrtip',
           buttons = list('colvis', list(extend = 'collection',
@@ -3241,6 +3216,12 @@ datatable(rr, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
             filename= 'hitStats')),
           text = 'Download')), scrollX = TRUE))
 ```
+```{r}
+mean(rr$ytotcor)
+```
+ 
+ 
+ 
 
 # Cambios
 ```{r}
@@ -3267,14 +3248,11 @@ mean(casen2017_algarrobo_head_sin_na$ytotcor)
 <!-- ##########  2020 -->
 
 
-2017
-
-
 ```{r}
 options(scipen=999)
 casen2020_algarrobo <- filter(casen2020, casen2020$comuna == "Algarrobo")
-casen2020_algarrobo <- casen2017_algarrobo
-casen2020_algarrobo <- casen2020_algarrobo[,c("comuna","folio","ytot", "ytotcor","ytoth","yaimh","yaimcorh","ytotcorh")]
+# casen2020_algarrobo <- casen2017_algarrobo
+casen2020_algarrobo <- casen2020_algarrobo[,c("comuna","folio","ytotcor","yaimcorh","ytotcorh","numper")]
 casen2020_algarrobo
 
 ```
@@ -3284,7 +3262,7 @@ Análisis:
 1 Eliminemos los NA
 
 ```{r}
-casen2020_algarrobo_head_sin_na <- mutate_at(casen2020_algarrobo, c("ytot", "ytotcor", "ytoth", "yaimh","yaimcorh","ytotcorh"), ~replace(., is.na(.), 0))
+casen2020_algarrobo_head_sin_na <- mutate_at(casen2020_algarrobo, c("ytotcor","yaimcorh","ytotcorh"), ~replace(., is.na(.), 0))
 casen2020_algarrobo_head_sin_na
 write_xlsx(casen2020_algarrobo_head_sin_na,"casen2020_algarrobo_head_sin_na.xlsx")
 ```
@@ -3295,7 +3273,13 @@ write_xlsx(casen2020_algarrobo_head_sin_na,"casen2020_algarrobo_head_sin_na.xlsx
 ```{r}
 mean(casen2020_algarrobo_head_sin_na$ytotcorh)
 ```
-
+```{r}
+mean((casen2020_algarrobo_head_sin_na$ytotcorh- casen2020_algarrobo_head_sin_na$yaimcorh)*casen2020_algarrobo_head_sin_na$numper)
+```
+```{r}
+mean((casen2020_algarrobo_head_sin_na$ytotcorh-casen2020_algarrobo_head_sin_na$yaimcorh)/casen2020_algarrobo_head_sin_na$numper)
+```
+ 
 3 Calculemos los ingresos por hogar per capita
 
 ```{r}
@@ -3303,7 +3287,7 @@ tabla <- table(casen2020_algarrobo_head_sin_na$folio)
 tabla <- as.data.frame(tabla)
 colnames(tabla) <- c("folio","freq_folio")
  
-casen_fh <- casen2020_algarrobo_head_sin_na[,c("comuna","folio","ytoth","ytotcorh","yaimcorh","yaimh")]
+casen_fh <- casen2020_algarrobo_head_sin_na[,c("comuna","folio","ytotcorh","yaimcorh","numper")]
 casen_fh$folio <- as.character(casen_fh$folio)
 repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
 rr <- repetidos2[!duplicated(repetidos2$folio), ]
@@ -3312,21 +3296,11 @@ rr
 
 
 ```{r}
-rr$multi <- rr$ytotcorh/rr$freq_folio
-rr$multi_sin_imput <- (rr$ytotcorh/rr$freq_folio)-rr$yaimcorh
-rr
+mean((rr$ytotcorh-rr$yaimcorh)*rr$numper)
 ```
-
-```{r}
-mean(rr$multi)
-mean(rr$multi_sin_imput)
-```
-
-
-```{r}
-mean(casen2020_algarrobo_head_sin_na$ytotcorh)
-```
-
+1092165
+2990806
+2537068
  
 
 
