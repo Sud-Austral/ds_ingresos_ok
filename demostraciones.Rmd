@@ -3159,21 +3159,13 @@ casen2017_algarrobo_head <- casen2017_algarrobo_head[,c("comuna","folio","ytot",
 
 Análisis:
 
-1 Eliminemos los NA
+1 Se cambian los NA por 0
 
 ```{r}
 casen2017_algarrobo_head_sin_na <- mutate_at(casen2017_algarrobo_head, c("ytot", "ytotcor", "ytoth", "yaimh","yaimcorh","ytotcorh"), ~replace(., is.na(.), 0))
-
 casen2017_algarrobo_head_sin_na$ytotcorh_sin_ah <- (casen2017_algarrobo_head_sin_na$ytotcorh - casen2017_algarrobo_head_sin_na$yaimcorh)
- 
 ```
 
-2 Calculemos el promedio de ytot para obtener los ingresos totales per capita:
-
-
-```{r}
-mean(casen2017_algarrobo_head_sin_na$ytotcor)
-```
 
 3 Calculemos los ingresos por hogar per capita
 
@@ -3182,11 +3174,10 @@ tabla <- table(casen2017_algarrobo_head_sin_na$folio)
 tabla <- as.data.frame(tabla)
 colnames(tabla) <- c("folio","freq_folio")
 
-casen_fh <- casen2017_algarrobo_head_sin_na[,c("comuna","folio","ytot", "ytotcor", "ytoth", "yaimh","yaimcorh","ytotcorh","ytotcorh_sin_ah")]
+casen_fh <- casen2017_algarrobo_head_sin_na[,c("comuna","folio", "ytotcor","yaimcorh","ytotcorh","ytotcorh_sin_ah")]
 casen_fh$folio <- as.character(casen_fh$folio)
 repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
 
- 
 rr <- repetidos2 
 
 datatable(rr, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
@@ -3201,29 +3192,62 @@ datatable(rr, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
           text = 'Download')), scrollX = TRUE))
 
 ```
-```{r}
-mean(rr$ytotcor)
-```
+
  
-
-# Cambios
 ```{r}
-rr$multi <- rr$ytotcorh_sin_ah/rr$freq_folio
-rr$multi_sin_imput <- (rr$ytotcorh_sin_ah/rr$freq_folio)-rr$yaimcorh
+receptaculo <- data.frame()
+comunas <- unique(casen2017$comuna)
+
+for (j in comunas[1:10]) {
+  
+options(scipen=999)
+casen2017_algarrobo <- filter(casen2017, casen2017$comuna == j)
+casen2017_algarrobo_head <- casen2017_algarrobo
+casen2017_algarrobo_head <- casen2017_algarrobo_head[,c("comuna","folio","ytotcor","yaimcorh","ytotcorh")]
+
+casen2017_algarrobo_head_sin_na <- mutate_at(casen2017_algarrobo_head, c("ytotcor","yaimcorh","ytotcorh"), ~replace(., is.na(.), 0))
+casen2017_algarrobo_head_sin_na$ytotcorh_sin_ah <- (casen2017_algarrobo_head_sin_na$ytotcorh - casen2017_algarrobo_head_sin_na$yaimcorh)
+
+
+tabla <- table(casen2017_algarrobo_head_sin_na$folio)
+tabla <- as.data.frame(tabla)
+colnames(tabla) <- c("folio","freq_folio")
+
+casen_fh <- casen2017_algarrobo_head_sin_na[,c("comuna","folio", "ytotcor","yaimcorh","ytotcorh","ytotcorh_sin_ah")]
+casen_fh$folio <- as.character(casen_fh$folio)
+repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
+rr <- repetidos2 
+
+calculos <- data.frame(
+  comuna = j,
+  prom_personas = mean(rr$ytotcor),
+  prom_hogares_sin_ing_imput = mean(rr$ytotcorh_sin_ah/rr$freq_folio),
+  prom_hogares = mean(rr$ytotcorh/rr$freq_folio)
+  
+)
  
+receptaculo <- rbind(receptaculo,calculos)
+
+}
+datatable(receptaculo, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+          options = list(dom = 'Bfrtip',
+          buttons = list('colvis', list(extend = 'collection',
+          buttons = list(
+          list(extend='copy'),
+          list(extend='excel',
+            filename = 'hitStats'),
+          list(extend='pdf',
+            filename= 'hitStats')),
+          text = 'Download')), scrollX = TRUE))
+# %>%
+#   formatStyle('prom_hogares_sin_ing_imput', color = ifelse(receptaculo$prom_hogares_sin_ing_imput == receptaculo$prom_personas, 'red','blak'), backgroundColor = 'orange', fontWeight = 'bold' )
+
 ```
 
-Promedio del ingreso para hogares(sin Alquiler imputado)
-
-```{r}
-# mean(rr$multi)
-mean(rr$multi_sin_imput)
-```
-
-Promedio del ingreso para personas
-
-```{r}
-mean(casen2017_algarrobo_head_sin_na$ytotcor)
+```{r, warning=FALSE, message=FALSE}
+p <- plot_ly(receptaculo, width = 1200, x = ~comuna, y = ~prom_personas, name = 'Promedio de personas', mode = 'markers') %>% add_lines() 
+p <- p %>% add_lines(y = ~prom_hogares_sin_ing_imput, name = 'Promedio de hogares(sin Alquiler imputado)', mode = 'markers') 
+p
 ```
 
 
