@@ -3196,6 +3196,7 @@ mean(rr$ytotcor)
 
 ```{r}
 # filtro <-filter(casen2017_algarrobo_head_sin_na ,casen2017_algarrobo_head_sin_na$folio == "560210040301" | casen2017_algarrobo_head_sin_na$folio == "560210030101")
+rr2 <- repetidos2
 filtro <- rr2
 filtro <- filtro[,-c(3,4)]
 head(filtro,10)
