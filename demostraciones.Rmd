@@ -3178,7 +3178,6 @@ casen_fh <- casen2017_algarrobo_head_sin_na[,c("comuna","folio", "ytotcor","yaim
 casen_fh$folio <- as.character(casen_fh$folio)
 repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
 
- 
 rr <- repetidos2 
 
 datatable(rr, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
@@ -3290,6 +3289,9 @@ p
 
 
  
+```{r}
+sort(comunas)[1:10]
+```
  
 
 
