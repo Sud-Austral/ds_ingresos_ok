@@ -3165,8 +3165,7 @@ Análisis:
 casen2017_algarrobo_head_sin_na <- mutate_at(casen2017_algarrobo_head, c("ytot", "ytotcor", "ytoth", "yaimh","yaimcorh","ytotcorh"), ~replace(., is.na(.), 0))
 
 casen2017_algarrobo_head_sin_na$ytotcorh_sin_ah <- (casen2017_algarrobo_head_sin_na$ytotcorh - casen2017_algarrobo_head_sin_na$yaimcorh)
-# casen2017_algarrobo_head_sin_na
-# write_xlsx(casen2017_algarrobo_head_sin_na,"casen2017_algarrobo_head_sin_na.xlsx")
+ 
 ```
 
 2 Calculemos el promedio de ytot para obtener los ingresos totales per capita:
@@ -3187,25 +3186,9 @@ casen_fh <- casen2017_algarrobo_head_sin_na[,c("comuna","folio","ytot", "ytotcor
 casen_fh$folio <- as.character(casen_fh$folio)
 repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
 
-# rr <- repetidos2[!duplicated(repetidos2$folio), ]
 
-```
-```{r}
-mean(rr$ytotcor)
-```
-
-```{r}
-# filtro <-filter(casen2017_algarrobo_head_sin_na ,casen2017_algarrobo_head_sin_na$folio == "560210040301" | casen2017_algarrobo_head_sin_na$folio == "560210030101")
-rr2 <- repetidos2
-filtro <- rr2
-filtro <- filtro[,-c(3,4)]
-head(filtro,10)
-```
-```{r}
-mean(filtro$ytotcorh_sin_ah/filtro$freq_folio)
-```
  
-```{r}
+rr <- repetidos2 
 
 datatable(rr, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
           options = list(dom = 'Bfrtip',
@@ -3217,19 +3200,18 @@ datatable(rr, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
           list(extend='pdf',
             filename= 'hitStats')),
           text = 'Download')), scrollX = TRUE))
+
 ```
 ```{r}
 mean(rr$ytotcor)
 ```
- 
- 
  
 
 # Cambios
 ```{r}
 rr$multi <- rr$ytotcorh_sin_ah/rr$freq_folio
 rr$multi_sin_imput <- (rr$ytotcorh_sin_ah/rr$freq_folio)-rr$yaimcorh
-head(rr,10)
+ 
 ```
 
 Promedio del ingreso para hogares(sin Alquiler imputado)
