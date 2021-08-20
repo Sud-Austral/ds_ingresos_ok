@@ -3188,23 +3188,7 @@ repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
 
  
 rr <- repetidos2 
-```
-```{r}
-mean(rr$ytotcor)
-```
 
-```{r}
-# filtro <-filter(casen2017_algarrobo_head_sin_na ,casen2017_algarrobo_head_sin_na$folio == "560210040301" | casen2017_algarrobo_head_sin_na$folio == "560210030101")
-filtro <- rr2
-filtro <- filtro[,-c(3,4)]
-head(filtro,10)
-```
-```{r}
-mean(filtro$ytotcorh_sin_ah/filtro$freq_folio)
-```
- 
-```{r}
- 
 datatable(rr, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
           options = list(dom = 'Bfrtip',
           buttons = list('colvis', list(extend = 'collection',
@@ -3215,12 +3199,11 @@ datatable(rr, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
           list(extend='pdf',
             filename= 'hitStats')),
           text = 'Download')), scrollX = TRUE))
+
 ```
 ```{r}
 mean(rr$ytotcor)
 ```
- 
- cambio
  
 
 # Cambios
