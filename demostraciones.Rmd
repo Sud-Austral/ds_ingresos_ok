@@ -121,11 +121,10 @@ año| | |
  
 
 
-# Metodología y fuentes de datos
+## Metodología y fuentes de datos
 
 Nuestra metodología fue la de encontrar publicaciones oficiales con datos calculados de la Casen y compararlos con cálculos propios.
 
-## Metodología.
 
 En general la Casen no es analizada a  nivel de personas, sino que de hogares. 
 
@@ -137,15 +136,13 @@ La página de la Casen 2020 en pandemia analizada contiene  un excel con datos c
 
 para cada hogar la Casen lleva asociado la variable ytrabajocorh que significa "Ingreso del trabajo del hogar corregido" que se repite para cada registro perteneciente a un hogar (folio). Se transforma la tabla y se hace un sólo registro con el ingreso familiar. Se promedian en una región. Si bien el cálculo es simple, nos da cierto nivel de complejidad que hará notar con mayor facilidad los errores:
 
-## Verificación para el Censo 2020
-
-### Bases de datos
+# Verificación para el Censo 2020
 
 Los ejercicios resultan con los $ a noviembre de cada año.
 
 Nuestra mayor preocupación era que las cifras de ingresos del Censo 2020 coincidieran con nuestros cálculos, por lo que la primera base de datos que buscamos fue ella.
 
-Para ello calculamos el ingreso promedio de los hogares por tipo de ingreso y región, 2006-2020, ($ noviembre de cada año
+Para ello calculamos el ingreso promedio de los hogares por tipo de ingreso y región, 2006-2020, ($ noviembre de cada año de la siguiente base de datos:
 
 ![title](uno.png)
 
@@ -154,7 +151,7 @@ Para ello calculamos el ingreso promedio de los hogares por tipo de ingreso y re
 
 <!-- ############################################################################################################################################################ -->
 
-### Verificación de nuestros cálculos con datos oficiales del 2020
+## Verificación de nuestros cálculos con datos oficiales del 2020
 
 ```{r, warning=FALSE, message=FALSE} 
 # casen2020 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2020.rds")
@@ -211,7 +208,7 @@ reg_06 <- unique(casen2006$R)
 ```
 
 
-#### Ingreso del trabajo hogar: **ytrabajocorh**
+### Ingreso del trabajo hogar: **ytrabajocorh**
 
 ```{r} 
 tabla_prom_reg <- data.frame()
