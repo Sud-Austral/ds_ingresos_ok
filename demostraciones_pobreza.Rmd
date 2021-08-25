@@ -388,32 +388,6 @@ La columna p_multi sería la que que contenga la cantidad de pobres extremos por
 
 
 
-<!-- # Análisis de la pobreza -->
-
-
-<!-- Uno a nivel **comunal** en la Región Metropolitana y tres a nivel Regional: -->
-
-<!-- i. Ingreso autónomo <span style="color:red">percápita</span>  -->
-<!-- del hogar, CASEN 2011 -->
-<!-- ($ de noviembre de 2011) -->
-<!-- de la pagina 16 [de aquí](https://ciperchile.cl/wp-content/uploads/INDICE-DE-PRIORIDAD-SOCIAL-2014.pdf -->
-<!-- ). -->
-
-
-<!-- ii. Ingreso autónomo promedio e ingreso monetario promedio del hogar a nivel regional el 2015: -->
-
-<!-- https://www.bcn.cl/portal/noticias?id=principales-resultados-sobre-pobreza-e-ingresos-regionales-encuesta-casen-2015 -->
-
-
-<!-- Por dos instrumentos diferentes oficiales llegamos a los mismos resultados y son a los cuales intentamos aproximarnos. -->
-
-
-<!-- iii.  Se comparará con la tabla obtenida en las III [(ver aquí)](https://datasocial.ministeriodesarrollosocial.gob.cl/dataSocial/csv/Tablas_Ingreso.xlsx)  -->
-
-<!--  <!-- ![Tabla de referencia](image_2021_08_12T19_27_00_679Z.png) --> 
-
-<!-- iiii. Y la otra con una página interactiva con datos por región [(ver aquí)](https://datasocial.ministeriodesarrollosocial.gob.cl/fichaIndicador/513/2) -->
-
 
 <br>
 
