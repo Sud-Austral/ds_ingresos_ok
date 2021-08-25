@@ -73,9 +73,11 @@ library(DT)
 
 # Introducción
 
+
 Una diferencia fundamental que hace la Casen es la división de los ingresos en presonales e individuales.
 
 Necesitamos comparar los datos que calculamos por cuenta propia de los **Ingresos** con lo ya publicado para identificar los posibles errores en nuestras estimaciones.
+
 
 [En un trabajo anterior](https://rpubs.com/dataintelligence/construccion_del_ingreso_en_la_casen), determinamos los ingresos fundamentales a partir de los cuales se puede deducir toda la estructura de ingresos de la Casen. Éstos son:
 
@@ -83,6 +85,7 @@ Necesitamos comparar los datos que calculamos por cuenta propia de los **Ingreso
 2. Ingresos autónomos\
 3. Ingresos del trabajo, e\
 4. Ingresos de la ocupación principal.
+
 
 Los análisis oficiales que entrega Casen y que son descargables de [aquí](http://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-en-pandemia-2020) para el 2020 y de [aquí](http://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-2011) del 2011 hasta 1990, entregan estad[isticas muy útiles sobres las cuales comparar.
 
@@ -113,106 +116,12 @@ codigos_comunales <- readRDS(file = "C:/Users/chris/OneDrive/Documentos/archivos
 ```
 
 
-
-
-
-
-Casen se concentra en el análisis de los ingresos de los hogares, entonces el cálculo básico es el siguiente:
-
-1 Se agrupan todos los hogares por núcleo familiar con una columna que indique su cantidad si queremos calcular los ingresos per cápita.
-
-2 Hacemos un merge para traernos una variable de ingreso para el hogar (que es la suma de los ingresos de todos sus integrantes), por ejemplo ytrabajocorh (en general éstas terminan siempre con h).
-
-3 Calculamos los promedios por región.
-
-Dividimos el informe en tres:
-
-1. Para el 2020 comparamos nuestros cálculos con los publicados.
-
-2. Generalizamos para los cuatro ingresos fundamentales entre 2009 y 2020, agregando la variación porcentual entre años contiguos para nuestros ingresos calculados y agregando una gráfica que compara para todos los años disponibles los calculados y los publicados. Adjuntamos la tabla completa descargable.
-
-3. Problema. 
-
-Cuando llegamos al análisis de los ingresos por persona por comuna 2017-2020 nos encontramos con una caída enorme, que no parece justificada por las cifras oficiales. No hay error. Ésto es así. Lo que pasa es que en éste momento entra en juego el concepto de "Alquiler imputado". Una muy buena definición la entrega la fundación SOl:
-
-Una persona de 75 años vive sola y, luego de haber pagado dividendos por más de 30 años, es dueña de su casa. El arriendo que se paga en el sector por una vivienda similar es de $300.000. Esta persona no recibe pensión básica y su pensión autofinanciada a través del sistema de AFP es de $100.000. Tampoco recibe aporte previsional solidario. Dicho de otro modo: es una persona mayor que vive en su casa y cuyo único ingreso es de $100.000. Al momento de calcular el porcentaje de pobreza, sin embargo, esta persona obtiene un ingreso mensual de $400.000, correspondiente a la suma del alquiler imputado y su pensión autofinanciada y, como la línea de pobreza para el hogar de una persona es de $158.145, figurará estadísticamente como que no es pobre.>https://www.elmostrador.cl/noticias/opinion/columnas/2018/08/29/y-si-miramos-la-pobreza-de-mercado-las-trampas-del-famoso-alquiler-imputado/
-
-
-
-
-# Ingresos de los hogares versus el de las personas
-
-El alquiler imputado se divide en partes iguales entre los integrantes del hogar.
-
-Tenemos un problema en el que nos percatamos que los ingresos de los hogares entre el 2017 y el 2020 no caen de forma tan dramática como lo hacen los ingresos personales. Entonces vamos a hacer una verifición manual en torno a éstos dos estadios.
-
-Estudiaremos el subset de Algarrobo 2017
-
-1. El promedio de los 4 registros amarillos del campo ytotcor entrega el valor del ingreso per cápita.
-
-2. Que es el mismo valor que nos entrega el promedio del campo ytotcorh_sin_ah.
-
-3. Que sube a 440883,3 cuando incluímos el Alquiler imputado.
-
-![](Screenshot_aysen.png)
-```{r}
-448333+771667+800000+375000   +  250000
-```
-```{r}
-2645000/6
-```
-
-```{r}
-(440833 - 399166 ) *6
-```
-
-
-
-
-
-
-POBREZA EN PORCENTAJE DE PERSONAS 2006
-
-```{r}
-unique(casen2006$CORTE)
-tabla_matp <-xtabs(casen2006$EXPC~COMUNA+CORTE, data = casen2006)
-head(tabla_matp,10)
-```
-
-
-```{r}
-s1 <- sum(tabla_matp[,1])+sum(tabla_matp[,2])+sum(tabla_matp[,3])
-s2 <- sum(tabla_matp[,1])
-
-s2*100/s1
-```
-
-```{r}
-casen_2006_r1 <- filter(casen2006, casen2006$R == "VIII")
-# head(casen_2006_r1)
-```
-
-```{r}
-# casen_2006_r1 %>% filter(!is.na(CORTE))
-
-tabla_matp <-xtabs(casen_2006_r1$EXPR~R+CORTE, data = casen_2006_r1)
-# head(tabla_matp,10)
-```
-
-```{r}
-s1 <- sum(tabla_matp[,1])+sum(tabla_matp[,2])+sum(tabla_matp[,3])
-s2 <- sum(tabla_matp[,3])
- 
-s2*100/s1
-```
-
-<br>
-<br>
 <br>
 
 # Pobreza por ingresos
 
 Desde 1990 Casen publica información sobre el porcentaje de pobreza de los chilenos, generalmente divididos en tres categorias: no pobres, pobres y pobres extremos. A continuación se muestran 2 porcentajes diferentes de pobreza y pobreza extrema:
+
 
 
 
@@ -236,9 +145,10 @@ Que coincide con otro informe:
 
 [(ver informe completo acá)](http://observatorio.ministeriodesarrollosocial.gob.cl/storage/docs/casen/2006/Resultados_Pobreza_Casen_2006.pdf) 
 
-No hay error.
 
-Las tablas antiguas fueron corregidas según una nueva metodología.
+Entonces existen dos publicaciones oficiales de resultados de la medicion de la pobreza de la Casen: los del año y los actualizados.
+
+Podemos demostrar que nuestros cálculos coinciden perfecto con los entregados del año 2006:
 
 <!-- Pobreza por Ingreso Casen en Pandemia  -->
 <!-- hoja 8 de Copia de Pobreza_por_Ingreso_Casen_en_Pandemia_2020-1 -->
@@ -247,7 +157,7 @@ A continuación vamos a construir y verificar que nuestros cálculos coincidan c
 
 ```{r}
 unique(casen2006$R)
-casen2006 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2006_c.rds")
+casen2006 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2006_c.rds")
 unique(casen2006$CORTE)
 tabla_matp <-xtabs(casen2006$EXPR~R+CORTE, data = casen2006)
 indigente <- tabla_matp[,1]
@@ -257,15 +167,8 @@ total <- tabla_matp[,1] + tabla_matp[,2] + tabla_matp[,3]
 indigente_por <- indigente*100/total
 indigente_por
 ```
-Coinciden. Pero no podemos ampliar a  nivel de comunas.
-
 ```{r}
-# casen2006
-```
-
-
-```{r}
-tabla_matp <-xtabs(casen2006$EXPC~COMUNA+CORTE, data = casen2006)
+tabla_matp <-xtabs(casen2006$EXPR~COMUNA+CORTE, data = casen2006)
 head(tabla_matp,20)
 ```
 
@@ -295,7 +198,582 @@ head(tabla_matp,20)
 # totalisimo2 <- rbind(totalisimo,pobre_no_ind_por)
 # totalisimo3 <- rbind(totalisimo2,no_pobre_por)
 
-datatable(tabla_matp, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+
+# datatable(tabla_matp, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+#           options = list(dom = 'Bfrtip',
+#           buttons = list('colvis', list(extend = 'collection',
+#           buttons = list(
+#           list(extend='copy'),
+#           list(extend='excel',
+#             filename = 'hitStats'),
+#           list(extend='pdf',
+#             filename= 'hitStats')),
+#           text = 'Download')), scrollX = TRUE))
+
+```
+
+
+
+# Expansión comunal de la pobreza.
+
+Caso ejemplo: 2006, Antofagasta. Region II.	Estimación pobres extremos	23.593  según la nueva metodologia, sin embargo nosotros contamos 10716.
+
+## Pobreza 1
+
+![](p5.png)
+
+```{r}
+# casen2006 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2006_c.rds")
+casen2006 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2006_c.rds")
+casen2006 <- mutate_if(casen2006, is.factor, as.character)
+# tabla_matp <-xtabs(casen2006$EXPC~COMUNA+R+CORTE, data = casen2006)
+# head(tabla_matp,20)
+region_2 <- filter(casen2006, casen2006$R == "II")
+# region_2
+```
+
+```{r}
+tabla_matp <-xtabs(region_2$EXPC~COMUNA+CORTE, data = region_2)
+head(tabla_matp,20)
+tabla_matp <- as.data.frame(tabla_matp)
+```
+
+Consideremos sólo los pobres extremos:
+
+```{r}
+frec_man_com_parcial_total <- filter(tabla_matp, tabla_matp$CORTE == "Indigente")
+frec_man_com_parcial_total
+codigos_com <- frec_man_com_parcial_total$COMUNA
+#codigos_com
+```
+```{r}
+sum(frec_man_com_parcial_total$Freq)
+```
+
+Expandiremos las frecuencias de pobres ty pobres extremos para que lleguen al nivel oficial de la nueva metodología y lo haremos por comuna.
+
+```{r} 
+frec_man_com_parcial_total2 <- data.frame()
+for(i in codigos_com){
+  frec_man_com_parcial <- filter(frec_man_com_parcial_total, frec_man_com_parcial_total$COMUNA == i)
+  frec_man_com_parcial$p <- frec_man_com_parcial$Freq*100/sum(frec_man_com_parcial_total$Freq)/100
+  frec_man_com_parcial_total2 <- rbind(frec_man_com_parcial_total2,frec_man_com_parcial)
+}
+ 
+```
+
+<!-- ######################################################################################################################### 2006 -->
+
+
+```{r}
+pobreza <- read_xlsx("valores de pobreza actuales.xlsx", sheet = 9 )
+regiones_pub <- pobreza[1:16,c(1,2,9)]
+regiones_pub2 <- pobreza[19:34,c(1,2,9)]
+regiones_pub$c2006 <- as.numeric(regiones_pub$c2006)
+regiones_pub2$c2006 <- as.numeric(regiones_pub2$c2006)
+ 
+cat <- unique(casen2006$CORTE)
+```
+
+```{r}
+prop_cor <- data.frame()
+for (cat in unique(casen2006$CORTE)[2]) {
+  
+proporcion <- data.frame()
+fn_prp_pob <- function(n){
+  
+region_2 <- filter(casen2006, casen2006$R == n)
+
+tabla_matp <-xtabs(region_2$EXPC~COMUNA+CORTE, data = region_2)
+tabla_matp <- as.data.frame(tabla_matp)
+tabla_matp2 <<- tabla_matp
+frec_man_com_parcial_total <- filter(tabla_matp, tabla_matp$CORTE == cat)
+codigos_com <- frec_man_com_parcial_total$COMUNA
+
+frec_man_com_parcial_total2 <- data.frame()
+for(i in codigos_com){
+  frec_man_com_parcial <- filter(frec_man_com_parcial_total, frec_man_com_parcial_total$COMUNA == i)
+  frec_man_com_parcial$p <- frec_man_com_parcial$Freq*100/sum(frec_man_com_parcial_total$Freq)/100
+  frec_man_com_parcial_total2 <- rbind(frec_man_com_parcial_total2,frec_man_com_parcial) 
+}
+proporcion2 <<- frec_man_com_parcial_total2
+} 
+for (n in unique(casen2006$R)) {
+ 
+  fn_prp_pob(n)
+  proporcion2$ROMANOS <- n 
+  proporcion <- rbind(proporcion,proporcion2)
+}
+
+
+proporcion <- proporcion[,c(5,1,2,3,4)]
+prop_cor <- rbind(prop_cor,proporcion)
+}
+ 
+prop_cor = merge(x = prop_cor, y = regiones_pub, by="ROMANOS")
+
+ 
+prop_cor$p_mul <- round(prop_cor$p * prop_cor$c2006)
+names(prop_cor)[1] <- "region_r" 
+
+pob_calculado <- data.frame()
+for (i in unique(prop_cor$region)) {  
+  tabla <- filter(prop_cor, prop_cor$region == i )
+  tabla <- filter(tabla, tabla$CORTE == "Indigente" )
+  
+  tabla2 <- data.frame(
+    region = i,
+    calculado = sum(tabla$p_mul)
+  ) 
+   pob_calculado <- rbind(pob_calculado, tabla2)
+}
+a1 <- pob_calculado
+```
+ 
+ <!-- ########################### -->
+ 
+```{r}
+prop_cor <- data.frame()
+for (cat in unique(casen2006$CORTE)[3]) {
+  
+proporcion <- data.frame()
+fn_prp_pob <- function(n){
+  
+region_2 <- filter(casen2006, casen2006$R == n)
+
+tabla_matp <-xtabs(region_2$EXPC~COMUNA+CORTE, data = region_2)
+tabla_matp <- as.data.frame(tabla_matp)
+tabla_matp2 <<- tabla_matp
+frec_man_com_parcial_total <- filter(tabla_matp, tabla_matp$CORTE == cat)
+codigos_com <- frec_man_com_parcial_total$COMUNA
+
+frec_man_com_parcial_total2 <- data.frame()
+for(i in codigos_com){
+  frec_man_com_parcial <- filter(frec_man_com_parcial_total, frec_man_com_parcial_total$COMUNA == i)
+  frec_man_com_parcial$p <- frec_man_com_parcial$Freq*100/sum(frec_man_com_parcial_total$Freq)/100
+  frec_man_com_parcial_total2 <- rbind(frec_man_com_parcial_total2,frec_man_com_parcial) 
+}
+proporcion2 <<- frec_man_com_parcial_total2
+} 
+for (n in unique(casen2006$R)) {
+ 
+  fn_prp_pob(n)
+  proporcion2$ROMANOS <- n 
+  proporcion <- rbind(proporcion,proporcion2)
+}
+
+
+proporcion <- proporcion[,c(5,1,2,3,4)]
+prop_cor <- rbind(prop_cor,proporcion)
+}
+ 
+prop_cor = merge(x = prop_cor, y = regiones_pub2, by="ROMANOS")
+
+ 
+prop_cor$p_mul <- round(prop_cor$p * prop_cor$c2006)
+names(prop_cor)[1] <- "region_r" 
+
+pob_calculado <- data.frame()
+for (i in unique(prop_cor$region)) {  
+  tabla <- filter(prop_cor, prop_cor$region == i )
+  tabla <- filter(tabla, tabla$CORTE == "Pobre no indigente" )
+  
+  tabla2 <- data.frame(
+    region = i,
+    calculado = sum(tabla$p_mul)
+  ) 
+   pob_calculado <- rbind(pob_calculado, tabla2)
+}
+a2 <- pob_calculado
+```
+
+ 
+<!-- ######################################################################################################################### 2009 --> 
+
+```{r}
+pobreza <- read_xlsx("valores de pobreza actuales.xlsx", sheet = 9 )
+regiones_pub <- pobreza[1:16,c(1,3,10)]
+regiones_pub$c2009 <- as.numeric(regiones_pub$c2009)
+regiones_pub2 <- pobreza[19:34,c(1,3,10)]
+regiones_pub2$c2009 <- as.numeric(regiones_pub2$c2009)
+ 
+cat <- unique(casen2009$CORTE)
+ 
+```
+
+```{r}
+prop_cor <- data.frame()
+for (cat in unique(casen2009$CORTE)[3]) {
+  
+proporcion <- data.frame()
+fn_prp_pob <- function(n){
+  
+region_2 <- filter(casen2009, casen2009$REGION == n)
+
+tabla_matp <-xtabs(region_2$EXPC~COMUNA+CORTE, data = region_2)
+tabla_matp <- as.data.frame(tabla_matp) 
+frec_man_com_parcial_total <- filter(tabla_matp, tabla_matp$CORTE == cat)
+codigos_com <- frec_man_com_parcial_total$COMUNA
+
+frec_man_com_parcial_total2 <- data.frame()
+for(i in codigos_com){
+  frec_man_com_parcial <- filter(frec_man_com_parcial_total, frec_man_com_parcial_total$COMUNA == i)
+  frec_man_com_parcial$p <- frec_man_com_parcial$Freq*100/sum(frec_man_com_parcial_total$Freq)/100
+  frec_man_com_parcial_total2 <- rbind(frec_man_com_parcial_total2,frec_man_com_parcial) 
+}
+proporcion2 <<- frec_man_com_parcial_total2
+} 
+for (n in unique(casen2009$REGION)) {
+ 
+  fn_prp_pob(n)
+  proporcion2$region_09 <- n 
+  proporcion <- rbind(proporcion,proporcion2)
+}
+
+
+proporcion <- proporcion[,c(5,1,2,3,4)]
+prop_cor <- rbind(prop_cor,proporcion)
+}
+ 
+prop_cor = merge(x = prop_cor, y = regiones_pub, by="region_09")
+ 
+prop_cor$p_mul <- round(prop_cor$p * prop_cor$c2009)
+names(prop_cor)[1] <- "region_r" 
+
+pob_calculado <- data.frame()
+for (i in unique(prop_cor$region)) {  
+  tabla <- filter(prop_cor, prop_cor$region == i )
+  tabla <- filter(tabla, tabla$CORTE == "Indigente" )
+  
+  tabla2 <- data.frame(
+    region = i,
+    calculado = sum(tabla$p_mul)
+  ) 
+   pob_calculado <- rbind(pob_calculado, tabla2)
+}
+a3 <- pob_calculado
+```
+
+<!-- ############################# -->
+
+```{r}
+prop_cor <- data.frame()
+for (cat in unique(casen2009$CORTE)[1]) {
+  
+proporcion <- data.frame()
+fn_prp_pob <- function(n){
+  
+region_2 <- filter(casen2009, casen2009$REGION == n)
+
+tabla_matp <-xtabs(region_2$EXPC~COMUNA+CORTE, data = region_2)
+tabla_matp <- as.data.frame(tabla_matp) 
+frec_man_com_parcial_total <- filter(tabla_matp, tabla_matp$CORTE == cat)
+codigos_com <- frec_man_com_parcial_total$COMUNA
+
+frec_man_com_parcial_total2 <- data.frame()
+for(i in codigos_com){
+  frec_man_com_parcial <- filter(frec_man_com_parcial_total, frec_man_com_parcial_total$COMUNA == i)
+  frec_man_com_parcial$p <- frec_man_com_parcial$Freq*100/sum(frec_man_com_parcial_total$Freq)/100
+  frec_man_com_parcial_total2 <- rbind(frec_man_com_parcial_total2,frec_man_com_parcial) 
+}
+proporcion2 <<- frec_man_com_parcial_total2
+} 
+for (n in unique(casen2009$REGION)) {
+ 
+  fn_prp_pob(n)
+  proporcion2$region_09 <- n 
+  proporcion <- rbind(proporcion,proporcion2)
+}
+
+
+proporcion <- proporcion[,c(5,1,2,3,4)]
+prop_cor <- rbind(prop_cor,proporcion)
+}
+ 
+prop_cor = merge(x = prop_cor, y = regiones_pub2, by="region_09")
+ 
+prop_cor$p_mul <- round(prop_cor$p * prop_cor$c2009)
+names(prop_cor)[1] <- "region_r" 
+
+pob_calculado <- data.frame()
+for (i in unique(prop_cor$region)) {  
+  tabla <- filter(prop_cor, prop_cor$region == i )
+  tabla <- filter(tabla, tabla$CORTE == "Pobre no Indigente" )
+  
+  tabla2 <- data.frame(
+    region = i,
+    calculado = sum(tabla$p_mul)
+  ) 
+   pob_calculado <- rbind(pob_calculado, tabla2)
+}
+a4 <- pob_calculado
+```
+
+
+<!-- ######################################################################################################################### 2011 --> 
+
+
+```{r}
+pobreza <- read_xlsx("valores de pobreza actuales.xlsx", sheet = 9 )
+regiones_pub <- pobreza[1:16,c(1,4)]
+regiones_pub$c2011 <- as.numeric(regiones_pub$c2011)
+regiones_pub2 <- pobreza[19:32,c(1,4)]
+regiones_pub2$c2011 <- as.numeric(regiones_pub2$c2011)
+
+cat <- unique(casen2011$corte)
+
+```
+
+
+```{r}
+prop_cor <- data.frame()
+for (cat in unique(casen2011$corte)[3]) {
+  
+proporcion <- data.frame()
+fn_prp_pob <- function(n){
+  
+region_2 <- filter(casen2011, casen2011$region == n)
+
+tabla_matp <-xtabs(region_2$expc_full~comuna+corte, data = region_2)
+tabla_matp <- as.data.frame(tabla_matp) 
+frec_man_com_parcial_total <- filter(tabla_matp, tabla_matp$corte == cat)
+codigos_com <- frec_man_com_parcial_total$comuna
+
+frec_man_com_parcial_total2 <- data.frame()
+for(i in codigos_com){
+  frec_man_com_parcial <- filter(frec_man_com_parcial_total, frec_man_com_parcial_total$comuna == i)
+  frec_man_com_parcial$p <- frec_man_com_parcial$Freq*100/sum(frec_man_com_parcial_total$Freq)/100
+  frec_man_com_parcial_total2 <- rbind(frec_man_com_parcial_total2,frec_man_com_parcial) 
+}
+proporcion2 <<- frec_man_com_parcial_total2
+} 
+for (n in unique(casen2011$region)) {
+ 
+  fn_prp_pob(n)
+  proporcion2$region <- n 
+  proporcion <- rbind(proporcion,proporcion2)
+}
+
+
+proporcion <- proporcion[,c(5,1,2,3,4)]
+prop_cor <- rbind(prop_cor,proporcion)
+}
+
+prop_cor = merge(x = prop_cor, y = regiones_pub, by="region")
+ 
+prop_cor$p_mul <- round(prop_cor$p * prop_cor$c2011)
+names(prop_cor)[1] <- "region_r" 
+
+pob_calculado <- data.frame()
+for (i in unique(prop_cor$region)) {  
+  tabla <- filter(prop_cor, prop_cor$region == i )
+  tabla <- filter(tabla, tabla$corte == "Pobreza extrema" )
+  
+  tabla2 <- data.frame(
+    region = i,
+    calculado = sum(tabla$p_mul)
+  ) 
+   pob_calculado <- rbind(pob_calculado, tabla2)
+}
+a5 <- pob_calculado
+```
+
+<!-- ########################## -->
+
+
+
+```{r}
+prop_cor <- data.frame()
+for (cat in unique(casen2011$corte)[2]) {
+  
+proporcion <- data.frame()
+fn_prp_pob <- function(n){
+  
+region_2 <- filter(casen2011, casen2011$region == n)
+
+tabla_matp <-xtabs(region_2$expc_full~comuna+corte, data = region_2)
+tabla_matp <- as.data.frame(tabla_matp) 
+frec_man_com_parcial_total <- filter(tabla_matp, tabla_matp$corte == cat)
+codigos_com <- frec_man_com_parcial_total$comuna
+
+frec_man_com_parcial_total2 <- data.frame()
+for(i in codigos_com){
+  frec_man_com_parcial <- filter(frec_man_com_parcial_total, frec_man_com_parcial_total$comuna == i)
+  frec_man_com_parcial$p <- frec_man_com_parcial$Freq*100/sum(frec_man_com_parcial_total$Freq)/100
+  frec_man_com_parcial_total2 <- rbind(frec_man_com_parcial_total2,frec_man_com_parcial) 
+}
+proporcion2 <<- frec_man_com_parcial_total2
+} 
+for (n in unique(casen2011$region)) {
+ 
+  fn_prp_pob(n)
+  proporcion2$region <- n 
+  proporcion <- rbind(proporcion,proporcion2)
+}
+
+
+proporcion <- proporcion[,c(5,1,2,3,4)]
+prop_cor <- rbind(prop_cor,proporcion)
+}
+
+prop_cor = merge(x = prop_cor, y = regiones_pub2, by="region")
+ 
+prop_cor$p_mul <- round(prop_cor$p * prop_cor$c2011)
+names(prop_cor)[1] <- "region_r" 
+
+pob_calculado <- data.frame()
+for (i in unique(prop_cor$region)) {  
+  tabla <- filter(prop_cor, prop_cor$region == i )
+  tabla <- filter(tabla, tabla$corte == "Pobre" )
+  
+  tabla2 <- data.frame(
+    region = i,
+    calculado = sum(tabla$p_mul)
+  ) 
+   pob_calculado <- rbind(pob_calculado, tabla2)
+}
+a6 <- pob_calculado
+```
+
+<!-- ######################################################################################################################### 2013  --> 
+
+
+```{r}
+pobreza <- read_xlsx("valores de pobreza actuales.xlsx", sheet = 9 )
+regiones_pub <- pobreza[1:16,c(1,5)]
+regiones_pub$c2013 <- as.numeric(regiones_pub$c2013)
+regiones_pub2 <- pobreza[19:34,c(1,5)]
+regiones_pub2$c2013 <- as.numeric(regiones_pub2$c2013)
+cat <- unique(casen2013$pobreza_MN)
+
+```
+
+```{r}
+prop_cor <- data.frame()
+for (cat in unique(casen2013$pobreza_MN)[4]) {
+  
+proporcion <- data.frame()
+fn_prp_pob <- function(n){
+  
+region_2 <- filter(casen2013, casen2013$region == n)
+
+tabla_matp <-xtabs(region_2$expc~comuna+pobreza_MN, data = region_2)
+tabla_matp <- as.data.frame(tabla_matp) 
+frec_man_com_parcial_total <- filter(tabla_matp, tabla_matp$pobreza_MN == cat)
+codigos_com <- frec_man_com_parcial_total$comuna
+
+frec_man_com_parcial_total2 <- data.frame()
+for(i in codigos_com){
+  frec_man_com_parcial <- filter(frec_man_com_parcial_total, frec_man_com_parcial_total$comuna == i)
+  frec_man_com_parcial$p <- frec_man_com_parcial$Freq*100/sum(frec_man_com_parcial_total$Freq)/100
+  frec_man_com_parcial_total2 <- rbind(frec_man_com_parcial_total2,frec_man_com_parcial) 
+}
+proporcion2 <<- frec_man_com_parcial_total2
+} 
+for (n in unique(casen2013$region)) {
+ 
+  fn_prp_pob(n)
+  proporcion2$region <- n 
+  proporcion <- rbind(proporcion,proporcion2)
+}
+
+
+proporcion <- proporcion[,c(5,1,2,3,4)]
+prop_cor <- rbind(prop_cor,proporcion)
+}
+
+prop_cor = merge(x = prop_cor, y = regiones_pub, by="region")
+ 
+prop_cor$p_mul <- round(prop_cor$p * prop_cor$c2013)
+names(prop_cor)[1] <- "region_r" 
+
+pob_calculado <- data.frame()
+for (i in unique(prop_cor$region)) {  
+  tabla <- filter(prop_cor, prop_cor$region == i )
+  tabla <- filter(tabla, tabla$pobreza_MN == "Pobres extremos" )
+  
+  tabla2 <- data.frame(
+    region = i,
+    calculado = sum(tabla$p_mul)
+  ) 
+   pob_calculado <- rbind(pob_calculado, tabla2)
+}
+a7 <- pob_calculado
+```
+
+```{r}
+prop_cor <- data.frame()
+for (cat in unique(casen2013$pobreza_MN)[2]) {
+  
+proporcion <- data.frame()
+fn_prp_pob <- function(n){
+  
+region_2 <- filter(casen2013, casen2013$region == n)
+
+tabla_matp <-xtabs(region_2$expc~comuna+pobreza_MN, data = region_2)
+tabla_matp <- as.data.frame(tabla_matp) 
+frec_man_com_parcial_total <- filter(tabla_matp, tabla_matp$pobreza_MN == cat)
+codigos_com <- frec_man_com_parcial_total$comuna
+
+frec_man_com_parcial_total2 <- data.frame()
+for(i in codigos_com){
+  frec_man_com_parcial <- filter(frec_man_com_parcial_total, frec_man_com_parcial_total$comuna == i)
+  frec_man_com_parcial$p <- frec_man_com_parcial$Freq*100/sum(frec_man_com_parcial_total$Freq)/100
+  frec_man_com_parcial_total2 <- rbind(frec_man_com_parcial_total2,frec_man_com_parcial) 
+}
+proporcion2 <<- frec_man_com_parcial_total2
+} 
+for (n in unique(casen2013$region)) {
+ 
+  fn_prp_pob(n)
+  proporcion2$region <- n 
+  proporcion <- rbind(proporcion,proporcion2)
+}
+
+
+proporcion <- proporcion[,c(5,1,2,3,4)]
+prop_cor <- rbind(prop_cor,proporcion)
+}
+
+prop_cor = merge(x = prop_cor, y = regiones_pub2, by="region")
+ 
+prop_cor$p_mul <- round(prop_cor$p * prop_cor$c2013)
+names(prop_cor)[1] <- "region_r" 
+
+pob_calculado <- data.frame()
+for (i in unique(prop_cor$region)) {  
+  tabla <- filter(prop_cor, prop_cor$region == i )
+  tabla <- filter(tabla, tabla$pobreza_MN == "Pobres no extremos" )
+  
+  tabla2 <- data.frame(
+    region = i,
+    calculado = sum(tabla$p_mul)
+  ) 
+   pob_calculado <- rbind(pob_calculado, tabla2)
+}
+a8 <- pob_calculado
+```
+```{r}
+a1$año <- 2006
+a3$año <- 2009
+a5$año <- 2011
+a7$año <- 2013
+a2$año <- 2006
+a4$año <- 2009
+a6$año <- 2011
+a8$año <- 2013
+a1$tp <- "Pobres extremos"
+a3$tp <- "Pobres extremos"
+a5$tp <- "Pobres extremos"
+a7$tp <- "Pobres extremos"
+a2$tp <- "Pobres no extremos"
+a4$tp <- "Pobres no extremos"
+a6$tp <- "Pobres no extremos"
+a8$tp <- "Pobres no extremos"
+tabla_f1 <- rbind(a1,a3,a5,a7)
+tabla_f2 <- rbind(a2,a4,a6,a8)
+tabla_f3 <- rbind(tabla_f1,tabla_f2)
+datatable(tabla_f3, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
           options = list(dom = 'Bfrtip',
           buttons = list('colvis', list(extend = 'collection',
           buttons = list(
@@ -305,14 +783,10 @@ datatable(tabla_matp, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
           list(extend='pdf',
             filename= 'hitStats')),
           text = 'Download')), scrollX = TRUE))
-
-
 ```
 
+<!-- ######################################################################################################################### -->
 
-podriamos construir un indicador que relaciones frecuencias y no porcentajes que difieren segun metodologia, asi por emeplo, en iquique para el 2006 hubo 2147 indigentes, eso representa una cantidad que puede relacionarse con el total nacional de personas.
-
-Un indice asi podria llamarase: ICP indice comparativo de la pobreza.
 
 
 <!-- # Análisis de la pobreza -->
@@ -343,7 +817,12 @@ Un indice asi podria llamarase: ICP indice comparativo de la pobreza.
 
 
 <br>
-<br>
+
+
+
+
+
+
 <br>
 <br>
 <br>
