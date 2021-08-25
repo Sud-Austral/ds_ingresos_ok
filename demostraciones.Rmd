@@ -78,7 +78,42 @@ library(DT)
 
 # Introducción
 
+
+Cuando estimamos porcentualmente la variación del ingreso total personal entre el 2017 y el 2020 por comuna nos encontramos con una caída del -34,45294636 a nivel nacional, lo que no se condice con las estadísticas que obtuvimos a nivel de hogares [aquí](http://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-en-pandemia-2020): Ingreso promedio de los hogares por tipo de ingreso y región. Los últimos apenas varian  frente a la tremenda caida del -34% de ytotcor, pero como demostraremos, creemos que es problema de interpretación y no de método o base de datos corrupta, sino que del concepto de **Alquiler imputado** que suaviza muchísimo la pobreza por ingresos.
+
+Casen se concentra en el analisis de los ingresos de los hogares, entonces el cálculo básico es el siguiente:
+
+1 Se agrupan todos los hogares por núcleo familiar con una columna que indique su cantidad si queremos calcular los ingresos per cápita.
+
+2 Hacemos un merge para traernos una variable de ingreso para el hogar (que es la suma de los ingresos de todos sus integrantes), por ejemplo ytrabajocorh (en general éstas terminan siempre con h).
+
+3 Calculamos los promedios por región.
+
+Dividimos el informe en tres:
+
+1. Para el 2020 comparamos nuestros cálculos con los publicados.
+
+2. Generalizamos para los cuatro ingresos fundamentales entre 2009 y 2020, agregando la variación porcentual entre años contiguos para nuestros ingresos calculados y agregando una gráfica que compara para todos los años disponibles los calculados y los publicados. Adjuntamos la tabla completa descargable.
+
+3. Problema. 
+
+Cuando llegamos al análisis de los ingresos por persona por comuna 2017-2020 nos encontramos con una caída enorme, que no parece justificada por las cifras oficiales. No hay error. Ésto es así. Lo que pasa es que en éste momento entra en juego el concepto de "Alquiler imputado". Una muy buena definición la entrega la fundación SOl:
+
+Una persona de 75 años vive sola y, luego de haber pagado dividendos por más de 30 años, es dueña de su casa. El arriendo que se paga en el sector por una vivienda similar es de $300.000. Esta persona no recibe pensión básica y su pensión autofinanciada a través del sistema de AFP es de $100.000. Tampoco recibe aporte previsional solidario. Dicho de otro modo: es una persona mayor que vive en su casa y cuyo único ingreso es de $100.000. Al momento de calcular el porcentaje de pobreza, sin embargo, esta persona obtiene un ingreso mensual de $400.000, correspondiente a la suma del alquiler imputado y su pensión autofinanciada y, como la línea de pobreza para el hogar de una persona es de $158.145, figurará estadísticamente como que no es pobre.>https://www.elmostrador.cl/noticias/opinion/columnas/2018/08/29/y-si-miramos-la-pobreza-de-mercado-las-trampas-del-famoso-alquiler-imputado/
+
+
+
+
+4. Solucion
+
+
+
+
+
+Informes de las Casen e información básica para Casen 2011 y anteriores:\
+
 1 Informes de las Casen e información básica:\
+
 http://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-2011
 
 # El problema
@@ -107,11 +142,10 @@ año| | |
  
 
 
-# Metodología y fuentes de datos
+## Metodología y fuentes de datos
 
 Nuestra metodología fue la de encontrar publicaciones oficiales con datos calculados de la Casen y compararlos con cálculos propios.
 
-## Metodología.
 
 En general la Casen no es analizada a  nivel de personas, sino que de hogares. 
 
@@ -123,15 +157,13 @@ La página de la Casen 2020 en pandemia analizada contiene  un excel con datos c
 
 para cada hogar la Casen lleva asociado la variable ytrabajocorh que significa "Ingreso del trabajo del hogar corregido" que se repite para cada registro perteneciente a un hogar (folio). Se transforma la tabla y se hace un sólo registro con el ingreso familiar. Se promedian en una región. Si bien el cálculo es simple, nos da cierto nivel de complejidad que hará notar con mayor facilidad los errores:
 
-## Verificación para el Censo 2020
-
-### Bases de datos
+# Verificación para el Censo 2020
 
 Los ejercicios resultan con los $ a noviembre de cada año.
 
 Nuestra mayor preocupación era que las cifras de ingresos del Censo 2020 coincidieran con nuestros cálculos, por lo que la primera base de datos que buscamos fue ella.
 
-Para ello calculamos el ingreso promedio de los hogares por tipo de ingreso y región, 2006-2020, ($ noviembre de cada año
+Para ello calculamos el ingreso promedio de los hogares por tipo de ingreso y región, 2006-2020, ($ noviembre de cada año de la siguiente base de datos:
 
 ![title](uno.png)
 
@@ -151,8 +183,9 @@ Para ello calculamos el ingreso promedio de los hogares por tipo de ingreso y re
 
 
 <!-- ############################################################################################################################################################ -->
-
+ 
 # Verificación de nuestros cálculos con datos oficiales del 2020
+ 
 
 ```{r, warning=FALSE, message=FALSE} 
 casen2020 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2020.rds")
@@ -260,9 +293,9 @@ reg_06 <- unique(casen2006$R)
 ```
 
 
-
+ 
 ## Ingreso del trabajo hogar: **ytrabajocorh**
-
+ 
 ```{r} 
 tabla_prom_reg <- data.frame()
 
@@ -2856,6 +2889,43 @@ p
 ```
 
 
+# Análisis de los ingresos por persona por comuna 2017-2020
+
+Si llegamos a tal nivel de sofisticación con el percápita y las variables calculadas coinciden con las publicadas sobre varios años, aunque no exista publicacion oficial con la cual comparar a nivel de personas, nuestras estimaciones deberán estar ok.
+
+
+Vamos a estimar a nivel porcentual la variación del ingreso total personal entre el 2017 y el 2020 por comuna.
+
+## Ingresos ytotcor
+
+Promedio ingreso total 2017 -2020
+
+```{r}
+salida_001 = aggregate(casen2017[,c("ytotcor")],by = list(PAISES = casen2017$comuna), FUN = mean)
+names(salida_001)[1]<-c("comunas")
+names(salida_001)[2]<-c("promedios totales 2017")
+# head(salida_001,10)
+ 
+salida_002 = aggregate(casen2020[,c("ytotcor")],by = list(PAISES = casen2020$comuna), FUN = mean)
+names(salida_002)[1]<-c("comunas")
+names(salida_002)[2]<-c("promedios totales 2020")
+# head(salida_002,10)
+ 
+union_003 <- merge(salida_001,salida_002, by="comunas", all.x = TRUE)
+union_003$difer_por <- (100-100*union_003$`promedios totales 2017`/union_003$`promedios totales 2020`)
+
+datatable(union_003, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+          options = list(dom = 'Bfrtip',
+          buttons = list('colvis', list(extend = 'collection',
+          buttons = list(
+          list(extend='csv',
+            filename = 'hitStats'),
+          list(extend='excel',
+            filename = 'hitStats'),
+          list(extend='pdf',
+            filename= 'hitStats')),
+          text = 'Download')), scrollX = TRUE))
+```
 
 
 Por comunas
@@ -2873,7 +2943,7 @@ Por comunas
 
 ## Ingreso autónomo <span style="color:red">percápita</span>  del hogar, CASEN 2011 ($ de noviembre de 2011) 
 
-Hasta el momento hemos calculado el ingreso de los hogares. Vamos a añadir un grado de complejidad más al calcular peste valor per cápita. Obtenemos valore para todo Chile y lLlegamos a la conclusión de que no es necesario la expansión.
+Hasta el momento hemos calculado el ingreso de los hogares. Vamos a añadir un grado de complejidad más al calcular el valor per cápita. Obtenemos valores para todas las comunas de Chile y llegamos a la conclusión de que no es necesario la expansión.
 
 
 
@@ -2895,8 +2965,10 @@ integrantes del hogar, excluido el servicio doméstico puertas adentro.
 <span style="color:red">folio: Identificación del hogar.</span>
 
 
-### Hacemos un subset con la region metropolitana
  
+### Hacemos un subset con la Región Metropolitana
+
+Procedemos según nuestra metodología. 
 
 ```{r}
 casen2011_rm <- filter(casen2011, casen2011$region == "Región Metropolitana de Santiago")
@@ -2935,48 +3007,12 @@ p <- p %>% add_trace(y = ~iaph, name = 'iaph', mode = 'markers')
 p
 ```
 
-# Análisis de los ingresos por persona por comuna 2017 2020
 
-Si llegamos a tal nivel de sofisticación con el percápita y las variables calculadas coinciden con las publicadas sobre varios años, aunque no exista publicacion oficial con la cual comparar a nivel de personas, nuestras estimaciones deberóan  estar ok.
+# Ingreso per cápita del hogar
 
+Tenemos así una forma de determinar para cada registro su ingreso per cápita del hogar y segír la metodología establecida. Por el contrario, podemos construir nuestros propios indicadores.
 
-Vamos a estimar a nivel porcentual la variación del ingreso total personal entre el 2017 y el 2020 por comuna.
-
-## Ingresos
-
-Promedio ingreso total 2017 -2020
-
-```{r}
-salida_001 = aggregate(casen2017[,c("ytotcor")],by = list(PAISES = casen2017$comuna), FUN = mean)
-names(salida_001)[1]<-c("comunas")
-names(salida_001)[2]<-c("promedios totales 2017")
-# head(salida_001,10)
- 
-salida_002 = aggregate(casen2020[,c("ytotcor")],by = list(PAISES = casen2020$comuna), FUN = mean)
-names(salida_002)[1]<-c("comunas")
-names(salida_002)[2]<-c("promedios totales 2020")
-# head(salida_002,10)
- 
-union_003 <- merge(salida_001,salida_002, by="comunas", all.x = TRUE)
-union_003$difer_por <- (100-100*union_003$`promedios totales 2017`/union_003$`promedios totales 2020`)
-
-datatable(union_003, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
-          options = list(dom = 'Bfrtip',
-          buttons = list('colvis', list(extend = 'collection',
-          buttons = list(
-          list(extend='csv',
-            filename = 'hitStats'),
-          list(extend='excel',
-            filename = 'hitStats'),
-          list(extend='pdf',
-            filename= 'hitStats')),
-          text = 'Download')), scrollX = TRUE))
-```
-
-
-<!-- #################################################################################################################################### -->
-
-## Promedio ingreso autonomo
+## Promedio ingreso autónomo
 
 ```{r, warning=FALSE, message=FALSE}
 fu_ingresos <- function(n){
@@ -2996,8 +3032,8 @@ fu_ingresos <- function(n){
         case = tabla_casen <- casen2017,
         case = tabla_casen <- casen2020
 )
-  
-casen2011_rm <- filter(tabla_casen, tabla_casen$region == nregion)
+casen2011_rm <- tabla_casen
+#casen2011_rm <- filter(tabla_casen, tabla_casen$region == nregion)
 tabla <- table(casen2011_rm[,c(nfolio)])
 tabla <- as.data.frame(tabla)
 colnames(tabla) <- c("folio","freq_folio")
@@ -3079,8 +3115,8 @@ fu_ingresos <- function(n){
         case = tabla_casen <- casen2017,
         case = tabla_casen <- casen2020
 )
-  
-casen2011_rm <- filter(tabla_casen, tabla_casen$region == nregion)
+casen2011_rm <- tabla_casen
+#casen2011_rm <- filter(tabla_casen, tabla_casen$region == nregion)
 tabla <- table(casen2011_rm[,c(nfolio)])
 tabla <- as.data.frame(tabla)
 colnames(tabla) <- c("folio","freq_folio")
@@ -3162,8 +3198,9 @@ fu_ingresos <- function(n){
         case = tabla_casen <- casen2017,
         case = tabla_casen <- casen2020
 )
-  
-casen2011_rm <- filter(tabla_casen, tabla_casen$region == nregion)
+
+casen2011_rm <- tabla_casen
+#casen2011_rm <- filter(tabla_casen, tabla_casen$region == nregion)
 tabla <- table(casen2011_rm[,c(nfolio)])
 tabla <- as.data.frame(tabla)
 colnames(tabla) <- c("folio","freq_folio")
@@ -3245,8 +3282,10 @@ fu_ingresos <- function(n){
         case = tabla_casen <- casen2017,
         case = tabla_casen <- casen2020
 )
+
   
-casen2011_rm <- filter(tabla_casen, tabla_casen$region == nregion)
+casen2011_rm <- tabla_casen
+#casen2011_rm <- filter(tabla_casen, tabla_casen$region == nregion)
 tabla <- table(casen2011_rm[,c(nfolio)])
 tabla <- as.data.frame(tabla)
 colnames(tabla) <- c("folio","freq_folio")
@@ -3884,23 +3923,23 @@ datatable(tabla_cont_freq, extensions = 'Buttons', escape = FALSE, rownames = FA
 
 ```
  
-
-<!-- ############################################################################################################# -->
+ 
 
 # Ingresos de los hogares versus el de las personas
 
 Tenemos un problema en el que nos percatamos que los ingresos de los hogares entre el 2017 y el 2020 no caen de forma tan dramática como lo hacen los ingresos personales. Entonces vamos a hacer una verifición manual en torno a éstos dos estadios.
 
-Estudiaremos el subset de Algarrobo.
+Estudiaremos el subset de Algarrobo 2017
 
-En el primer par de grupos clacularemos para el 2027 y el 2020 el ingreso per cápita promedio de los hogares. En el segundo set, las cifras duras en términos individuales.
+1. El promedio de los 4 registros amarillos del campo ytotcor entrega el valor del ingreso per cápita.
 
+2. Que es el mismo valor que nos entrega el promedio del campo ytotcorh_sin_ah.
 
-2017
+3. Que sube a 440883,3 cuando incluímos el Alquiler imputado.
 
 ![](Screenshot_aysen.png)
 
-
+# Análisis para Aysén.
 
 ```{r}
 options(scipen=999)
@@ -3910,9 +3949,7 @@ casen2017_algarrobo_head <- casen2017_algarrobo_head[,c("comuna","folio","ytot",
 
 ```
 
-Análisis:
 
-1 Se cambian los NA por 0
 
 ```{r}
 casen2017_algarrobo_head_sin_na <- mutate_at(casen2017_algarrobo_head, c("ytot", "ytotcor", "ytoth", "yaimh","yaimcorh","ytotcorh"), ~replace(., is.na(.), 0))
@@ -3920,7 +3957,7 @@ casen2017_algarrobo_head_sin_na$ytotcorh_sin_ah <- (casen2017_algarrobo_head_sin
 ```
 
 
-3 Calculemos los ingresos por hogar per capita
+
 
 ```{r} 
 tabla <- table(casen2017_algarrobo_head_sin_na$folio)
@@ -4011,6 +4048,8 @@ calculados <<- receptaculo
 
 ```
 
+# Análisis comunal a nivel nacional
+
 ```{r}
 for (n in 1:6) {
   fn_prom(n)
@@ -4057,6 +4096,99 @@ p
 
 
 
+
+
+
+
+# Análisis de la pobreza
+
+
+Uno a nivel **comunal** en la Región Metropolitana y tres a nivel Regional:
+
+i. Ingreso autónomo <span style="color:red">percápita</span> 
+del hogar, CASEN 2011
+($ de noviembre de 2011)
+de la pagina 16 [de aquí](https://ciperchile.cl/wp-content/uploads/INDICE-DE-PRIORIDAD-SOCIAL-2014.pdf
+).
+
+
+ii. Ingreso autónomo promedio e ingreso monetario promedio del hogar a nivel regional el 2015:
+
+https://www.bcn.cl/portal/noticias?id=principales-resultados-sobre-pobreza-e-ingresos-regionales-encuesta-casen-2015
+
+
+Por dos instrumentos diferentes oficiales llegamos a los mismos resultados y son a los cuales intentamos aproximarnos.
+
+
+iii.  Se comparará con la tabla obtenida en las III [(ver aquí)](https://datasocial.ministeriodesarrollosocial.gob.cl/dataSocial/csv/Tablas_Ingreso.xlsx) 
+
+ <!-- ![Tabla de referencia](image_2021_08_12T19_27_00_679Z.png) -->
+
+iiii. Y la otra con una página interactiva con datos por región [(ver aquí)](https://datasocial.ministeriodesarrollosocial.gob.cl/fichaIndicador/513/2)
+
+
+
+
+
+
+
+![ ](pobreza_1.pdf.png)
+
+link 1[(ver aquí)](http://observatorio.ministeriodesarrollosocial.gob.cl/storage/docs/casen/2020/Resumen_de_resultados_de_Pobreza_por_Ingresos_y_Distribucion_de_Ingresos.pdf) 
+
+
+![](pobreza_2.png)
+
+link 2 [(ver aquí)](http://observatorio.ministeriodesarrollosocial.gob.cl/storage/docs/casen/2006/Resultados_Pobreza_Casen_2006.pdf) 
+
+
+POBREZA EN PORCENTAJE DE PERSONAS 2006
+
+```{r}
+unique(casen2006$CORTE)
+ 
+tabla_matp <-xtabs(casen2006$EXPC~COMUNA+CORTE, data = casen2006)
+head(tabla_matp,10)
+```
+
+
+```{r}
+s1 <- sum(tabla_matp[,1])+sum(tabla_matp[,2])+sum(tabla_matp[,3])
+s2 <- sum(tabla_matp[,1])
+
+s2*100/s1
+```
+
+```{r}
+casen_2006_r1 <- filter(casen2006, casen2006$R == "VIII")
+# head(casen_2006_r1)
+```
+
+```{r}
+# casen_2006_r1 %>% filter(!is.na(CORTE))
+
+tabla_matp <-xtabs(casen_2006_r1$EXPR~R+CORTE, data = casen_2006_r1)
+# head(tabla_matp,10)
+```
+
+```{r}
+s1 <- sum(tabla_matp[,1])+sum(tabla_matp[,2])+sum(tabla_matp[,3])
+s2 <- sum(tabla_matp[,3])
+ 
+s2*100/s1
+```
+
+
+
+Alquiler imputado 2020
+
+yaimh
+yaimcorh 
+
+Alquiler imputado 2017
+
+yaimh
+yaimcorh
 
 
 

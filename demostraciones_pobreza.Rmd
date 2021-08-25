@@ -1,5 +1,7 @@
 ---
+
 title: Análisis propios, comparados con los oficiales, tanto de los ingresos como de la pobreza en la<span style="color:green"> Encuesta Casen (2006-2020) </span>
+
 author:
 - name: VE-CC-AJ
   affiliation: DataIntelligence
@@ -119,10 +121,9 @@ codigos_comunales <- readRDS(file = "C:/Users/chris/OneDrive/Documentos/archivos
 <br>
 
 # Pobreza por ingresos
-
+ 
 Desde 1990 Casen publica información sobre el porcentaje de pobreza de los chilenos, generalmente divididos en tres categorias: no pobres, pobres y pobres extremos. A continuación se muestran 2 porcentajes diferentes de pobreza y pobreza extrema:
-
-
+ 
 
 
 ## Pobreza 1
@@ -521,8 +522,10 @@ regiones_pub2 <- pobreza[19:32,c(1,4)]
 regiones_pub2$c2011 <- as.numeric(regiones_pub2$c2011)
 
 cat <- unique(casen2011$corte)
-
+ 
 ```
+ 
+## Pobreza 1 
 
 
 ```{r}
@@ -611,10 +614,11 @@ for (n in unique(casen2011$region)) {
   proporcion <- rbind(proporcion,proporcion2)
 }
 
-
+ 
 proporcion <- proporcion[,c(5,1,2,3,4)]
 prop_cor <- rbind(prop_cor,proporcion)
 }
+
 
 prop_cor = merge(x = prop_cor, y = regiones_pub2, by="region")
  
@@ -638,7 +642,7 @@ a6 <- pob_calculado
 <!-- ######################################################################################################################### 2013  --> 
 
 
-```{r}
+```{r} 
 pobreza <- read_xlsx("valores de pobreza actuales.xlsx", sheet = 9 )
 regiones_pub <- pobreza[1:16,c(1,5)]
 regiones_pub$c2013 <- as.numeric(regiones_pub$c2013)
@@ -676,7 +680,6 @@ for (n in unique(casen2013$region)) {
   proporcion2$region <- n 
   proporcion <- rbind(proporcion,proporcion2)
 }
-
 
 proporcion <- proporcion[,c(5,1,2,3,4)]
 prop_cor <- rbind(prop_cor,proporcion)
@@ -734,7 +737,7 @@ for (n in unique(casen2013$region)) {
 proporcion <- proporcion[,c(5,1,2,3,4)]
 prop_cor <- rbind(prop_cor,proporcion)
 }
-
+ 
 prop_cor = merge(x = prop_cor, y = regiones_pub2, by="region")
  
 prop_cor$p_mul <- round(prop_cor$p * prop_cor$c2013)
@@ -783,11 +786,83 @@ datatable(tabla_f3, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
           list(extend='pdf',
             filename= 'hitStats')),
           text = 'Download')), scrollX = TRUE))
+ 
 ```
 
-<!-- ######################################################################################################################### -->
 
 
+# Expansión comunal de la pobreza.
+
+Caso ejemplo: 2006, Antofagasta. Region II.	Estimación pobres extremos	23.593  según la nueva metodologia, sin embargo nosotros contamos 10716.
+
+## Pobreza 1
+
+![](p5.png)
+
+```{r}
+casen2006 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2006_c.rds")
+casen2006 <- mutate_if(casen2006, is.factor, as.character)
+# tabla_matp <-xtabs(casen2006$EXPC~COMUNA+R+CORTE, data = casen2006)
+# head(tabla_matp,20)
+region_2 <- filter(casen2006, casen2006$R == "II")
+# region_2
+```
+
+```{r}
+tabla_matp <-xtabs(region_2$EXPC~COMUNA+CORTE, data = region_2)
+head(tabla_matp,20)
+tabla_matp <- as.data.frame(tabla_matp)
+```
+
+Consideremos sólo los pobres extremos:
+
+```{r}
+frec_man_com_parcial_total <- filter(tabla_matp, tabla_matp$CORTE == "Indigente")
+frec_man_com_parcial_total
+codigos_com <- frec_man_com_parcial_total$COMUNA
+#codigos_com
+```
+```{r}
+sum(frec_man_com_parcial_total$Freq)
+```
+
+Expandiremos las frecuencias de pobres ty pobres extremos para que lleguen al nivel oficial de la nueva metodología y lo haremos por comuna.
+
+```{r}
+frec_man_com_parcial_total2 <- data.frame()
+for(i in codigos_com){
+  frec_man_com_parcial <- filter(frec_man_com_parcial_total, frec_man_com_parcial_total$COMUNA == i)
+  frec_man_com_parcial$p <- frec_man_com_parcial$Freq*100/sum(frec_man_com_parcial_total$Freq)/100
+  frec_man_com_parcial_total2 <- rbind(frec_man_com_parcial_total2,frec_man_com_parcial)
+}
+```
+
+Calculando una proporción poblacional
+
+```{r}
+
+   frec_man_com_parcial_total2
+```
+```{r}
+sum(frec_man_com_parcial_total2$p)
+```
+
+
+y multiplicandola con el valor al que deseamos llegar:
+
+```{r}
+ frec_man_com_parcial_total2$p_mul <- round(frec_man_com_parcial_total2$p *23593)
+ frec_man_com_parcial_total2 
+```
+
+ 
+```{r}
+sum( frec_man_com_parcial_total2$p_mul)
+```
+
+La columna p_multi sería la que que contenga la cantidad de pobres extremos por comuna corregidos.
+
+ 
 
 <!-- # Análisis de la pobreza -->
 
