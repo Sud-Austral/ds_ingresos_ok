@@ -1,5 +1,7 @@
 ---
+
 title: Análisis propios, comparados con los oficiales, tanto de los ingresos como de la pobreza en la<span style="color:green"> Encuesta Casen (2006-2020) </span>
+
 author:
 - name: VE-CC-AJ
   affiliation: DataIntelligence
@@ -73,9 +75,11 @@ library(DT)
 
 # Introducción
 
+
 Una diferencia fundamental que hace la Casen es la división de los ingresos en presonales e individuales.
 
 Necesitamos comparar los datos que calculamos por cuenta propia de los **Ingresos** con lo ya publicado para identificar los posibles errores en nuestras estimaciones.
+
 
 [En un trabajo anterior](https://rpubs.com/dataintelligence/construccion_del_ingreso_en_la_casen), determinamos los ingresos fundamentales a partir de los cuales se puede deducir toda la estructura de ingresos de la Casen. Éstos son:
 
@@ -83,6 +87,7 @@ Necesitamos comparar los datos que calculamos por cuenta propia de los **Ingreso
 2. Ingresos autónomos\
 3. Ingresos del trabajo, e\
 4. Ingresos de la ocupación principal.
+
 
 Los análisis oficiales que entrega Casen y que son descargables de [aquí](http://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-en-pandemia-2020) para el 2020 y de [aquí](http://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-2011) del 2011 hasta 1990, entregan estad[isticas muy útiles sobres las cuales comparar.
 
@@ -111,8 +116,6 @@ casen2020 <- readRDS("casen2020.rds")
 casen2020 <- mutate_if(casen2020, is.factor, as.character)
 codigos_comunales <- readRDS(file = "C:/Users/chris/OneDrive/Documentos/archivos_grandes/codigos_comunales_2011-2017.rds")
 ```
-
-
 
 
 
@@ -216,6 +219,7 @@ Desde 1990 Casen publica información sobre el porcentaje de pobreza de los chil
 
 
 
+
 ## Pobreza 1
 
 ![](pobreza_1.pdf.png)
@@ -236,9 +240,10 @@ Que coincide con otro informe:
 
 [(ver informe completo acá)](http://observatorio.ministeriodesarrollosocial.gob.cl/storage/docs/casen/2006/Resultados_Pobreza_Casen_2006.pdf) 
 
-No hay error.
 
-Las tablas antiguas fueron corregidas según una nueva metodología.
+Entonces existen dos publicaciones oficiales de resultados de la medicion de la pobreza de la Casen: los del año y los actualizados.
+
+Podemos demostrar que nuestros cálculos coinciden perfecto con los entregados del año 2006:
 
 <!-- Pobreza por Ingreso Casen en Pandemia  -->
 <!-- hoja 8 de Copia de Pobreza_por_Ingreso_Casen_en_Pandemia_2020-1 -->
@@ -256,13 +261,6 @@ no_pobre <- tabla_matp[,3]
 total <- tabla_matp[,1] + tabla_matp[,2] + tabla_matp[,3]
 indigente_por <- indigente*100/total
 indigente_por
-```
-Coinciden. Pero no podemos ampliar a  nivel de comunas.
-
-```{r}
-# casen2006
-```
-
 
 ```{r}
 tabla_matp <-xtabs(casen2006$EXPC~COMUNA+CORTE, data = casen2006)
@@ -295,6 +293,7 @@ head(tabla_matp,20)
 # totalisimo2 <- rbind(totalisimo,pobre_no_ind_por)
 # totalisimo3 <- rbind(totalisimo2,no_pobre_por)
 
+
 datatable(tabla_matp, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
           options = list(dom = 'Bfrtip',
           buttons = list('colvis', list(extend = 'collection',
@@ -306,13 +305,81 @@ datatable(tabla_matp, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
             filename= 'hitStats')),
           text = 'Download')), scrollX = TRUE))
 
-
 ```
 
 
-podriamos construir un indicador que relaciones frecuencias y no porcentajes que difieren segun metodologia, asi por emeplo, en iquique para el 2006 hubo 2147 indigentes, eso representa una cantidad que puede relacionarse con el total nacional de personas.
 
-Un indice asi podria llamarase: ICP indice comparativo de la pobreza.
+# Expansión comunal de la pobreza.
+
+Caso ejemplo: 2006, Antofagasta. Region II.	Estimación pobres extremos	23.593  según la nueva metodologia, sin embargo nosotros contamos 10716.
+
+## Pobreza 1
+
+![](p5.png)
+
+```{r}
+casen2006 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2006_c.rds")
+casen2006 <- mutate_if(casen2006, is.factor, as.character)
+# tabla_matp <-xtabs(casen2006$EXPC~COMUNA+R+CORTE, data = casen2006)
+# head(tabla_matp,20)
+region_2 <- filter(casen2006, casen2006$R == "II")
+# region_2
+```
+
+```{r}
+tabla_matp <-xtabs(region_2$EXPC~COMUNA+CORTE, data = region_2)
+head(tabla_matp,20)
+tabla_matp <- as.data.frame(tabla_matp)
+```
+
+Consideremos sólo los pobres extremos:
+
+```{r}
+frec_man_com_parcial_total <- filter(tabla_matp, tabla_matp$CORTE == "Indigente")
+frec_man_com_parcial_total
+codigos_com <- frec_man_com_parcial_total$COMUNA
+#codigos_com
+```
+```{r}
+sum(frec_man_com_parcial_total$Freq)
+```
+
+Expandiremos las frecuencias de pobres ty pobres extremos para que lleguen al nivel oficial de la nueva metodología y lo haremos por comuna.
+
+```{r}
+frec_man_com_parcial_total2 <- data.frame()
+for(i in codigos_com){
+  frec_man_com_parcial <- filter(frec_man_com_parcial_total, frec_man_com_parcial_total$COMUNA == i)
+  frec_man_com_parcial$p <- frec_man_com_parcial$Freq*100/sum(frec_man_com_parcial_total$Freq)/100
+  frec_man_com_parcial_total2 <- rbind(frec_man_com_parcial_total2,frec_man_com_parcial)
+}
+```
+
+Calculando una proporción poblacional
+
+```{r}
+
+   frec_man_com_parcial_total2
+```
+```{r}
+sum(frec_man_com_parcial_total2$p)
+```
+
+
+y multiplicandola con el valor al que deseamos llegar:
+
+```{r}
+ frec_man_com_parcial_total2$p_mul <- round(frec_man_com_parcial_total2$p *23593)
+ frec_man_com_parcial_total2
+```
+
+
+```{r}
+sum( frec_man_com_parcial_total2$p_mul)
+```
+
+La columna p_multi sería la que que contenga la cantidad de pobres extremos por comuna corregidos.
+
 
 
 <!-- # Análisis de la pobreza -->
