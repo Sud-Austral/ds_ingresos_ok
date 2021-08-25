@@ -69,8 +69,7 @@ library(readstata13)
 library(reldist)
 library(foreign)
 library(DT)
-
-options(digits=2)
+ 
 ```
 
 
@@ -180,12 +179,13 @@ Para ello calculamos el ingreso promedio de los hogares por tipo de ingreso y re
 
 
 
-
+ 
 
 
 <!-- ############################################################################################################################################################ -->
-
-## Verificación de nuestros cálculos con datos oficiales del 2020
+ 
+# Verificación de nuestros cálculos con datos oficiales del 2020
+ 
 
 ```{r, warning=FALSE, message=FALSE} 
 # casen2020 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2020.rds")
@@ -293,7 +293,9 @@ reg_06 <- unique(casen2006$R)
 ```
 
 
-
+ 
+## Ingreso del trabajo hogar: **ytrabajocorh**
+ 
 ```{r} 
 tabla_prom_reg <- data.frame()
 
@@ -345,7 +347,7 @@ p <- p %>% add_trace(y = ~`Ingreso del trabajo`, name = 'ingreso del trabajo ofi
 p 
 ```
 
-### Ingreso autonomo del hogar: **yautcorh**
+## Ingreso autonomo del hogar: **yautcorh**
 
 ```{r, message=FALSE} 
 
@@ -393,7 +395,7 @@ p <- p %>% add_trace(y = ~ingreso_autonomo, name = 'ingreso autonomo oficial', m
 p 
 ```
  
-### Ingreso del subsidio monetario: **ysubh**
+## Ingreso del subsidio monetario: **ysubh**
 
 ```{r} 
 
@@ -442,7 +444,7 @@ p
 ```
 
 
-### Ingreso monetario: **ymonecorh**
+## Ingreso monetario: **ymonecorh**
  
 ```{r} 
 
@@ -544,78 +546,83 @@ p
 ```
 
  <!-- #####################################################################################----- comunas -->
+ 
+# Ingreso familias
 
+## Ingreso familias 2020
 
- ### Ingreso monetario: **ymonecorh**
+No se despliega informacion 2020 parcial por razones de tiempo de ejecucion, sin embargo en el apartado tabla de familias 2011-2020 esta incluida
  
 ```{r, warning = FALSE, message=FALSE}
-library(tidyr)
-
-fn_prom <- function(n){
-
-ingresoh<-switch(n,"ytotcorh","yautcorh","ytrabajocorh","yoprcorh")
-
-tabla_prom_reg <- data.frame()
-
-for (i in unique(casen2020$comuna)[1:5]) {
-  casen_fh <- filter(casen2020 , casen2020$comuna == i)
-  
-casen_fh <- casen_fh[,c("comuna","folio",ingresoh)]
-casen_fh$folio <- as.character(casen_fh$folio)
-  
-tabla <- table(casen_fh$folio)
-tabla <- as.data.frame(tabla)
-colnames(tabla) <- c("folio","freq_folio")
-repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
-repetidos2 <- repetidos2[,c(2,1,4,3)]
-rr <- repetidos2[!duplicated(repetidos2$folio ), ] 
-rrr <- rr
-tabla_reg <- data.frame(
-  comuna = i,
-  promedio = mean(na.omit(rr[,4]))
-)
-
-tabla_prom_reg <- rbind(tabla_prom_reg, tabla_reg)
-
-}
-calculados <<- tabla_prom_reg
-# print(tabla_prom_reg)
-}
-
-for (n in 1:4) {
-  fn_prom(n)
-  assign(paste0("calculo_de_2020_",n),calculados)
-}
-
-receptaculo_unido = merge(x = calculo_de_2020_1, y = calculo_de_2020_2, by = "comuna", all.x = T)
-receptaculo_unido = merge(x = calculo_de_2020_3, y = receptaculo_unido, by = "comuna", all.x = T)
-receptaculo_unido = merge(x = calculo_de_2020_4, y = receptaculo_unido, by = "comuna", all.x = T)
-familias_1 <- receptaculo_unido
-codigos_comunales <- readRDS(file = "C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/codigos_comunales_2011-2017.rds")
-names(codigos_comunales)[2] <- "comuna"
-familias_1 = merge(x = codigos_comunales, y = familias_1, by = "comuna")
-regiones <- casen2020[,c("comuna","region")]
-regiones <- regiones[!duplicated(regiones$comuna ), ] 
-familias_1 = merge(x = regiones, y = familias_1, by = "comuna")
-familias_1 <- familias_1[,c(2,1,3,4:7)]
-colnames(familias_1) <- c("region","comuna","codigo_comuna","ytotcorh","yautcorh","ytrabajocorh","yoprcorh")
-familias_1$año <- 2020
-datatable(familias_1, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
-          options = list(dom = 'Bfrtip',
-          buttons = list('colvis', list(extend = 'collection',
-          buttons = list(
-          list(extend='copy'),
-          list(extend='excel',
-            filename = 'hitStats'),
-          list(extend='pdf',
-            filename= 'hitStats')),
-          text = 'Download')), scrollX = TRUE))%>%
-    formatRound(columns=c("ytotcorh","yautcorh","ytrabajocorh","yoprcorh"),mark = "", digits=1)
+# library(tidyr)
+# 
+# fn_prom <- function(n){
+# 
+# ingresoh<-switch(n,"ytotcorh","yautcorh","ytrabajocorh","yoprcorh")
+# 
+# tabla_prom_reg <- data.frame()
+# 
+# for (i in unique(casen2020$comuna)) {
+#   casen_fh <- filter(casen2020 , casen2020$comuna == i)
+#   
+# casen_fh <- casen_fh[,c("comuna","folio",ingresoh)]
+# casen_fh$folio <- as.character(casen_fh$folio)
+#   
+# tabla <- table(casen_fh$folio)
+# tabla <- as.data.frame(tabla)
+# colnames(tabla) <- c("folio","freq_folio")
+# repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
+# repetidos2 <- repetidos2[,c(2,1,4,3)]
+# rr <- repetidos2[!duplicated(repetidos2$folio ), ] 
+# rrr <- rr
+# tabla_reg <- data.frame(
+#   comuna = i,
+#   promedio = mean(na.omit(rr[,4]))
+# )
+# 
+# tabla_prom_reg <- rbind(tabla_prom_reg, tabla_reg)
+# 
+# }
+# calculados <<- tabla_prom_reg
+# # print(tabla_prom_reg)
+# }
+# 
+# for (n in 1:4) {
+#   fn_prom(n)
+#   assign(paste0("calculo_de_2020_",n),calculados)
+# }
+# 
+# receptaculo_unido = merge(x = calculo_de_2020_1, y = calculo_de_2020_2, by = "comuna", all.x = T)
+# receptaculo_unido = merge(x = calculo_de_2020_3, y = receptaculo_unido, by = "comuna", all.x = T)
+# receptaculo_unido = merge(x = calculo_de_2020_4, y = receptaculo_unido, by = "comuna", all.x = T)
+# familias_1 <- receptaculo_unido
+# codigos_comunales <- readRDS(file = "C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/codigos_comunales_2011-2017.rds")
+# names(codigos_comunales)[2] <- "comuna"
+# familias_1 = merge(x = codigos_comunales, y = familias_1, by = "comuna")
+# regiones <- casen2020[,c("comuna","region")]
+# regiones <- regiones[!duplicated(regiones$comuna ), ] 
+# familias_1 = merge(x = regiones, y = familias_1, by = "comuna")
+# familias_1 <- familias_1[,c(2,1,3,4:7)]
+# colnames(familias_1) <- c("region","comuna","codigo_comuna","ytotcorh","yautcorh","ytrabajocorh","yoprcorh")
+# familias_1$año <- 2020
+# datatable(familias_1, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+#           options = list(dom = 'Bfrtip',
+#           buttons = list('colvis', list(extend = 'collection',
+#           buttons = list(
+#           list(extend='copy'),
+#           list(extend='excel',
+#             filename = 'hitStats'),
+#           list(extend='pdf',
+#             filename= 'hitStats')),
+#           text = 'Download')), scrollX = TRUE))%>%
+#     formatRound(columns=c("ytotcorh","yautcorh","ytrabajocorh","yoprcorh"),mark = "", digits=1)
 ```
  
  
 <!-- ########################################## -->
 
+### Ingreso familias 2017
+
 ```{r, warning = FALSE, message=FALSE}
 
 fn_prom <- function(n){
@@ -624,7 +631,7 @@ ingresoh<-switch(n,"ytotcorh","yautcorh","ytrabajocorh","yoprcorh")
 
 tabla_prom_reg <- data.frame()
 
-for (i in unique(casen2017$comuna)[1:5]) {
+for (i in unique(casen2017$comuna)) {
   casen_fh <- filter(casen2017 , casen2017$comuna == i)
   
 casen_fh <- casen_fh[,c("comuna","folio",ingresoh)]
@@ -683,6 +690,8 @@ datatable(familias_2, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
  
 <!-- ########################################## -->
 
+### Ingreso familias 2015
+
 ```{r, warning = FALSE, message=FALSE}
 
 fn_prom <- function(n){
@@ -691,7 +700,7 @@ ingresoh<-switch(n,"ytotcorh","yautcorh","ytrabajoCorh","yoprCorh")
 names(casen2015)[3] <- "folio"
 tabla_prom_reg <- data.frame()
 
-for (i in unique(casen2015$comuna)[1:5]) {
+for (i in unique(casen2015$comuna)) {
   casen_fh <- filter(casen2015 , casen2015$comuna == i)
   names(casen2015)[3] <- "folio"
 casen_fh <- casen_fh[,c("comuna","folio",ingresoh)]
@@ -748,6 +757,8 @@ datatable(familias_3, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
 
 ```
  
+### Ingreso familias 2013
+  
 ```{r, warning = FALSE, message=FALSE}
 
 fn_prom <- function(n){
@@ -756,7 +767,7 @@ ingresoh<-switch(n,"ytotcorh","yautcorh","ytrabajoCorh","yoprCorh")
 # names(casen2013)[3] <- "folio"
 tabla_prom_reg <- data.frame()
 
-for (i in unique(casen2013$comuna)[1:5]) {
+for (i in unique(casen2013$comuna)) {
   casen_fh <- filter(casen2013 , casen2013$comuna == i)
   # names(casen2013)[3] <- "folio"
 casen_fh <- casen_fh[,c("comuna","folio",ingresoh)]
@@ -815,6 +826,109 @@ datatable(familias_4, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
  
 <!-- ########################################## -->
 
+### Ingreso familias 2011
+```{r}
+union_reg <- data.frame()
+for (re in unique(casen2011$region)) {
+  
+tabla_casen <- filter(casen2011, casen2011$region == re)
+
+fn_prom <- function(n){
+
+ingresoh<-switch(n,"ytrabhaj")
+
+tabla_prom_reg <- data.frame()
+
+for (i in unique(tabla_casen$comuna)) {
+  casen_fh <- filter(tabla_casen , tabla_casen$comuna == i)
+
+casen_fh <- casen_fh[,c("comuna","folio",ingresoh)]
+casen_fh$folio <- as.character(casen_fh$folio)
+  
+tabla <- table(casen_fh$folio)
+tabla <- as.data.frame(tabla)
+colnames(tabla) <- c("folio","freq_folio")
+repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
+repetidos2 <- repetidos2[,c(2,1,4,3)]
+rr <- repetidos2[!duplicated(repetidos2$folio ), ]
+# rr<-repetidos2
+tabla_reg <- data.frame(
+  region = re,
+  comuna = i,
+  promedio = mean(rr[,4])
+)
+
+tabla_prom_reg <- rbind(tabla_prom_reg, tabla_reg)
+tabla_prom_reg
+}
+calculados <<- tabla_prom_reg
+# print(tabla_prom_reg)
+}
+
+for (n in 1:1) {
+  fn_prom(n)
+  assign(paste0("calculo_de_2011_",n),calculados)
+}
+
+# receptaculo_unido = merge(x = calculo_de_2011_1, y = calculo_de_2011_2, by = "comuna", all.x = T)
+# receptaculo_unido = merge(x = calculo_de_2011_3, y = receptaculo_unido, by = "comuna", all.x = T) 
+# receptaculo_unido = merge(x = calculo_de_2011_4, y = receptaculo_unido, by = "comuna", all.x = T) 
+
+union_reg <- rbind(union_reg, calculo_de_2011_1 )
+}
+# colnames(union_reg) <- c("comuna","region","ytotcorh","yautcorh","ytrabajocorh","yoprcorh")
+union_reg
+```
+
+ 
+
+```{r}
+filtro <- filter(union_reg, union_reg$region =="Región de Valparaíso" )
+mean(filtro$promedio)
+```
+
+```{r} 
+
+union_reg <- data.frame()
+for (re in unique(casen2011$region)) {
+  
+tabla_casen <- filter(casen2011, casen2011$region == re) 
+
+union_comuna <- data.frame()
+for (co in unique(tabla_casen$comuna)) {
+  
+
+casen_fh <- filter(tabla_casen, tabla_casen$comuna == co) 
+ 
+casen_fh <- casen_fh[,c("comuna","folio","ytrabhaj")]
+casen_fh$folio <- as.character(casen_fh$folio)
+  
+tabla <- table(casen_fh$folio)
+tabla <- as.data.frame(tabla)
+colnames(tabla) <- c("folio","freq_folio")
+repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
+repetidos2 <- repetidos2[,c(2,1,4,3)]
+rr <- repetidos2[!duplicated(repetidos2$folio ), ]
+
+tabla_reg <- data.frame(
+  region = re,
+  comuna = co,
+  calculado_2011 = mean(rr$ytrabhaj)
+)
+union_comuna <- rbind(union_comuna,tabla_reg)
+}
+union_reg <- rbind(union_reg, union_comuna)
+}
+union_reg
+```
+
+
+```{r}
+filtro <- filter(union_reg, union_reg$region =="Región de Valparaíso" )
+mean(filtro$calculado_2011)
+```
+
+
 ```{r, warning = FALSE, message=FALSE}
 
 fn_prom <- function(n){
@@ -823,7 +937,7 @@ ingresoh<-switch(n,"ytothaj","yauthaj","ytrabhaj","yoprhaj")
 
 tabla_prom_reg <- data.frame()
 
-for (i in unique(casen2011$comuna)[1:5]) {
+for (i in unique(casen2011$comuna)) {
   casen_fh <- filter(casen2011 , casen2011$comuna == i)
 
 casen_fh <- casen_fh[,c("comuna","folio",ingresoh)]
@@ -881,8 +995,14 @@ datatable(familias_5, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
 ```
 
 <!-- ########################################## -->
+
+### Tabla de familias 2011-2020
+ 
 ```{r, warning = FALSE, message=FALSE}
-familias <- rbind(familias_1,familias_2,familias_3,familias_4,familias_5) 
+
+familias <- rbind(familias_2,familias_3,familias_4,familias_5) #familias_1,
+# write_xlsx(familias,"familias.xlsx")
+familias <- read_xlsx("familias.xlsx")
 datatable(familias, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
           options = list(dom = 'Bfrtip',
           buttons = list('colvis', list(extend = 'collection',
@@ -896,70 +1016,74 @@ datatable(familias, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
     formatRound(columns=c("ytotcorh","yautcorh","ytrabajocorh","yoprcorh"),mark = "", digits=1)
 
 ```
-
-```{r}
-write_xlsx(familias,"familias.xlsx")
-```
-
-<!-- #####################################################################################-----  --> Comuna personas
+ 
  
 
+<!-- #####################################################################################-----  --> 
+ 
  <!-- ########################################## -->
 
+# Ingreso personas
+
+## Ingreso personas 2020
+ 
+ No se despliega informacion 2020 parcial por razones de tiempo de ejecucion, sin embargo en el apartado tabla de familias 2011-2020 esta incluida
 ```{r, warning = FALSE, message=FALSE}
-
-fn_prom <- function(n){
-
-ingresoh<-switch(n,"ytotcor","yautcor","ytrabajocor","yoprcor")
-tabla_prom_reg <- data.frame()
-
-for (i in unique(casen2020$comuna)) {
-  
-  casen_fh <- filter(casen2020, casen2020$comuna == i) 
-tabla_reg <- data.frame(
-  comuna = i,
-  promedio = mean(na.omit(casen_fh[,c(ingresoh)]))
-)
-
-tabla_prom_reg <- rbind(tabla_prom_reg, tabla_reg)
-
-}
-calculados <<- tabla_prom_reg 
-}
-
-for (n in 1:4) {
-  fn_prom(n)
-  assign(paste0("calculo_de_2020_",n),calculados)
-}
-
-receptaculo_unido = merge(x = calculo_de_2020_1, y = calculo_de_2020_2, by = "comuna", all.x = T)
-receptaculo_unido = merge(x = calculo_de_2020_3, y = receptaculo_unido, by = "comuna", all.x = T) 
-receptaculo_unido = merge(x = calculo_de_2020_4, y = receptaculo_unido, by = "comuna", all.x = T) 
-personas_1 <- receptaculo_unido
-codigos_comunales <- readRDS(file = "C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/codigos_comunales_2011-2017.rds")
-names(codigos_comunales)[2] <- "comuna"
-personas_1 = merge(x = codigos_comunales, y = personas_1, by = "comuna")
-regiones <- casen2020[,c("comuna","region")]
-regiones <- regiones[!duplicated(regiones$comuna ), ] 
-personas_1 = merge(x = regiones, y = personas_1, by = "comuna")
-personas_1 <- personas_1[,c(2,1,3,4:7)]
-colnames(personas_1) <- c("region","comuna","codigo_comuna","ytotcor","yautcor","ytrabajocor","yoprcor") 
-personas_1$año <- 2020
-datatable(personas_1, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
-          options = list(dom = 'Bfrtip',
-          buttons = list('colvis', list(extend = 'collection',
-          buttons = list(
-          list(extend='copy'),
-          list(extend='excel',
-            filename = 'hitStats'),
-          list(extend='pdf',
-            filename= 'hitStats')),
-          text = 'Download')), scrollX = TRUE))%>%
-    formatRound(columns=c("ytotcor","yautcor","ytrabajocor","yoprcor") ,mark = "", digits=1)
+# 
+# fn_prom <- function(n){
+# 
+# ingresoh<-switch(n,"ytotcor","yautcor","ytrabajocor","yoprcor")
+# tabla_prom_reg <- data.frame()
+# 
+# for (i in unique(casen2020$comuna)) {
+#   
+#   casen_fh <- filter(casen2020, casen2020$comuna == i) 
+# tabla_reg <- data.frame(
+#   comuna = i,
+#   promedio = mean(na.omit(casen_fh[,c(ingresoh)]))
+# )
+# 
+# tabla_prom_reg <- rbind(tabla_prom_reg, tabla_reg)
+# 
+# }
+# calculados <<- tabla_prom_reg 
+# }
+# 
+# for (n in 1:4) {
+#   fn_prom(n)
+#   assign(paste0("calculo_de_2020_",n),calculados)
+# }
+# 
+# receptaculo_unido = merge(x = calculo_de_2020_1, y = calculo_de_2020_2, by = "comuna", all.x = T)
+# receptaculo_unido = merge(x = calculo_de_2020_3, y = receptaculo_unido, by = "comuna", all.x = T) 
+# receptaculo_unido = merge(x = calculo_de_2020_4, y = receptaculo_unido, by = "comuna", all.x = T) 
+# personas_1 <- receptaculo_unido
+# codigos_comunales <- readRDS(file = "C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/codigos_comunales_2011-2017.rds")
+# names(codigos_comunales)[2] <- "comuna"
+# personas_1 = merge(x = codigos_comunales, y = personas_1, by = "comuna")
+# regiones <- casen2020[,c("comuna","region")]
+# regiones <- regiones[!duplicated(regiones$comuna ), ] 
+# personas_1 = merge(x = regiones, y = personas_1, by = "comuna")
+# personas_1 <- personas_1[,c(2,1,3,4:7)]
+# colnames(personas_1) <- c("region","comuna","codigo_comuna","ytotcor","yautcor","ytrabajocor","yoprcor") 
+# personas_1$año <- 2020
+# datatable(personas_1, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+#           options = list(dom = 'Bfrtip',
+#           buttons = list('colvis', list(extend = 'collection',
+#           buttons = list(
+#           list(extend='copy'),
+#           list(extend='excel',
+#             filename = 'hitStats'),
+#           list(extend='pdf',
+#             filename= 'hitStats')),
+#           text = 'Download')), scrollX = TRUE))%>%
+#     formatRound(columns=c("ytotcor","yautcor","ytrabajocor","yoprcor") ,mark = "", digits=1)
 
 ```
 
  <!-- ########################################## -->
+
+### Ingreso personas 2017
 
 ```{r, warning = FALSE, message=FALSE}
 
@@ -1016,6 +1140,8 @@ datatable(personas_2, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
 
 
  <!-- ########################################## -->
+ 
+### Ingreso personas 2015
 
 ```{r, warning = FALSE, message=FALSE}
 
@@ -1073,6 +1199,8 @@ datatable(personas_3, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
 
  <!-- ########################################## -->
 
+### Ingreso personas 2013
+
 ```{r, warning = FALSE, message=FALSE}
 
 fn_prom <- function(n){
@@ -1128,6 +1256,8 @@ datatable(personas_4, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
 
  <!-- ########################################## -->
 
+### Ingreso personas 2011
+
 ```{r, warning = FALSE, message=FALSE}
 
 fn_prom <- function(n){
@@ -1182,8 +1312,12 @@ datatable(personas_5, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
 
 ```
 
+### Tabla de personas 2011-2020
+
 ```{r, warning = FALSE, message=FALSE} 
-personas <- rbind(personas_1,personas_2,personas_3,personas_4,personas_5) 
+personas <- rbind(personas_2,personas_3,personas_4,personas_5) #personas_1,
+# write_xlsx(personas,"personas.xlsx")
+personas <- read_xlsx("personas.xlsx")
 datatable(personas, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
           options = list(dom = 'Bfrtip',
           buttons = list('colvis', list(extend = 'collection',
@@ -1194,11 +1328,8 @@ datatable(personas, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
           list(extend='pdf',
             filename= 'hitStats')),
           text = 'Download')), scrollX = TRUE))%>%
-    formatRound(columns=c("ytotcorh","yautcorh","ytrabajocorh","yoprcorh"),mark = "", digits=1)
-```
- 
-```{r}
-write_xlsx(personas,"personas.xlsx")
+    formatRound(columns=c("ytotcor","yautcor","ytrabajocor","yoprcor"),mark = "", digits=1)
+
 ```
  
  
@@ -1247,6 +1378,8 @@ tabla_2020 <- tabla_2020[,-c(3)]
  
 tabla_prom_reg <- data.frame()
 
+#### 2017
+
 for (i in reg_17) {
   casen_fh <- filter(casen2017, casen2017$region == i)
   
@@ -1281,15 +1414,15 @@ tabla_prom_reg <- data.frame()
 for (i in reg_15) {
   casen_fh <- filter(casen2015, casen2015$region == i)
   
-casen_fh <- casen_fh[,c("region","folio.x","ytrabajoCorh")]
-casen_fh$folio.x <- as.character(casen_fh$folio.x)
+casen_fh <- casen_fh[,c("region","folio","ytrabajoCorh")]
+casen_fh$folio <- as.character(casen_fh$folio)
   
-tabla <- table(casen_fh$folio.x)
+tabla <- table(casen_fh$folio)
 tabla <- as.data.frame(tabla)
-colnames(tabla) <- c("folio.x","freq_folio")
-repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio.x", all.x = T)
+colnames(tabla) <- c("folio","freq_folio")
+repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
 repetidos2 <- repetidos2[,c(2,1,4,3)]
-rr <- repetidos2[!duplicated(repetidos2$folio.x ), ]
+rr <- repetidos2[!duplicated(repetidos2$folio ), ]
 
 tabla_reg <- data.frame(
   region = i,
@@ -1516,7 +1649,7 @@ p <- p %>% add_trace(y = ~`publicado_2020`, name = 'Oficial 2020', mode = 'marke
 p
 ```
 
-
+569996
 
 
 
@@ -1595,15 +1728,15 @@ tabla_prom_reg <- data.frame()
 for (i in reg_15) {
   casen_fh <- filter(casen2015, casen2015$region == i)
   
-casen_fh <- casen_fh[,c("region","folio.x","yautcorh")]
-casen_fh$folio.x <- as.character(casen_fh$folio.x)
+casen_fh <- casen_fh[,c("region","folio","yautcorh")]
+casen_fh$folio <- as.character(casen_fh$folio)
   
-tabla <- table(casen_fh$folio.x)
+tabla <- table(casen_fh$folio)
 tabla <- as.data.frame(tabla)
-colnames(tabla) <- c("folio.x","freq_folio")
-repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio.x", all.x = T)
+colnames(tabla) <- c("folio","freq_folio")
+repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
 repetidos2 <- repetidos2[,c(2,1,4,3)]
-rr <- repetidos2[!duplicated(repetidos2$folio.x ), ]
+rr <- repetidos2[!duplicated(repetidos2$folio ), ]
 
 tabla_reg <- data.frame(
   region = i,
@@ -1903,15 +2036,15 @@ tabla_prom_reg <- data.frame()
 for (i in reg_15) {
   casen_fh <- filter(casen2015, casen2015$region == i)
   
-casen_fh <- casen_fh[,c("region","folio.x","ymoneCorh")]
-casen_fh$folio.x <- as.character(casen_fh$folio.x)
+casen_fh <- casen_fh[,c("region","folio","ymoneCorh")]
+casen_fh$folio <- as.character(casen_fh$folio)
   
-tabla <- table(casen_fh$folio.x)
+tabla <- table(casen_fh$folio)
 tabla <- as.data.frame(tabla)
-colnames(tabla) <- c("folio.x","freq_folio")
-repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio.x", all.x = T)
+colnames(tabla) <- c("folio","freq_folio")
+repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
 repetidos2 <- repetidos2[,c(2,1,4,3)]
-rr <- repetidos2[!duplicated(repetidos2$folio.x ), ]
+rr <- repetidos2[!duplicated(repetidos2$folio ), ]
 
 tabla_reg <- data.frame(
   region = i,
@@ -2212,15 +2345,15 @@ tabla_prom_reg <- data.frame()
 for (i in reg_15) {
   casen_fh <- filter(casen2015, casen2015$region == i)
   
-casen_fh <- casen_fh[,c("region","folio.x","ysubh")]
-casen_fh$folio.x <- as.character(casen_fh$folio.x)
+casen_fh <- casen_fh[,c("region","folio","ysubh")]
+casen_fh$folio <- as.character(casen_fh$folio)
   
-tabla <- table(casen_fh$folio.x)
+tabla <- table(casen_fh$folio)
 tabla <- as.data.frame(tabla)
-colnames(tabla) <- c("folio.x","freq_folio")
-repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio.x", all.x = T)
+colnames(tabla) <- c("folio","freq_folio")
+repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
 repetidos2 <- repetidos2[,c(2,1,4,3)]
-rr <- repetidos2[!duplicated(repetidos2$folio.x ), ]
+rr <- repetidos2[!duplicated(repetidos2$folio ), ]
 
 tabla_reg <- data.frame(
   region = i,
@@ -2521,15 +2654,15 @@ tabla_prom_reg <- data.frame()
 for (i in reg_15) {
   casen_fh <- filter(casen2015, casen2015$region == i)
   
-casen_fh <- casen_fh[,c("region","folio.x","ymoneCorh")]
-casen_fh$folio.x <- as.character(casen_fh$folio.x)
+casen_fh <- casen_fh[,c("region","folio","ymoneCorh")]
+casen_fh$folio <- as.character(casen_fh$folio)
   
-tabla <- table(casen_fh$folio.x)
+tabla <- table(casen_fh$folio)
 tabla <- as.data.frame(tabla)
-colnames(tabla) <- c("folio.x","freq_folio")
-repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio.x", all.x = T)
+colnames(tabla) <- c("folio","freq_folio")
+repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
 repetidos2 <- repetidos2[,c(2,1,4,3)]
-rr <- repetidos2[!duplicated(repetidos2$folio.x ), ]
+rr <- repetidos2[!duplicated(repetidos2$folio ), ]
 
 tabla_reg <- data.frame(
   region = i,
@@ -2832,12 +2965,13 @@ integrantes del hogar, excluido el servicio doméstico puertas adentro.
 <span style="color:red">folio: Identificación del hogar.</span>
 
 
+ 
 ### Hacemos un subset con la Región Metropolitana
 
-Procedemos según nuestra metodología.
+Procedemos según nuestra metodología. 
 
 ```{r}
-casen2011_rm <- filter(casen2011, casen2011$region == "Metropolitana")
+casen2011_rm <- filter(casen2011, casen2011$region == "Región Metropolitana de Santiago")
 tabla <- table(casen2011_rm$folio)
 tabla <- as.data.frame(tabla)
 colnames(tabla) <- c("folio","freq_folio")
@@ -2884,8 +3018,8 @@ Tenemos así una forma de determinar para cada registro su ingreso per cápita d
 fu_ingresos <- function(n){
   # n <- 3
   ningreso<-switch(n,"yauthaj","yautcorh","yautcorh","yautcorh","yautcorh")
-  nfolio<-switch(n,"folio","folio","folio.x","folio","folio")
-  nregion<-switch(n,"Metropolitana","Metropolitana","Región Metropolitana de Santiago","Región Metropolitana de Santiago","Región Metropolitana de Santiago")
+  nfolio<-switch(n,"folio","folio","folio","folio","folio")
+  nregion<-switch(n,"Región Metropolitana de Santiago","Región Metropolitana de Santiago","Región Metropolitana de Santiago","Región Metropolitana de Santiago","Región Metropolitana de Santiago")
   expan<-switch(n,"expc_full","expc","expc_todas","expc","expc")
   xx<-switch(n,"2011","2013","2015","2017","2020")
   tanios <<- xx
@@ -2967,8 +3101,8 @@ p
 fu_ingresos <- function(n){
   # n <- 3
   ningreso<-switch(n,"ytothaj","ytotcorh","ytotcorh","ytotcorh","ytotcorh")
-  nfolio<-switch(n,"folio","folio","folio.x","folio","folio")
-  nregion<-switch(n,"Metropolitana","Metropolitana","Región Metropolitana de Santiago","Región Metropolitana de Santiago","Región Metropolitana de Santiago")
+  nfolio<-switch(n,"folio","folio","folio","folio","folio")
+  nregion<-switch(n,"Región Metropolitana de Santiago","Región Metropolitana de Santiago","Región Metropolitana de Santiago","Región Metropolitana de Santiago","Región Metropolitana de Santiago")
   expan<-switch(n,"expc_full","expc","expc_todas","expc","expc")
   xx<-switch(n,"2011","2013","2015","2017","2020")
   tanios <<- xx
@@ -3050,8 +3184,8 @@ p
 fu_ingresos <- function(n){
   # n <- 3
   ningreso<-switch(n,"ytrabhaj","ytrabajoCorh","ytrabajoCorh","ytrabajocorh","ytrabajocorh")
-  nfolio<-switch(n,"folio","folio","folio.x","folio","folio")
-  nregion<-switch(n,"Metropolitana","Metropolitana","Región Metropolitana de Santiago","Región Metropolitana de Santiago","Región Metropolitana de Santiago")
+  nfolio<-switch(n,"folio","folio","folio","folio","folio")
+  nregion<-switch(n,"Región Metropolitana de Santiago","Región Metropolitana de Santiago","Región Metropolitana de Santiago","Región Metropolitana de Santiago","Región Metropolitana de Santiago")
   expan<-switch(n,"expc_full","expc","expc_todas","expc","expc")
   xx<-switch(n,"2011","2013","2015","2017","2020")
   tanios <<- xx
@@ -3134,8 +3268,8 @@ p
 fu_ingresos <- function(n){
   # n <-2
   ningreso<-switch(n,"yoprhaj","yoprCorh","yoprCorh","yoprcorh","yoprcorh")
-  nfolio<-switch(n,"folio","folio","folio.x","folio","folio")
-  nregion<-switch(n,"Metropolitana","Metropolitana","Región Metropolitana de Santiago","Región Metropolitana de Santiago","Región Metropolitana de Santiago")
+  nfolio<-switch(n,"folio","folio","folio","folio","folio")
+  nregion<-switch(n,"Región Metropolitana de Santiago","Región Metropolitana de Santiago","Región Metropolitana de Santiago","Región Metropolitana de Santiago","Región Metropolitana de Santiago")
   expan<-switch(n,"expc_full","expc","expc_todas","expc","expc")
   xx<-switch(n,"2011","2013","2015","2017","2020")
   tanios <<- xx
@@ -3789,8 +3923,7 @@ datatable(tabla_cont_freq, extensions = 'Buttons', escape = FALSE, rownames = FA
 
 ```
  
-
-
+ 
 
 # Ingresos de los hogares versus el de las personas
 
