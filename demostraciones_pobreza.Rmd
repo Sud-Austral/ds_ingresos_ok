@@ -1,5 +1,7 @@
 ---
-title: Pobreza por ingresos </span>
+
+title: Análisis propios, comparados con los oficiales, tanto de los ingresos como de la pobreza en la<span style="color:green"> Encuesta Casen (2006-2020) </span>
+
 author:
 - name: VE-CC-AJ
   affiliation: DataIntelligence
@@ -73,6 +75,12 @@ library(DT)
 
 # Introducción
 
+
+Una diferencia fundamental que hace la Casen es la división de los ingresos en presonales e individuales.
+
+Necesitamos comparar los datos que calculamos por cuenta propia de los **Ingresos** con lo ya publicado para identificar los posibles errores en nuestras estimaciones.
+
+
 [En un trabajo anterior](https://rpubs.com/dataintelligence/construccion_del_ingreso_en_la_casen), determinamos los ingresos fundamentales a partir de los cuales se puede deducir toda la estructura de ingresos de la Casen. Éstos son:
 
 1. Ingresos totales\
@@ -80,7 +88,13 @@ library(DT)
 3. Ingresos del trabajo, e\
 4. Ingresos de la ocupación principal.
 
-Los análisis oficiales que entrega Casen y que son descargables de [aquí](http://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-en-pandemia-2020) para el 2020 y de [aquí](http://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-2011) del 2011 hasta 1990, entregan estadísticas muy útiles sobres las cuales comparar.
+
+Los análisis oficiales que entrega Casen y que son descargables de [aquí](http://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-en-pandemia-2020) para el 2020 y de [aquí](http://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-2011) del 2011 hasta 1990, entregan estad[isticas muy útiles sobres las cuales comparar.
+
+Nos concentraremos en una primera parte en los ingresos que trae calculado por hogares la Casen del 2020 en pandemia y compararemos con los obtenidos por nosotros. Concluiremos que son prácticamente los mismos.
+
+
+Cuando estimamos porcentualmente la variación del ingreso total personal entre el 2017 y el 2020 por comuna nos encontramos con una caída del -34,453 a nivel nacional, lo que no se condice con las estadísticas que obtuvimos a nivel de hogares [descargar aquí](http://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-en-pandemia-2020). Ingreso promedio de los hogares por tipo de ingreso y región. Los últimos apenas varian  frente a la tremenda caida del -34% de ytotcor, pero como demostraremos, creemos que es problema de interpretación y no de método o base de datos corrupta, sino que del concepto de **Alquiler imputado** que suaviza la pobreza por ingresos.
 
 
 ```{r}
@@ -104,9 +118,106 @@ codigos_comunales <- readRDS(file = "C:/Users/chris/OneDrive/Documentos/archivos
 ```
 
 
+
+
+Casen se concentra en el análisis de los ingresos de los hogares, entonces el cálculo básico es el siguiente:
+
+1 Se agrupan todos los hogares por núcleo familiar con una columna que indique su cantidad si queremos calcular los ingresos per cápita.
+
+2 Hacemos un merge para traernos una variable de ingreso para el hogar (que es la suma de los ingresos de todos sus integrantes), por ejemplo ytrabajocorh (en general éstas terminan siempre con h).
+
+3 Calculamos los promedios por región.
+
+Dividimos el informe en tres:
+
+1. Para el 2020 comparamos nuestros cálculos con los publicados.
+
+2. Generalizamos para los cuatro ingresos fundamentales entre 2009 y 2020, agregando la variación porcentual entre años contiguos para nuestros ingresos calculados y agregando una gráfica que compara para todos los años disponibles los calculados y los publicados. Adjuntamos la tabla completa descargable.
+
+3. Problema. 
+
+Cuando llegamos al análisis de los ingresos por persona por comuna 2017-2020 nos encontramos con una caída enorme, que no parece justificada por las cifras oficiales. No hay error. Ésto es así. Lo que pasa es que en éste momento entra en juego el concepto de "Alquiler imputado". Una muy buena definición la entrega la fundación SOl:
+
+Una persona de 75 años vive sola y, luego de haber pagado dividendos por más de 30 años, es dueña de su casa. El arriendo que se paga en el sector por una vivienda similar es de $300.000. Esta persona no recibe pensión básica y su pensión autofinanciada a través del sistema de AFP es de $100.000. Tampoco recibe aporte previsional solidario. Dicho de otro modo: es una persona mayor que vive en su casa y cuyo único ingreso es de $100.000. Al momento de calcular el porcentaje de pobreza, sin embargo, esta persona obtiene un ingreso mensual de $400.000, correspondiente a la suma del alquiler imputado y su pensión autofinanciada y, como la línea de pobreza para el hogar de una persona es de $158.145, figurará estadísticamente como que no es pobre.>https://www.elmostrador.cl/noticias/opinion/columnas/2018/08/29/y-si-miramos-la-pobreza-de-mercado-las-trampas-del-famoso-alquiler-imputado/
+
+
+
+
+# Ingresos de los hogares versus el de las personas
+
+El alquiler imputado se divide en partes iguales entre los integrantes del hogar.
+
+Tenemos un problema en el que nos percatamos que los ingresos de los hogares entre el 2017 y el 2020 no caen de forma tan dramática como lo hacen los ingresos personales. Entonces vamos a hacer una verifición manual en torno a éstos dos estadios.
+
+Estudiaremos el subset de Algarrobo 2017
+
+1. El promedio de los 4 registros amarillos del campo ytotcor entrega el valor del ingreso per cápita.
+
+2. Que es el mismo valor que nos entrega el promedio del campo ytotcorh_sin_ah.
+
+3. Que sube a 440883,3 cuando incluímos el Alquiler imputado.
+
+![](Screenshot_aysen.png)
+```{r}
+448333+771667+800000+375000   +  250000
+```
+```{r}
+2645000/6
+```
+
+```{r}
+(440833 - 399166 ) *6
+```
+
+
+
+
+
+
+POBREZA EN PORCENTAJE DE PERSONAS 2006
+
+```{r}
+unique(casen2006$CORTE)
+tabla_matp <-xtabs(casen2006$EXPC~COMUNA+CORTE, data = casen2006)
+head(tabla_matp,10)
+```
+
+
+```{r}
+s1 <- sum(tabla_matp[,1])+sum(tabla_matp[,2])+sum(tabla_matp[,3])
+s2 <- sum(tabla_matp[,1])
+
+s2*100/s1
+```
+
+```{r}
+casen_2006_r1 <- filter(casen2006, casen2006$R == "VIII")
+# head(casen_2006_r1)
+```
+
+```{r}
+# casen_2006_r1 %>% filter(!is.na(CORTE))
+
+tabla_matp <-xtabs(casen_2006_r1$EXPR~R+CORTE, data = casen_2006_r1)
+# head(tabla_matp,10)
+```
+
+```{r}
+s1 <- sum(tabla_matp[,1])+sum(tabla_matp[,2])+sum(tabla_matp[,3])
+s2 <- sum(tabla_matp[,3])
+ 
+s2*100/s1
+```
+
+<br>
+<br>
+<br>
+
 # Pobreza por ingresos
 
-Desde 1990 Casen publica información sobre el porcentaje de pobreza de los chilenos, divididos en tres categorias: no pobres, pobres y pobres extremos. Se corrigieron los resultados obtenidos de las primeras Casen con una nueva metodología para la medición de la pobreza que fue aplicado de forma retroactiva. A continuación se muestran 2 porcentajes diferentes de pobreza y pobreza extrema (Pobreza 1 y pobreza 3):
+Desde 1990 Casen publica información sobre el porcentaje de pobreza de los chilenos, generalmente divididos en tres categorias: no pobres, pobres y pobres extremos. A continuación se muestran 2 porcentajes diferentes de pobreza y pobreza extrema:
+
+
 
 
 ## Pobreza 1
@@ -129,6 +240,7 @@ Que coincide con otro informe:
 
 [(ver informe completo acá)](http://observatorio.ministeriodesarrollosocial.gob.cl/storage/docs/casen/2006/Resultados_Pobreza_Casen_2006.pdf) 
 
+
 Entonces existen dos publicaciones oficiales de resultados de la medicion de la pobreza de la Casen: los del año y los actualizados.
 
 Podemos demostrar que nuestros cálculos coinciden perfecto con los entregados del año 2006:
@@ -149,6 +261,8 @@ no_pobre <- tabla_matp[,3]
 total <- tabla_matp[,1] + tabla_matp[,2] + tabla_matp[,3]
 indigente_por <- indigente*100/total
 indigente_por
+
+```{r}
 tabla_matp <-xtabs(casen2006$EXPC~COMUNA+CORTE, data = casen2006)
 head(tabla_matp,20)
 ```
@@ -179,19 +293,20 @@ head(tabla_matp,20)
 # totalisimo2 <- rbind(totalisimo,pobre_no_ind_por)
 # totalisimo3 <- rbind(totalisimo2,no_pobre_por)
 
-# datatable(tabla_matp, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
-#           options = list(dom = 'Bfrtip',
-#           buttons = list('colvis', list(extend = 'collection',
-#           buttons = list(
-#           list(extend='copy'),
-#           list(extend='excel',
-#             filename = 'hitStats'),
-#           list(extend='pdf',
-#             filename= 'hitStats')),
-#           text = 'Download')), scrollX = TRUE))
 
+datatable(tabla_matp, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+          options = list(dom = 'Bfrtip',
+          buttons = list('colvis', list(extend = 'collection',
+          buttons = list(
+          list(extend='copy'),
+          list(extend='excel',
+            filename = 'hitStats'),
+          list(extend='pdf',
+            filename= 'hitStats')),
+          text = 'Download')), scrollX = TRUE))
 
 ```
+
 
 
 # Expansión comunal de la pobreza.
@@ -264,8 +379,6 @@ sum( frec_man_com_parcial_total2$p_mul)
 ```
 
 La columna p_multi sería la que que contenga la cantidad de pobres extremos por comuna corregidos.
-
-
 
 
 
