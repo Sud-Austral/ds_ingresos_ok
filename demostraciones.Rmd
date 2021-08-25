@@ -188,39 +188,39 @@ Para ello calculamos el ingreso promedio de los hogares por tipo de ingreso y re
  
 
 ```{r, warning=FALSE, message=FALSE} 
-casen2020 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2020.rds")
-casen2020 <- mutate_if(casen2020, is.factor, as.character)
-casen2017 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2017_c2.rds")
-casen2017 <- mutate_if(casen2017, is.factor, as.character)
-casen2015 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2015_c2.rds")
-casen2015 <- mutate_if(casen2015, is.factor, as.character)
-casen2013 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2013_c2.rds")
-casen2013 <- mutate_if(casen2013, is.factor, as.character)
-casen2011 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2011_c2.rds")
-casen2011 <- mutate_if(casen2011, is.factor, as.character)
-casen2009 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2009_c.rds")
-casen2009 <- mutate_if(casen2009, is.factor, as.character)
-casen2006 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2006_c.rds")
-casen2006 <- mutate_if(casen2006, is.factor, as.character)
+# casen2020 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2020.rds")
+# casen2020 <- mutate_if(casen2020, is.factor, as.character)
+# casen2017 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2017_c2.rds")
+# casen2017 <- mutate_if(casen2017, is.factor, as.character)
+# casen2015 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2015_c2.rds")
+# casen2015 <- mutate_if(casen2015, is.factor, as.character)
+# casen2013 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2013_c2.rds")
+# casen2013 <- mutate_if(casen2013, is.factor, as.character)
+# casen2011 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2011_c2.rds")
+# casen2011 <- mutate_if(casen2011, is.factor, as.character)
+# casen2009 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2009_c.rds")
+# casen2009 <- mutate_if(casen2009, is.factor, as.character)
+# casen2006 <- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2006_c.rds")
+# casen2006 <- mutate_if(casen2006, is.factor, as.character)
  
 
-# casen2006 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2006_c.rds")
-# casen2006 <- mutate_if(casen2006, is.factor, as.character)
-# casen2009 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2009_c.rds")
-# casen2009 <- mutate_if(casen2009, is.factor, as.character)
-# casen2011 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2011_c.rds")
-# casen2011 <- mutate_if(casen2011, is.factor, as.character)
-# casen2013 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2013_c.rds")
-# casen2013 <- mutate_if(casen2013, is.factor, as.character)
-# casen2015 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2015_c.rds")
-# casen2015 <- mutate_if(casen2015, is.factor, as.character)
-# casen2017 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2017_c.rds")
-# casen2017 <- mutate_if(casen2017, is.factor, as.character)
-#casen2020 <- read.spss(file="C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2020.sav", to.data.frame=TRUE)
-#saveRDS(casen2020,"casen2020.rds")
-# casen2020 <- readRDS("casen2020.rds")
-# casen2020 <- mutate_if(casen2020, is.factor, as.character)
-# codigos_comunales <- readRDS(file = "C:/Users/chris/OneDrive/Documentos/archivos_grandes/codigos_comunales_2011-2017.rds")
+casen2006 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2006_c.rds")
+casen2006 <- mutate_if(casen2006, is.factor, as.character)
+casen2009 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2009_c.rds")
+casen2009 <- mutate_if(casen2009, is.factor, as.character)
+casen2011 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2011_c.rds")
+casen2011 <- mutate_if(casen2011, is.factor, as.character)
+casen2013 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2013_c.rds")
+casen2013 <- mutate_if(casen2013, is.factor, as.character)
+casen2015 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2015_c.rds")
+casen2015 <- mutate_if(casen2015, is.factor, as.character)
+casen2017 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2017_c.rds")
+casen2017 <- mutate_if(casen2017, is.factor, as.character)
+casen2020 <- read.spss(file="C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2020.sav", to.data.frame=TRUE)
+saveRDS(casen2020,"casen2020.rds")
+casen2020 <- readRDS("casen2020.rds")
+casen2020 <- mutate_if(casen2020, is.factor, as.character)
+codigos_comunales <- readRDS(file = "C:/Users/chris/OneDrive/Documentos/archivos_grandes/codigos_comunales_2011-2017.rds")
 
 
 
@@ -3927,61 +3927,18 @@ datatable(tabla_cont_freq, extensions = 'Buttons', escape = FALSE, rownames = FA
 
 # Ingresos de los hogares versus el de las personas
 
-Tenemos un problema en el que nos percatamos que los ingresos de los hogares entre el 2017 y el 2020 no caen de forma tan dramática como lo hacen los ingresos personales. Entonces vamos a hacer una verifición manual en torno a éstos dos estadios.
+Nos percatamos de que los ingresos de los hogares entre el 2017 y el 2020 no caen de forma tan dramática como lo hacen los ingresos personales. 
 
-Estudiaremos el subset de Algarrobo 2017
+Estudiaremos una familia de Aysen.
 
-1. El promedio de los 4 registros amarillos del campo ytotcor entrega el valor del ingreso per cápita.
+1. El promedio de los 4 registros amarillos del campo ytotcor entrega el valor del ingreso ytotcor per cápita.
 
-2. Que es el mismo valor que nos entrega el promedio del campo ytotcorh_sin_ah.
+2.La suma de esos cuatro valores nos entrega el ytotcorh_sin_ah: 2395000, que per cápita es 399166.
 
-3. Que sube a 440883,3 cuando incluímos el Alquiler imputado.
+3. Cuando incluímos el Alquiler imputado, lo hacemos una sola vez para el grupo familiar, dividiendo 250000 por 6 y sumándolo al ytotcorh_sin_ah, dandonos ytotcorh.
 
 ![](Screenshot_aysen.png)
 
-# Análisis para Aysén.
-
-```{r}
-options(scipen=999)
-casen2017_algarrobo <- filter(casen2017, casen2017$comuna == "Aysén")
-casen2017_algarrobo_head <- casen2017_algarrobo
-casen2017_algarrobo_head <- casen2017_algarrobo_head[,c("comuna","folio","ytot", "ytotcor","ytoth","yaimh","yaimcorh","ytotcorh")]
-
-```
-
-
-
-```{r}
-casen2017_algarrobo_head_sin_na <- mutate_at(casen2017_algarrobo_head, c("ytot", "ytotcor", "ytoth", "yaimh","yaimcorh","ytotcorh"), ~replace(., is.na(.), 0))
-casen2017_algarrobo_head_sin_na$ytotcorh_sin_ah <- (casen2017_algarrobo_head_sin_na$ytotcorh - casen2017_algarrobo_head_sin_na$yaimcorh)
-```
-
-
-
-
-```{r} 
-tabla <- table(casen2017_algarrobo_head_sin_na$folio)
-tabla <- as.data.frame(tabla)
-colnames(tabla) <- c("folio","freq_folio")
-
-casen_fh <- casen2017_algarrobo_head_sin_na[,c("comuna","folio", "ytotcor","yaimcorh","ytotcorh","ytotcorh_sin_ah")]
-casen_fh$folio <- as.character(casen_fh$folio)
-repetidos2 <- merge(x=casen_fh, y=tabla, by = "folio", all.x = T)
-
-rr <- repetidos2 
-
-datatable(rr, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
-          options = list(dom = 'Bfrtip',
-          buttons = list('colvis', list(extend = 'collection',
-          buttons = list(
-          list(extend='copy'),
-          list(extend='excel',
-            filename = 'hitStats'),
-          list(extend='pdf',
-            filename= 'hitStats')),
-          text = 'Download')), scrollX = TRUE))
-
-```
 
 ```{r}
 
@@ -4094,108 +4051,45 @@ p
 
  
 
+```{r}
+casen2020 <- readRDS("casen2020.rds")
+casen2020 <- mutate_if(casen2020, is.factor, as.character)
+```
 
+# Problema: no podemos dar con la cifra exacta de promedios por familia.
+Que tanta exactitud buscamos?
 
-
-
-
-
-# Análisis de la pobreza
-
-
-Uno a nivel **comunal** en la Región Metropolitana y tres a nivel Regional:
-
-i. Ingreso autónomo <span style="color:red">percápita</span> 
-del hogar, CASEN 2011
-($ de noviembre de 2011)
-de la pagina 16 [de aquí](https://ciperchile.cl/wp-content/uploads/INDICE-DE-PRIORIDAD-SOCIAL-2014.pdf
-).
-
-
-ii. Ingreso autónomo promedio e ingreso monetario promedio del hogar a nivel regional el 2015:
-
-https://www.bcn.cl/portal/noticias?id=principales-resultados-sobre-pobreza-e-ingresos-regionales-encuesta-casen-2015
-
-
-Por dos instrumentos diferentes oficiales llegamos a los mismos resultados y son a los cuales intentamos aproximarnos.
-
-
-iii.  Se comparará con la tabla obtenida en las III [(ver aquí)](https://datasocial.ministeriodesarrollosocial.gob.cl/dataSocial/csv/Tablas_Ingreso.xlsx) 
-
- <!-- ![Tabla de referencia](image_2021_08_12T19_27_00_679Z.png) -->
-
-iiii. Y la otra con una página interactiva con datos por región [(ver aquí)](https://datasocial.ministeriodesarrollosocial.gob.cl/fichaIndicador/513/2)
-
-
-
-
-
-
-
-![ ](pobreza_1.pdf.png)
-
-link 1[(ver aquí)](http://observatorio.ministeriodesarrollosocial.gob.cl/storage/docs/casen/2020/Resumen_de_resultados_de_Pobreza_por_Ingresos_y_Distribucion_de_Ingresos.pdf) 
-
-
-![](pobreza_2.png)
-
-link 2 [(ver aquí)](http://observatorio.ministeriodesarrollosocial.gob.cl/storage/docs/casen/2006/Resultados_Pobreza_Casen_2006.pdf) 
-
-
-POBREZA EN PORCENTAJE DE PERSONAS 2006
+Leemos Casen2020
 
 ```{r}
-unique(casen2006$CORTE)
- 
-tabla_matp <-xtabs(casen2006$EXPC~COMUNA+CORTE, data = casen2006)
-head(tabla_matp,10)
+# casen2020
 ```
 
 
 ```{r}
-s1 <- sum(tabla_matp[,1])+sum(tabla_matp[,2])+sum(tabla_matp[,3])
-s2 <- sum(tabla_matp[,1])
+un_filtro <- filter(casen2020,casen2020$region=="Región de Tarapacá")
+tabla <- table(un_filtro$folio)
+tabla <- as.data.frame(tabla)
+tabla
+colnames(tabla) <- c("folio","freq_folio")
+repetidos2 <- merge(x=tabla, y=casen2020, by = "folio", all.x = T)
+#repetidos2 <- repetidos2[,c(2,1,4,3)]
+#rr 
+#rr
 
-s2*100/s1
+repetidos2
+
 ```
+
 
 ```{r}
-casen_2006_r1 <- filter(casen2006, casen2006$R == "VIII")
-# head(casen_2006_r1)
-```
-
-```{r}
-# casen_2006_r1 %>% filter(!is.na(CORTE))
-
-tabla_matp <-xtabs(casen_2006_r1$EXPR~R+CORTE, data = casen_2006_r1)
-# head(tabla_matp,10)
-```
-
-```{r}
-s1 <- sum(tabla_matp[,1])+sum(tabla_matp[,2])+sum(tabla_matp[,3])
-s2 <- sum(tabla_matp[,3])
- 
-s2*100/s1
+un_filtro2 <- repetidos2$yauth
+#un_filtro2
+mean(un_filtro2)
 ```
 
 
-
-Alquiler imputado 2020
-
-yaimh
-yaimcorh 
-
-Alquiler imputado 2017
-
-yaimh
-yaimcorh
-
-
-
-
-
-
-
+![](ingreso_autonomo.png)
 
 
 
