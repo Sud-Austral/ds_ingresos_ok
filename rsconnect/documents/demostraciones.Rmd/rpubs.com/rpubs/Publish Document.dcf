@@ -6,6 +6,6 @@ server: rpubs.com
 hostUrl: rpubs.com
 appId: https://api.rpubs.com/api/v1/document/802094/5a07aed01b9b441695a519c71e157d6d
 bundleId: https://api.rpubs.com/api/v1/document/802094/5a07aed01b9b441695a519c71e157d6d
-url: http://rpubs.com/publish/claim/802094/5f7154d0df044cd28a580a8cd6794311
-when: 1629917431.77819
-lastSyncTime: 1629917431.77819
+url: http://rpubs.com/dataintelligence/802094
+when: 1629939851.9081
+lastSyncTime: 1629939851.9081
