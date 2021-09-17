@@ -345,6 +345,17 @@ p <- p %>% add_trace(y = ~`Ingreso del trabajo`, name = 'ingreso del trabajo ofi
 p 
 ```
 
+
+
+
+
+
+
+
+
+
+
+
 ### Ingreso autonomo del hogar: **yautcorh**
 
 ```{r, message=FALSE} 

@@ -1,5 +1,5 @@
 ---
-title: Pobreza por ingresos<span style="color:green"> (2006-2020) </span>
+title: Pobreza por ingresos<span style="color:green"> según Casen (2006-2020) </span>
 author:
 - name: VE-CC-AJ
   affiliation: DataIntelligence
@@ -73,13 +73,23 @@ library(DT)
 
 # Introducción
 
-En éste trabajo nos concentraremos en la distribución de la pobreza en Chile, pobreza que se divide, con diferentes nombres, en tres grandes grupos: no pobres, pobres y pobres extremos.
+La encuesta Casen, divide a la pobreza (con diferentes nombres), en tres grandes grupos: no pobres, pobres y pobres extremos.
 
-Veremos que para cifras del año y a  nivel regional, los cálculos  a los que llegamos son exactos a los obtenidos y publicados por Casen en cada año en que fue aplicada. Pero éste es un problema, pues las cifras entregadas en los primeros años de vuelta a la democracia fueron corregidos según una nueva metodología que no conocemos. 
+Cada año se hace la publicación de los resultados. los que a nivel regional coinciden casi exactamente con los que obtenemos con cálculos propios.
 
-Como lo valores que obtenemos a nivel regional son exactos a los publicados a nivel regional, podemos deducir que también lo serán a nivel comunal, por lo que ideamos una metodología para llevar las frecuencias de pobres y no pobres a niveles calculados con la nueva metodología para poder hacer comparaciones anuales entre Casen de diferentes años.
+Pero hay un problema, pues las cifras entregadas en los primeros años de vuelta a la democracia fueron corregidos el 2015 según una nueva metodología que no conocemos. 
 
-Los análisis oficiales que entrega Casen y que son descargables de [aquí](http://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-en-pandemia-2020) para el 2020 y de [aquí](http://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-2011) del 2011 hasta 1990, entregan estadísticas muy útiles sobres las cuales comparar.
+Como lo valores que obtenemos a nivel regional son exactos, podemos deducir que serán también muy aproximados a nivel comunal, por lo que ideamos una metodología para llevar las frecuencias de pobres y pobres extremos a niveles calculados con la nueva metodología para poder hacer comparaciones anuales entre diferentes Casen.
+
+Utilizaremos las cifra oficiales de **frecuencias** que entrega Casen y que son descargables de [aquí](http://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-en-pandemia-2020) para todo el rango de tiempo de interés.
+
+Existe un punto de quiebre en el 2014. Antes de ese año las cifras de pobrezas estaban subrepresentadas por el hecho que desde el [2015] (http://www.desarrollosocialyfamilia.gob.cl/pdf/upload/IDS2.pdf) se comenzó a aplicar una nueva metodología de medición de pobreza que subió los estándares. Es por eso que tuvimos que corregir 4 Casen: 2006, 2009, 2011 y 2013. La metodología para ello se incluye en éste documento.
+
+
+
+
+
+
 
 
 ```{r}
@@ -105,50 +115,39 @@ codigos_comunales <- readRDS(file = "C:/Users/chris/OneDrive/Documentos/archivos
 
 
 
-<br>
 
-# Pobreza por ingresos
-
-Desde 1990 Casen publica información sobre el porcentaje de pobreza de los chilenos, generalmente divididos en tres categorias: no pobres, pobres y pobres extremos. A continuación se muestran 3 informes diferentes de pobreza y pobreza extrema (los dos primeros se confirman):
 
 
 
 
-## Pobreza 1
+# Pobreza por ingresos
 
-![](pobreza_1.pdf.png)
+Desde 1990 Casen publica información sobre el porcentaje de pobreza de los chilenos, generalmente divididos en tres categorias: no pobres, pobres y pobres extremos. A continuación se muestran 3 informes diferentes de pobreza y pobreza extrema. Los dos primeros se confirman pues están basados en la nueva metodología.
 
-[(ver informe completo acá)](http://observatorio.ministeriodesarrollosocial.gob.cl/storage/docs/casen/2020/Resumen_de_resultados_de_Pobreza_por_Ingresos_y_Distribucion_de_Ingresos.pdf) 
+El tercero, el del 2006 contiene cifras dispares, pero que son ciertas en el año que se aplicó, si bien el standard para medirla era muy bajo.
 
-Que coincide con otro informe:
+Tanto 2.1 como 2.2 son publicaciones del año 2020
 
-## Pobreza 2
+## Pobreza 1 (medición 1)
 
-![](p4.png)
+![](pobreza_1.pdf.png)[(ver informe completo acá)](http://observatorio.ministeriodesarrollosocial.gob.cl/storage/docs/casen/2020/Resumen_de_resultados_de_Pobreza_por_Ingresos_y_Distribucion_de_Ingresos.pdf) 
 
-[(ver informe completo acá)](http://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-en-pandemia-2020)
+Cuyo resultado detallado por Región es:
+
+## Pobreza 2 
+
+![](total_pobres_2006.png)[(ver informe completo acá)](http://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-en-pandemia-2020)
+
+Un segundo informe publicado en el 2006 es sorprendente porque informa a nivel nacional una tasa de pobreza y pobreza extrema de casi 1/3 del que actualmente se afirma que existía (13,7 versus 29,1).
 
 ## Pobreza 3
 
+![](pobreza_2.png)[(ver informe completo acá)](http://observatorio.ministeriodesarrollosocial.gob.cl/storage/docs/casen/2006/Resultados_Pobreza_Casen_2006.pdf) 
+
+
+# Confirmación de resultados de pobreza a nivel Regional en la Casen al año de publicación (2006-2013)
+
 ![](pobreza_2.png)
-
-1. Por un lado podemos apreciar dos informes con resultados distintos.
-
-2.Nuestros calculos son casi iguales a nivel reginal con el segundo informe.
-
-
-
-[(ver informe completo acá)](http://observatorio.ministeriodesarrollosocial.gob.cl/storage/docs/casen/2006/Resultados_Pobreza_Casen_2006.pdf) 
-
-
-Entonces existen dos publicaciones oficiales de resultados de la medicion de la pobreza de la Casen: los del año y los actualizados.
-
-Podemos demostrar que nuestros cálculos coinciden perfecto con los entregados del año 2006:
-
-<!-- Pobreza por Ingreso Casen en Pandemia  -->
-<!-- hoja 8 de Copia de Pobreza_por_Ingreso_Casen_en_Pandemia_2020-1 -->
-
-A continuación vamos a construir y verificar que nuestros cálculos coincidan con los oficiales no corregidos.
 
 ```{r}
 casen2006 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2006_c.rds")
@@ -174,8 +173,6 @@ tabla_matp <-xtabs(casen2006$EXPC~COMUNA+CORTE, data = casen2006)
 #           text = 'Download')), scrollX = TRUE))
 
 ```
-
-# Verificaremos la exactitud de nuestros calculos para los años 2009, 2011, 2013, 2015, 2017 y 2020.
 
 ## 2009
 
@@ -300,11 +297,14 @@ tabla_matp <-xtabs(casen2013$expr~region+casen2013$pobreza_MN, data = casen2013)
 #           text = 'Download')), scrollX = TRUE))
 ```
 
- <span style="color:red">A partir del 2015 ya no es necesario corregir</span>
+ <span style="color:red">A partir del 2015 ya no es necesario corregir.</span>
 
 # Expansión comunal de la pobreza.
 
-Nos basamos para corregir a criterios actuales de la tabla oficial
+## La metodología
+
+Nos basamos para corregir a criterios actuales de la tabla oficial.
+
 http://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-en-pandemia-2020
 
 ![](pobreza_direccion.png)
@@ -315,7 +315,7 @@ http://observatorio.ministeriodesarrollosocial.gob.cl/encuesta-casen-en-pandemia
 
 Caso ejemplo: 2006, Antofagasta. Region II.	Estimación pobres extremos	23.593  según la nueva metodologia. Nosotros contamos 10716.
 
-## Pobreza 1
+## Pobreza 2006 ejemplo de expansión para la región II.
 
 ![](p5.png)
 
@@ -350,7 +350,7 @@ y los sumamos:
 sum(frec_man_com_parcial_total$Freq)
 ```
 
-Expandiremos las frecuencias de pobres ty pobres extremos para que lleguen al nivel oficial de la nueva metodología y lo haremos por comuna.
+Expandiremos las frecuencias de pobres y pobres extremos para que lleguen al nivel oficial de la nueva metodología y lo haremos por comuna.
 
 ```{r}
 frec_man_com_parcial_total2 <- data.frame()
@@ -418,10 +418,112 @@ La columna p_multi sería la que que contenga la cantidad de pobres extremos por
 <br>
 
 
+2006
 
-# Desde 2015 tenemos las frecuencias sin problemas:
+```{r}
+pobreza <- read_xlsx("valores de pobreza actuales.xlsx", sheet = 9 )
+regiones_pub <- pobreza[1:16,c(1,2,9)]
+regiones_pub2 <- pobreza[19:34,c(1,2,9)]
+regiones_pub$c2006 <- as.numeric(regiones_pub$c2006)
+regiones_pub2$c2006 <- as.numeric(regiones_pub2$c2006)
 
-## 2015
+cat <- unique(casen2006$CORTE)
+prop_cor <- data.frame()
+for (cat in unique(casen2006$CORTE)[2]) {
+  
+proporcion <- data.frame()
+fn_prp_pob <- function(n){
+  
+region_2 <- filter(casen2006, casen2006$R == n)
+
+tabla_matp <-xtabs(region_2$EXPC~COMUNA+CORTE, data = region_2)
+tabla_matp <- as.data.frame(tabla_matp)
+tabla_matp2 <<- tabla_matp
+frec_man_com_parcial_total <- filter(tabla_matp, tabla_matp$CORTE == cat)
+codigos_com <- frec_man_com_parcial_total$COMUNA
+
+frec_man_com_parcial_total2 <- data.frame()
+for(i in codigos_com){
+  frec_man_com_parcial <- filter(frec_man_com_parcial_total, frec_man_com_parcial_total$COMUNA == i)
+  frec_man_com_parcial$p <- frec_man_com_parcial$Freq*100/sum(frec_man_com_parcial_total$Freq)/100
+  frec_man_com_parcial_total2 <- rbind(frec_man_com_parcial_total2,frec_man_com_parcial) 
+}
+proporcion2 <<- frec_man_com_parcial_total2
+} 
+for (n in unique(casen2006$R)) {
+ 
+  fn_prp_pob(n)
+  proporcion2$ROMANOS <- n 
+  proporcion <- rbind(proporcion,proporcion2)
+}
+
+proporcion <- proporcion[,c(5,1,2,3,4)]
+prop_cor <- rbind(prop_cor,proporcion)
+}
+
+prop_cor = merge(x = prop_cor, y = regiones_pub, by="ROMANOS")
+prop_cor$p_mul <- round(prop_cor$p * prop_cor$c2006)
+names(prop_cor)[1] <- "region_r" 
+
+a1 <- prop_cor
+ 
+
+  
+prop_cor <- data.frame()
+for (cat in unique(casen2006$CORTE)[3]) {
+  
+proporcion <- data.frame()
+fn_prp_pob <- function(n){
+  
+region_2 <- filter(casen2006, casen2006$R == n)
+
+tabla_matp <-xtabs(region_2$EXPC~COMUNA+CORTE, data = region_2)
+tabla_matp <- as.data.frame(tabla_matp)
+tabla_matp2 <<- tabla_matp
+frec_man_com_parcial_total <- filter(tabla_matp, tabla_matp$CORTE == cat)
+codigos_com <- frec_man_com_parcial_total$COMUNA
+
+frec_man_com_parcial_total2 <- data.frame()
+for(i in codigos_com){
+  frec_man_com_parcial <- filter(frec_man_com_parcial_total, frec_man_com_parcial_total$COMUNA == i)
+  frec_man_com_parcial$p <- frec_man_com_parcial$Freq*100/sum(frec_man_com_parcial_total$Freq)/100
+  frec_man_com_parcial_total2 <- rbind(frec_man_com_parcial_total2,frec_man_com_parcial) 
+}
+proporcion2 <<- frec_man_com_parcial_total2
+} 
+for (n in unique(casen2006$R)) {
+ 
+  fn_prp_pob(n)
+  proporcion2$ROMANOS <- n 
+  proporcion <- rbind(proporcion,proporcion2)
+}
+proporcion <- proporcion[,c(5,1,2,3,4)]
+prop_cor <- rbind(prop_cor,proporcion)
+}
+prop_cor = merge(x = prop_cor, y = regiones_pub2, by="ROMANOS")
+prop_cor$p_mul <- round(prop_cor$p * prop_cor$c2006)
+names(prop_cor)[1] <- "region_r" 
+
+a2 <- prop_cor
+datatable(rbind(a1,a2), extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+          options = list(dom = 'Bfrtip',
+          buttons = list('colvis', list(extend = 'collection',
+          buttons = list(
+          list(extend='copy'),
+          list(extend='excel',
+            filename = 'hitStats'),
+          list(extend='pdf',
+            filename= 'hitStats')),
+          text = 'Download')), scrollX = TRUE))
+```
+
+<br>
+
+
+
+## Desde 2015 tenemos las frecuencias sin problemas
+
+
 
 ```{r}
 casen2015 <- readRDS("C:/Users/chris/OneDrive/Documentos/archivos_grandes/casen_2015_c.rds")
@@ -434,19 +536,19 @@ casen2020 <- readRDS("casen2020.rds")
 casen2020 <- mutate_if(casen2020, is.factor, as.character)
 ```
 
+### 2015
+
 
 ```{r}
-tabla_matp <-xtabs(casen2015$expc~comuna+pobreza, data = casen2015)
+tabla_matp <-xtabs(casen2015$expc_todas~comuna+pobreza, data = casen2015)
 head(tabla_matp,20)
 tabla_matp15 <- as.data.frame(tabla_matp)
 tabla_matp15$año <- "2015"
 # tabla_matp15
 ```
 
-```{r}
-unique(tabla_matp15$pobreza)
-```
 
+### 2017
 
 
 
@@ -459,9 +561,7 @@ tabla_matp17$año <- "2017"
 ```
 
 
-```{r}
-unique(tabla_matp17$pobreza)
-```
+### 2020
 
 
 ```{r}
@@ -472,14 +572,12 @@ tabla_matp20$año <- "2020"
 # tabla_matp20
 ```
 
-```{r}
-unique(tabla_matp20$pobreza)
-```
 
 
-<br>
 
-#Desgargue información de pobreza del 2015, 2017 y 2020:
+
+
+# Descarga de la información de pobreza del 2015, 2017 y 2020:
 
 ```{r}
 pobreza_15_20 <- rbind(tabla_matp15,tabla_matp17,tabla_matp20)
