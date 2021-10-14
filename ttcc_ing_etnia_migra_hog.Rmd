@@ -1,0 +1,792 @@
+---
+title: Tablas de contingencia sobre ingresos de personas y variables sobre las<span style="color:green"> Casen 2006-2020 </span>
+author:
+- name: VE-CC-AJ
+  affiliation: DataIntelligence
+subtitle: | 
+  Por comunas
+header-includes:
+   - \usepackage[]{babel}
+output:
+  rmdformats::html_clean:
+    highlight: kate
+    toc: true
+    use_bookdown: true
+    code_folding: "hide"    
+---
+
+date: `r format(Sys.time(), "%d-%m-%Y")`
+<style type="text/css">
+.main-container {
+  max-width: 1600px;
+  margin-left: 100px;
+  margin-right: auto;
+}
+</style>
+ 
+
+
+# Las variables de ingreso a utilizar serán:
+
+| Año  | Ingreso total | Ingreso autónomo  | Ingreso del trabajo | Ingreso ocupación principal |
+|------|---------------|-------------------|---------------------|-----------------------------|
+| 2006 | YTOTHAJ        | YAUTHAJ            | YTRABHAJ             | YOPRHAJ                      |
+| 2009 | YTOTHAJ        | YAUTHAJ            | YTRABHAJ             | YOPRHAJ                      |
+| 2011 | ytothaj        | yauthaj            | ytrabhaj             | yoprhaj                      |
+| 2013 | ytotcorh       | yautcorh           | ytrabajoCorh         | yoprCorh                     |
+| 2015 | ytotcorh       | yautcorh           | ytrabajoCorh         | yoprCorh                     |
+| 2017 | ytotcorh       | yautcorh           | ytrabajocorh         | yoprcorh                     |
+| 2020 | ytotcorh       | yautcorh           | ytrabajocorh         | yoprcorh                     |
+
+</br>
+
+
+```{r , message=FALSE, warning=FALSE, include = FALSE, eecho = FALSE}
+
+#suppressWarnings(library(RODBC))
+
+library(ggplot2)
+library(ggpubr)
+library(markdown)
+library(shiny)
+library(shinythemes)
+library(tidyverse)
+library(magrittr)
+library(lubridate)
+library(plotly)
+library(xts)
+library(dygraphs)
+library(kableExtra)
+library(knitr)
+library("readxl")
+library(rsconnect)
+library(dplyr)
+library(summarytools)
+library(epiDisplay)
+#library(leaflet)
+library(haven)
+library(epiDisplay)
+library("readxl")
+library(expss)
+library(hrbrthemes)
+library(viridis)
+library(viridisLite)
+library(DescTools)
+library(roperators)
+library(shinycssloaders)
+library(writexl)
+library(labelled)
+library(tidyverse)
+library(haven)
+library(readr)
+library(sjmisc)
+library(WriteXLS)
+
+library(ineq)
+library(readstata13)
+library(reldist)
+
+library(DT)
+```
+
+
+## Lectura de bases de datos Casen
+
+```{r, message=FALSE, warning=FALSE}
+dataset_06 <<- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2006_c.rds")
+dataset_06 <- mutate_if(dataset_06, is.factor, as.character)
+dataset_09 <<- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2009_c.rds")
+dataset_09 <- mutate_if(dataset_09, is.factor, as.character)
+dataset_11 <<- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2011_c.rds")
+dataset_11 <- mutate_if(dataset_11, is.factor, as.character)
+dataset_13 <<- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2013_c.rds")
+dataset_13 <- mutate_if(dataset_13, is.factor, as.character)
+dataset_15 <<- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2015_c.rds")
+dataset_15 <- mutate_if(dataset_15, is.factor, as.character)
+dataset_17 <<- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2017_c.rds")
+dataset_17 <- mutate_if(dataset_17, is.factor, as.character)
+dataset_20 <<- readRDS("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/casen/casen_2020_c.rds")
+dataset_20 <- mutate_if(dataset_20, is.factor, as.character)
+```
+
+### Homologación de alfabetismo
+
+```{r, message=FALSE, warning=FALSE}
+dataset_06$E1[dataset_06$E1 == "No sabe /Sin dato"] <- NA
+
+dataset_11$e1[dataset_11$e1 == "Sí, lee y escribe"] <- "Sí"
+dataset_11$e1[dataset_11$e1 == "No, sólo lee"] <- "No"
+dataset_11$e1[dataset_11$e1 == "No, ninguno"] <- "No"
+dataset_11$e1[dataset_11$e1 == "No, sólo escribe"] <- "No"
+
+dataset_13$e1[dataset_13$e1 == "Sí, lee y escribe"] <- "Sí"
+dataset_13$e1[dataset_13$e1 == "No, ninguno"] <- "No"
+dataset_13$e1[dataset_13$e1 == "No, sólo lee"] <- "No"
+dataset_13$e1[dataset_13$e1 == "No, sólo escribe"] <- "No"
+dataset_13$e1[dataset_13$e1 == "NS/NR"] <- NA
+
+dataset_15$e1[dataset_15$e1 == "Sí, lee y escribe"] <- "Sí"
+dataset_15$e1[dataset_15$e1 == "No, ninguno"] <- "No"
+dataset_15$e1[dataset_15$e1 == "No, sólo lee"] <- "No"
+dataset_15$e1[dataset_15$e1 == "No, sólo escribe"] <- "No"
+
+dataset_17$e1[dataset_17$e1 == "Sí, lee y escribe"] <- "Sí"
+dataset_17$e1[dataset_17$e1 == "No, sólo lee"] <- "No"
+dataset_17$e1[dataset_17$e1 == "No, ninguno"] <- "No"
+dataset_17$e1[dataset_17$e1 == "No sabe/responde"] <- NA
+dataset_17$e1[dataset_17$e1 == "No, sólo escribe"] <- "No"
+
+dataset_20$e1[dataset_20$e1 == 1] <- "Sí"
+dataset_20$e1[dataset_20$e1 == 0] <- "No"
+```
+
+### Homologación de migracion
+
+```{r}
+for (i in unique(dataset_20$r2_pais_esp)) {
+  pais <- gsub("(^[[:space:]]+|[[:space:]]+$)", "", i)
+  pais <- tolower(pais)
+  dataset_20$r2_pais_esp[dataset_20$r2_pais_esp == i] <- str_to_title(pais) 
+} 
+
+dataset_11$r2p_cod[dataset_11$r2p_cod == "No contesta"] <- "NS/NR"
+dataset_13$r2_p_cod[dataset_13$r2_p_cod == "No contesta"] <- "NS/NR"
+dataset_15$r2espp_cod[dataset_15$r2espp_cod == "No contesta"] <- "NS/NR"
+dataset_17$r2_p_cod[dataset_17$r2_p_cod == "No Bien Especificado"] <- "NS/NR"
+dataset_17$r2_p_cod[dataset_17$r2_p_cod == "No Responde"] <- "NS/NR"
+dataset_20$r2_pais_esp[dataset_20$r2_pais_esp == "No Bien Especificado"] <- "NS/NR"
+dataset_20$r2_pais_esp[dataset_20$r2_pais_esp == ""] <- NA
+```
+ 
+
+
+# Generación de tablas de contingencia con <span style="color:red">etnia</span>
+
+```{r, message=FALSE, warning=FALSE}
+df_tablas <- data.frame()
+
+for (var2 in 1:4) {
+
+ 
+funcion1 <- function(n){
+ 
+ xx<-switch(n,"2006","2009","2011","2013","2015","2017","2020")
+ tanio <<- xx
+
+ 
+ 
+
+if(xx==2006) {
+ 
+  ingreso <- switch(var2,"YTOTHAJ","YAUTHAJ","YTRABHAJ","YOPRHAJ") 
+eliminated <- dataset_06[!is.na(dataset_06[,c(ingreso)]),]
+a <- eliminated[,c(ingreso)]
+b <- eliminated$COMUNA
+c <- eliminated$SEXO
+d <- eliminated$E1 #alfabetismo
+e <- eliminated$T4 #etnia 
+anio <- 2006
+}
+
+if(xx==2009) {
+
+  ingreso <- switch(var2,"YTOTHAJ","YAUTHAJ","YTRABHAJ","YOPRHAJ") 
+eliminated <- dataset_09[!is.na(dataset_09[,c(ingreso)]),]
+a <- eliminated[,c(ingreso)]
+b <- eliminated$COMUNA
+c <- eliminated$SEXO
+d <- eliminated$E1 #alfabetismo
+e <- eliminated$T5 #etnia 
+anio <- 2009
+
+}
+
+if(xx==2011) {
+  
+  ingreso <- switch(var2,"ytothaj","yauthaj","ytrabhaj","yoprhaj") 
+eliminated <- dataset_11[!is.na(dataset_11[,c(ingreso)]),]
+a <- eliminated[,c(ingreso)]
+b <- eliminated$comuna
+c <- eliminated$sexo
+d <- eliminated$e1 #alfabetismo
+e <- eliminated$r6 #etnia 
+anio <- 2011
+
+}
+
+if(xx==2013) {
+  
+  ingreso <- switch(var2,"ytotcorh","yautcorh","ytrabajoCorh","yoprCorh") 
+eliminated <- dataset_13[!is.na(dataset_13[,c(ingreso)]),]
+a <- eliminated[,c(ingreso)]
+b <- eliminated$comuna
+c <- eliminated$sexo
+d <- eliminated$e1 #alfabetismo
+e <- eliminated$r6 #etnia 
+anio <- 2013
+
+}
+ 
+
+if(xx==2015) {
+  
+  ingreso <- switch(var2,"ytotcorh","yautcorh","ytrabajoCorh","yoprCorh") 
+eliminated <- dataset_15[!is.na(dataset_15[,c(ingreso)]),]
+a <- eliminated[,c(ingreso)]
+b <- eliminated$comuna
+c <- eliminated$sexo
+d <- eliminated$e1 #alfabetismo
+e <- eliminated$r3 #etnia 
+anio <- 2015
+}
+
+if(xx==2017) {
+  
+  ingreso <- switch(var2,"ytotcorh","yautcorh","ytrabajocorh","yoprcorh") 
+eliminated <- dataset_17[!is.na(dataset_17[,c(ingreso)]),]
+a <- eliminated[,c(ingreso)]
+b <- eliminated$comuna
+c <- eliminated$sexo
+d <- eliminated$e1 #alfabetismo
+e <- eliminated$r3 #etnia 
+anio <- 2017
+}
+
+if(xx==2020) {
+  
+  ingreso <- switch(var2,"ytotcorh","yautcorh","ytrabajocorh","yoprcorh") 
+eliminated <-dataset_20[!(dataset_20[,c(ingreso)] == 0),]
+a <- eliminated[,c(ingreso)]
+b <- eliminated$comuna
+c <- eliminated$sexo
+d <- eliminated$e1 #alfabetismo
+e <- eliminated$r3 #etnia 
+anio <- 2020
+}
+
+promedios_grupales <-aggregate(a, by=list(b, c, d,  e ), FUN = mean , na.rm = TRUE)
+promedios_grupales_sd <-aggregate(a, by=list(b, c, d,  e ), FUN = sd , na.rm = TRUE)
+promedios_grupales_gini <-aggregate(a, by=list(b, c, d,  e ), FUN = gini , na.rm = TRUE)
+
+promedios_grupales$sd = promedios_grupales_sd$sd.a
+promedios_grupales$gini = promedios_grupales_gini$gini.a
+df <- promedios_grupales
+
+################ -- frecuencia
+expan<-switch(n,"EXPC","EXPC","expc_full","expc","expc_todas","expc","expc")
+
+tabla_matp <-xtabs(eliminated[,(expan)]~b+c+d+e , data = eliminated)
+tabla_matp <- as.data.frame(tabla_matp)
+tabla_matp <-tabla_matp[!(tabla_matp$Freq == 0),]
+df$freq <- tabla_matp$Freq
+df <- df[complete.cases(df), ]
+################ 
+
+
+ 
+names(df)[1] <- "Comuna"
+names(df)[2] <- "Sexo"
+names(df)[3] <- "Alfabetismo"
+names(df)[4] <- "Etnia"
+names(df)[5] <- "Promedio del Ingreso"
+names(df)[6] <- "Desviación standard"
+names(df)[7] <- "Gini"
+names(df)[8] <- "freq" 
+df$Año = xx
+
+direc_cod_com <- paste0("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/codigos_comunales_2006-2020.rds")
+codigos_comunales <- readRDS(file = direc_cod_com)
+names(codigos_comunales)[1] <- "Código"
+names(codigos_comunales)[2] <- "Comuna"
+
+tabla_df = merge( x = df, y = codigos_comunales, by = "Comuna", all.x = TRUE)
+tabla_df <-tabla_df[!(tabla_df$Promedio == 0),]
+
+tabla_df2 <<- tabla_df 
+
+}
+
+data_df3 <- data.frame()
+for (n in 1:7){
+  funcion1(n)
+
+  data_df3 <- rbind(data_df3,tabla_df2)
+
+} 
+variable_i <- switch(var2,"ytotcorh","yautcorh","ytrabajocorh","yoprcorh")
+
+data_df3$var_id <- paste0(variable_i,"_id")
+assign(paste0("tabla_etnia_",variable_i),data_df3)
+data_df3 <- data.frame()
+print(paste0("tabla_etnia_",variable_i))
+ 
+ 
+}
+ 
+tabla_final <- rbind(tabla_etnia_ytotcorh,tabla_etnia_yautcorh,tabla_etnia_ytrabajocorh,tabla_etnia_yoprcorh)
+
+```
+ 
+## Homologación de etnia
+
+```{r}
+tabla_final$Etnia[tabla_final$Etnia == "Aimara" ]  <- "Aymara"
+tabla_final$Etnia[tabla_final$Etnia == "No pertenece a ninguno de estos pueblos indígenas" ]  <-  "No pertenece a ningún pueblo indígena"
+tabla_final$Etnia[tabla_final$Etnia == "Mapuche"]  <- "Mapuche"
+tabla_final$Etnia[tabla_final$Etnia == "Diaguita"]  <- "Diaguita"
+tabla_final$Etnia[tabla_final$Etnia == "Atacameño" ]  <- "Atacameño"
+tabla_final$Etnia[tabla_final$Etnia == "Atacameño (Likan-Antai)" ]  <- "Atacameño"
+tabla_final$Etnia[tabla_final$Etnia == "Atacameño (Likán Antai)" ]  <- "Atacameño"
+tabla_final$Etnia[tabla_final$Etnia == "Atacameño (Likán-Antai)" ]  <- "Atacameño"
+tabla_final$Etnia[tabla_final$Etnia == "Quechua" ]  <- "Quechua"
+tabla_final$Etnia[tabla_final$Etnia == "Yámana o Yagán" ]  <- "Yagán"
+tabla_final$Etnia[tabla_final$Etnia == "Yagan" ]  <- "Yagán"
+tabla_final$Etnia[tabla_final$Etnia == "Yagán (Yámana)" ]  <- "Yagán"
+tabla_final$Etnia[tabla_final$Etnia == "Rapa-Nui o Pascuenses"]  <- "Pascuense"
+tabla_final$Etnia[tabla_final$Etnia == "Rapa-Nui"]  <- "Pascuense"
+tabla_final$Etnia[tabla_final$Etnia == "Rapa Nui (Pascuense)"]  <- "Pascuense"
+tabla_final$Etnia[tabla_final$Etnia == "Rapa Nui"]  <- "Pascuense"
+tabla_final$Etnia[tabla_final$Etnia == "Collas"]  <- "Coya"
+tabla_final$Etnia[tabla_final$Etnia == "Kawashkar o Alacalufes" ]  <- "Alacalufe"
+tabla_final$Etnia[tabla_final$Etnia == "Kawashkar" ]  <- "Alacalufe"
+tabla_final$Etnia[tabla_final$Etnia == "Kawésqar (Alacalufes)" ]  <- "Alacalufe"
+tabla_final$Etnia[tabla_final$Etnia == "Kawésqar" ]  <- "Alacalufe"
+tabla_final$Etnia[tabla_final$Etnia == "Kawaskar" ]  <- "Alacalufe"
+tabla_final$Etnia[tabla_final$Etnia == "Chango" ]  <- "Chango"
+tabla_final$Etnia[tabla_final$Etnia ==  "Sin dato"]  <- NA
+tabla_final$Etnia[tabla_final$Etnia ==  "NS/NR"   ]  <- NA
+tabla_final$Etnia[tabla_final$Etnia == "No sabe/no responde" ]  <- NA
+ 
+##############
+data_df3 <- tabla_final
+data_df3$cod_sexo <- data_df3$Sexo
+data_df3$cod_sexo[data_df3$cod_sexo == "Hombre"] <- "01"
+data_df3$cod_sexo[data_df3$cod_sexo == "Mujer"] <- "02"
+
+data_df3$cod_alfa <- data_df3$Alfabetismo
+data_df3$cod_alfa[data_df3$cod_alfa == "Sí"] <- "01"
+data_df3$cod_alfa[data_df3$cod_alfa == "No"] <- "02"
+
+Etnia <- c(sort(unique(data_df3$Etnia)[-c(1,6)] ),"No pertenece a ningún pueblo indígena",NA)
+Etnia<- as.data.frame(Etnia)
+Etnia$cod_etnia <- paste("00",seq(1:nrow(Etnia)), sep = "")
+codigos <- Etnia$cod_etnia
+rango <- seq(1:nrow(Etnia))
+cadena <- paste("",codigos[rango], sep = "")
+cadena <- substr(cadena,(nchar(cadena)[rango])-(1),4)
+codigos <- as.data.frame(codigos)
+cadena <- as.data.frame(cadena)
+codigos <- cbind(Etnia,cadena)
+colnames(codigos) <- c("Etnia","cadena","cod_etnia")
+
+data_df3 <- merge(x=data_df3, y=codigos, by="Etnia")
+data_df3 <- data_df3[,c(2,10,1,15,3,12,4,13,5,6,7,8,9,11)]
+tabla_final <- data_df3
+
+##############
+```
+
+ 
+
+## Ingreso total *ytotcorh*
+ 
+
+```{r, message=FALSE, warning=FALSE}
+tabla_etnia_ytotcorh <- filter(tabla_final,tabla_final$var_id == "ytotcorh_id")  
+
+datatable(tabla_etnia_ytotcorh, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+          options = list(dom = 'Bfrtip',
+          buttons = list('colvis', list(extend = 'collection',
+          buttons = list(
+          list(extend='copy'),
+          list(extend='excel',
+            filename = 'tabla_etnia_ytotcorh'),
+          list(extend='pdf',
+            filename= 'tabla_etnia_ytotcorh')),
+          text = 'Download')), scrollX = TRUE))%>%
+    formatRound(columns=c("Promedio del Ingreso","Desviación standard","Gini") ,mark = "", digits=3)
+```
+
+
+```{r}
+dta1 <- data.frame()
+for (i in c(2006,2009,2011,2013,2015,2017,2020)) {
+  filtro <- filter(tabla_etnia_ytotcorh,Comuna=="Santiago",Etnia=="No pertenece a ningún pueblo indígena",Sexo=="Hombre",Año== i,Alfabetismo=="Sí") 
+dta1 <- rbind(dta1,filtro)
+}
+
+ggplot(dta1, aes(x=Año, y=`Promedio del Ingreso`)) + geom_bar(stat="identity")
+
+```
+
+
+## Ingreso autonomo *yautcorh*
+ 
+
+```{r, message=FALSE, warning=FALSE} 
+ tabla_etnia_yautcorh <- filter(tabla_final,tabla_final$var_id == "yautcorh_id") 
+
+datatable(tabla_etnia_yautcorh, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+          options = list(dom = 'Bfrtip',
+          buttons = list('colvis', list(extend = 'collection',
+          buttons = list(
+          list(extend='copy'),
+          list(extend='excel',
+            filename = 'tabla_etnia_yautcorh'),
+          list(extend='pdf',
+            filename= 'tabla_etnia_yautcorh')),
+          text = 'Download')), scrollX = TRUE))%>%
+    formatRound(columns=c("Promedio del Ingreso","Desviación standard","Gini") ,mark = "", digits=3)
+```
+
+## Ingreso del trabajo *ytrabajocorh*
+ 
+
+```{r, message=FALSE, warning=FALSE}
+ tabla_etnia_ytrabajocorh <- filter(tabla_final,tabla_final$var_id == "ytrabajocorh_id") 
+
+datatable(tabla_etnia_ytrabajocorh, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+          options = list(dom = 'Bfrtip',
+          buttons = list('colvis', list(extend = 'collection',
+          buttons = list(
+          list(extend='copy'),
+          list(extend='excel',
+            filename = 'tabla_etnia_ytrabajocorh'),
+          list(extend='pdf',
+            filename= 'tabla_etnia_ytrabajocorh')),
+          text = 'Download')), scrollX = TRUE))%>%
+    formatRound(columns=c("Promedio del Ingreso","Desviación standard","Gini") ,mark = "", digits=3)
+```
+  
+ 
+## Ingreso del trabajo *yoprcor*
+ 
+
+```{r, message=FALSE, warning=FALSE}
+ tabla_etnia_yoprcorh <- filter(tabla_final,tabla_final$var_id == "yoprcorh_id") 
+
+datatable(tabla_etnia_yoprcorh, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+          options = list(dom = 'Bfrtip',
+          buttons = list('colvis', list(extend = 'collection',
+          buttons = list(
+          list(extend='copy'),
+          list(extend='excel',
+            filename = 'tabla_etnia_yoprcorh'),
+          list(extend='pdf',
+            filename= 'tabla_etnia_yoprcorh')),
+          text = 'Download')), scrollX = TRUE))%>%
+    formatRound(columns=c("Promedio del Ingreso","Desviación standard","Gini") ,mark = "", digits=3)
+```
+
+
+# Generación de tablas de contingencia con <span style="color:red">migración</span>
+
+```{r, message=FALSE, warning=FALSE}
+df_tablas <- data.frame()
+
+for (var2 in 1:4) {
+ 
+funcion1 <- function(n){
+ 
+ xx<-switch(n,"2011","2013","2015","2017","2020")
+ tanio <<- xx
+
+ 
+
+
+if(xx==2011) {
+  
+  ingreso <- switch(var2,"ytothaj","yauthaj","ytrabhaj","yoprhaj") 
+eliminated <- dataset_11[!is.na(dataset_11[,c(ingreso)]),]
+a <- eliminated[,c(ingreso)]
+b <- eliminated$comuna
+c <- eliminated$sexo
+d <- eliminated$e1 #alfabetismo
+e <- eliminated$r2p_cod #migra 
+anio <- 2011
+
+}
+
+if(xx==2013) {
+  
+  ingreso <- switch(var2,"ytotcorh","yautcorh","ytrabajoCorh","yoprCorh") 
+eliminated <- dataset_13[!is.na(dataset_13[,c(ingreso)]),]
+a <- eliminated[,c(ingreso)]
+b <- eliminated$comuna
+c <- eliminated$sexo
+d <- eliminated$e1 #alfabetismo
+e <- eliminated$r2_p_cod #migra 
+anio <- 2013
+
+}
+ 
+
+if(xx==2015) {
+  
+  ingreso <- switch(var2,"ytotcorh","yautcorh","ytrabajoCorh","yoprCorh") 
+eliminated <- dataset_15[!is.na(dataset_15[,c(ingreso)]),]
+a <- eliminated[,c(ingreso)]
+b <- eliminated$comuna
+c <- eliminated$sexo
+d <- eliminated$e1 #alfabetismo
+e <- eliminated$r2espp_cod #migra 
+anio <- 2015
+}
+
+if(xx==2017) {
+  
+  ingreso <- switch(var2,"ytotcorh","yautcorh","ytrabajocorh","yoprcorh") 
+eliminated <- dataset_17[!is.na(dataset_17[,c(ingreso)]),]
+a <- eliminated[,c(ingreso)]
+b <- eliminated$comuna
+c <- eliminated$sexo
+d <- eliminated$e1 #alfabetismo
+e <- eliminated$r2_p_cod #migra 
+anio <- 2017
+}
+
+if(xx==2020) {
+  
+  ingreso <- switch(var2,"ytotcorh","yautcorh","ytrabajocorh","yoprcorh") 
+eliminated <-dataset_20[!(dataset_20[,c(ingreso)] == 0),]
+a <- eliminated[,c(ingreso)]
+b <- eliminated$comuna
+c <- eliminated$sexo
+d <- eliminated$e1 #alfabetismo
+e <- eliminated$r2_pais_esp #migra 
+anio <- 2020
+}
+
+promedios_grupales <-aggregate(a, by=list(b, c, d, e ), FUN = mean , na.rm = TRUE)
+promedios_grupales_sd <-aggregate(a, by=list(b, c, d, e ), FUN = sd , na.rm = TRUE)
+promedios_grupales_gini <-aggregate(a, by=list(b, c, d, e ), FUN = gini , na.rm = TRUE)
+
+promedios_grupales$sd = promedios_grupales_sd$sd.a
+promedios_grupales$gini = promedios_grupales_gini$gini.a
+df<-promedios_grupales
+
+################ -- frecuencia
+expan<-switch(n,"expc_full","expc","expc_todas","expc","expc")
+
+tabla_matp <-xtabs(eliminated[,(expan)]~b+c+d+e , data = eliminated)
+tabla_matp <- as.data.frame(tabla_matp)
+tabla_matp <-tabla_matp[!(tabla_matp$Freq == 0),]
+df$freq <- tabla_matp$Freq
+df <- df[complete.cases(df), ]
+################ 
+
+
+ 
+names(df)[1] <- "Comuna"
+names(df)[2] <- "Sexo"
+names(df)[3] <- "Alfabetismo"
+names(df)[4] <- "Migra"
+names(df)[5] <- "Promedio del Ingreso"
+names(df)[6] <- "Desviación standard"
+names(df)[7] <- "Gini"
+names(df)[8] <- "freq" 
+df$Año = xx
+
+direc_cod_com <- paste0("C:/Users/enamo/Desktop/Shiny-R/Casen_en_pandemia_2020/codigos_comunales_2011-2017.rds")
+codigos_comunales <- readRDS(file = direc_cod_com)
+names(codigos_comunales)[1] <- "Código"
+names(codigos_comunales)[2] <- "Comuna"
+
+tabla_df = merge( x = df, y = codigos_comunales, by = "Comuna", all.x = TRUE)
+tabla_df <-tabla_df[!(tabla_df$Promedio == 0),]
+
+tabla_df2 <<- tabla_df
+ 
+}
+
+data_df3 <- data.frame()
+for (n in 1:5){
+  funcion1(n)
+
+  data_df3 <- rbind(data_df3,tabla_df2)
+
+} 
+variable_i <- switch(var2,"ytotcorh","yautcorh","ytrabajocorh","yoprcorh") 
+
+data_df3$var_id <- paste0(variable_i,"_id")
+assign(paste0("tabla_migra_",variable_i),data_df3)
+data_df3 <- data.frame()
+print(paste0("tabla_migra_",variable_i))
+ 
+ 
+}
+ 
+data_df3 <- rbind(tabla_migra_ytotcorh,tabla_migra_yautcorh,tabla_migra_ytrabajocorh,tabla_migra_yoprcorh)
+ 
+#################
+data_df3$cod_sexo <- data_df3$Sexo
+data_df3$cod_sexo[data_df3$cod_sexo == "Hombre"] <- "01"
+data_df3$cod_sexo[data_df3$cod_sexo == "Mujer"] <- "02"
+
+data_df3$cod_alfa <- data_df3$Alfabetismo
+data_df3$cod_alfa[data_df3$cod_alfa == "Sí"] <- "01"
+data_df3$cod_alfa[data_df3$cod_alfa == "No"] <- "02"
+
+Migra <- c(sort(unique(data_df3$Migra)[-6]),"NS/NR")
+Migra<- as.data.frame(Migra)
+Migra$cod_Migra <- paste("00",seq(1:nrow(Migra)), sep = "")
+codigos <- Migra$cod_Migra
+rango <- seq(1:nrow(Migra))
+cadena <- paste("",codigos[rango], sep = "")
+cadena <- substr(cadena,(nchar(cadena)[rango])-(1),4)
+codigos <- as.data.frame(codigos)
+cadena <- as.data.frame(cadena)
+codigos <- cbind(Migra,cadena)
+colnames(codigos) <- c("Migra","cadena","cod_Migra")
+data_df3 <- merge(x=data_df3, y=codigos, by="Migra")
+
+data_df3 <- data_df3[,c(2,10,1,15,3,12,4,13,5,6,7,8,9,11)]
+
+###################
+```
+ 
+```{r}
+tab_f <- readRDS("tab_f.rds")
+
+```
+
+```{r}
+homol <- sort(unique(tab_f$Homologacion))
+homol 
+```
+
+```{r}
+homol <- sort(unique(tab_f$Homologacion))
+homol<- as.data.frame(homol)
+homol$cod_homol <- paste("00",seq(1:nrow(homol)), sep = "")
+codigos <- homol$cod_homol
+rango <- seq(1:nrow(homol))
+cadena <- paste("",codigos[rango], sep = "")
+cadena <- substr(cadena,(nchar(cadena)[rango])-(1),4)
+codigos <- as.data.frame(codigos)
+cadena <- as.data.frame(cadena)
+codigos <- cbind(homol,cadena)
+colnames(codigos) <- c("Homologacion","cadena_h","cod_homologacion")
+tab_f <- merge(x=tab_f, y=codigos, by="Homologacion")
+tab_f
+```
+
+## Ingreso total *ytotcorh* 
+
+```{r, message=FALSE, warning=FALSE} 
+tabla_migra_ytotcorh <- filter(data_df3,data_df3$var_id == "ytotcorh_id") 
+
+datatable(tabla_migra_ytotcorh, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+          options = list(dom = 'Bfrtip',
+          buttons = list('colvis', list(extend = 'collection',
+          buttons = list(
+          list(extend='copy'),
+          list(extend='excel',
+            filename = 'tabla_migra_ytotcorh'),
+          list(extend='pdf',
+            filename= 'tabla_migra_ytotcorh')),
+          text = 'Download')), scrollX = TRUE))%>%
+    formatRound(columns=c("Promedio del Ingreso","Desviación standard","Gini") ,mark = "", digits=3)
+```
+
+   
+## Ingreso autonomo *yautcorh* 
+
+```{r, message=FALSE, warning=FALSE} 
+tabla_migra_yautcorh <- filter(data_df3,data_df3$var_id == "yautcorh_id") 
+
+datatable(tabla_migra_yautcorh, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+          options = list(dom = 'Bfrtip',
+          buttons = list('colvis', list(extend = 'collection',
+          buttons = list(
+          list(extend='copy'),
+          list(extend='excel',
+            filename = 'tabla_migra_yautcorh'),
+          list(extend='pdf',
+            filename= 'tabla_migra_yautcorh')),
+          text = 'Download')), scrollX = TRUE))%>%
+    formatRound(columns=c("Promedio del Ingreso","Desviación standard","Gini") ,mark = "", digits=3)
+```
+ 
+## Ingreso del trabajo *ytrabajocorh* 
+
+```{r, message=FALSE, warning=FALSE} 
+tabla_migra_ytrabajocorh <- filter(data_df3,data_df3$var_id == "ytrabajocorh_id") 
+
+datatable(tabla_migra_ytrabajocorh, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+          options = list(dom = 'Bfrtip',
+          buttons = list('colvis', list(extend = 'collection',
+          buttons = list(
+          list(extend='copy'),
+          list(extend='excel',
+            filename = 'tabla_migra_ytrabajocorh'),
+          list(extend='pdf',
+            filename= 'tabla_migra_ytrabajocorh')),
+          text = 'Download')), scrollX = TRUE))%>%
+    formatRound(columns=c("Promedio del Ingreso","Desviación standard","Gini") ,mark = "", digits=3)
+```
+
+
+## Ingreso del principal *yoprcor* 
+
+```{r, message=FALSE, warning=FALSE} 
+tabla_migra_yoprcorh <- filter(data_df3,data_df3$var_id == "yoprcorh_id") 
+
+datatable(tabla_migra_yoprcorh, extensions = 'Buttons', escape = FALSE, rownames = FALSE,
+          options = list(dom = 'Bfrtip',
+          buttons = list('colvis', list(extend = 'collection',
+          buttons = list(
+          list(extend='copy'),
+          list(extend='excel',
+            filename = 'tabla_migra_yoprcorh'),
+          list(extend='pdf',
+            filename= 'tabla_migra_yoprcorh')),
+          text = 'Download')), scrollX = TRUE))%>%
+    formatRound(columns=c("Promedio del Ingreso","Desviación standard","Gini") ,mark = "", digits=3)
+```
+
+
+
+
+ 
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
