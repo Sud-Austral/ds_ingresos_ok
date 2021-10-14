@@ -2,9 +2,9 @@
 
 Tenemos los 4 ingresos fundamentales de las Casen agrupados como tablas de contingencia:
 
-ttcc_ing_etnia_migra_per
+ttcc_ing_etnia_migra_per.Rmd
 
-ttcc_ing_etnia_migra_hog
+ttcc_ing_etnia_migra_hog.Rmd
 
 Que en internet estan en:
 
