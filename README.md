@@ -17,9 +17,9 @@ ttcc_ing_etnia_migra_hog.Rmd (pendiente)
 
 Que en internet estan en:
 
-https://rpubs.com/dataintelligence/ttcc_etnia_migra_hog
+https://rpubs.com/dataintelligence/ttcc_etnia_migra_hog (pendiente)
 
-https://rpubs.com/dataintelligence/ttcc_etnia_migra_per (pendiente)
+https://rpubs.com/dataintelligence/ttcc_etnia_migra_per 
 
 ![Ingresos](Low-Income-Children.jpg)
 
@@ -28,7 +28,9 @@ OBSERVACIONES IMPORTANTES
 1 En cálculos anteriores se han sobreestimado los ingresos, ignorando los valores 0,
 debido al desconocimiento técnico tanto de R como del Excel. El promedio del ingreso DEBE considerar los ingresos ceros dentro de las categorias
 sexo, alfabetismo y etnia.
+
 2 El coeficiente de gini no tiene sentido de calcular pues se aplica sobre una muestra.
+
 3 La frecuencia es la suma de los factores de expansión de las personas encuestadas.
 
 4 Se debe aplicar el factor de expansión a los ingresos. Para ello la metodología será
