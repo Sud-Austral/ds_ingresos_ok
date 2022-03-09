@@ -3,29 +3,32 @@ Tenemos los 4 ingresos fundamentales de las Casen agrupados como tablas de conti
 bajo alfabetismo, sexo, etnia(o inmigración) y comuna,
 tanto para personas como para hogares:
 
+# El código
+
 El código está en:\
 ttcc_ing_etnia_migra_per.Rmd
 
-/ingresos_migra/ingresos_por_migra_con_codigos
+# El producto
 
-El la base de datos en GitHub está en:
+## Por personas
 
-/ingresos_etnia/ingresos_por_etnia_con_codigos
+ingresos_migra/ingresos_por_migra_con_codigos\
+ingresos_etnia/ingresos_por_etnia_con_codigos
+
+## Por hogares
 
 ttcc_ing_etnia_migra_hog.Rmd (pendiente)
 
-Que en internet estan en:
-
-https://rpubs.com/dataintelligence/ttcc_etnia_migra_hog (pendiente)
-
-https://rpubs.com/dataintelligence/ttcc_etnia_migra_per 
+Sólo es necesario reemplazar las mismas variables que consideran a las personas por las que consideran hogares.
 
 ![Ingresos](Low-Income-Children.jpg)
 
-OBSERVACIONES IMPORTANTES
+## Un análisis metodológico
 
-1 En cálculos anteriores se han sobreestimado los ingresos, ignorando los valores 0,
-debido al desconocimiento técnico tanto de R como del Excel. El promedio del ingreso DEBE considerar los ingresos ceros dentro de las categorias
+1 En los cálculos de las ttcc se han ignorando los valores 0, haciéndonos sospechar que se han sobreestimado los ingresos,
+
+
+El promedio del ingreso DEBE considerar los ingresos ceros dentro de las categorias
 sexo, alfabetismo y etnia.
 
 2 El coeficiente de gini no tiene sentido de calcular pues se aplica sobre una muestra.
