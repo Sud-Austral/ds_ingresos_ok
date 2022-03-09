@@ -1,6 +1,6 @@
 
 Tenemos los 4 ingresos fundamentales de las Casen agrupados como tablas de contingencia,
-bajo alfabetismo, sexo, y etnia o comuna, en el repositorio: ds_ingresos_ok_v 2.0,
+bajo alfabetismo, sexo, etnia(o inmigración) y comuna,
 tanto para personas como para hogares:
 
 El código en GitHub está en:
