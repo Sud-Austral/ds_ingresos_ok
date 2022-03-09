@@ -3,8 +3,7 @@ Tenemos los 4 ingresos fundamentales de las Casen agrupados como tablas de conti
 bajo alfabetismo, sexo, etnia(o inmigración) y comuna,
 tanto para personas como para hogares:
 
-El código en GitHub está en:
-
+El código está en:\
 ttcc_ing_etnia_migra_per.Rmd
 
 /ingresos_migra/ingresos_por_migra_con_codigos
