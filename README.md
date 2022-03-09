@@ -26,17 +26,12 @@ Sólo es necesario reemplazar las mismas variables que consideran a las personas
 ## Dudas metodológicas
 
 1 En los cálculos de las ttcc se han ignorando los valores 0, haciéndonos sospechar que se han sobreestimado los ingresos,
+pero los promedios de los ingresos por comuna sólo consideran a la población económicamente activa, así que nuestros cálculos 
+debiesen estar ok.
 
-El promedio del ingreso DEBE considerar los ingresos ceros dentro de las categorias
-sexo, alfabetismo y etnia.
+2 El coeficiente de gini no tiene sentido de calcular pues la Casen se aplica sobre una muestra.
 
-2 El coeficiente de gini no tiene sentido de calcular pues se aplica sobre una muestra.
 
-3 La frecuencia es la suma de los factores de expansión de las personas encuestadas.
-
-4 Se debe aplicar el factor de expansión a los ingresos. Para ello la metodología será
-multiplicar el valor de los 4 ingresos de los encuestados de la tabla construída por el factor de expansión
-expansión del encuestado y dividirlo por el número de habitantes de la comuna.
 
 
 
