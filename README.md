@@ -23,10 +23,9 @@ Sólo es necesario reemplazar las mismas variables que consideran a las personas
 
 ![Ingresos](Low-Income-Children.jpg)
 
-## Un análisis metodológico
+## Dudas metodológicas
 
 1 En los cálculos de las ttcc se han ignorando los valores 0, haciéndonos sospechar que se han sobreestimado los ingresos,
-
 
 El promedio del ingreso DEBE considerar los ingresos ceros dentro de las categorias
 sexo, alfabetismo y etnia.
